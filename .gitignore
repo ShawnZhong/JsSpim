@@ -1,0 +1,10 @@
+*.o
+.DS_Store
+spim.data
+spim.wasm
+spim.js
+spim.html
+spim.wast
+parser_yacc.cpp
+parser_yacc.h
+lex.yy.cpp
