@@ -6,7 +6,7 @@ const runDOM = document.getElementById('run');
 
 var Module = {
     preRun: [],
-    postRun: [main],
+    postRun: [initSpim, main],
     print,
     printErr,
     totalDependencies: 0,
@@ -14,6 +14,38 @@ var Module = {
         this.totalDependencies = Math.max(this.totalDependencies, left);
     },
 };
+
+let Spim;
+
+function initSpim() {
+    Spim = {
+        get_user_text: cwrap('get_user_text', 'string'),
+        get_kernel_text: cwrap('get_kernel_text', 'string'),
+        get_user_stack: cwrap('get_user_stack', 'string'),
+        get_all_regs: cwrap('get_all_regs', 'string'),
+        get_reg: cwrap('get_reg', 'number', ['number']),
+        init: cwrap('init', 'void', ['string']),
+        run: cwrap('run', 'void'),
+        step: cwrap('step', 'void')
+    }
+}
+
+
+async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s') {
+    let data = await loadData(fileInput);
+
+    const stream = FS.open('input.s', 'w+');
+    FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
+    FS.close(stream);
+
+    Spim.init("input.s");
+
+    regsDOM.innerText = Spim.get_all_regs();
+    memoryDOM.innerText = Spim.get_user_text();
+
+    runDOM.onclick = () => Spim.run();
+    stepDOM.onclick = () => Spim.step();
+}
 
 async function loadData(fileInput) {
     if (fileInput instanceof File) { // local file
@@ -26,32 +58,6 @@ async function loadData(fileInput) {
         const response = await fetch(fileInput);
         return await response.arrayBuffer();
     }
-}
-
-
-async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s') {
-    let data = await loadData(fileInput);
-    
-    const stream = FS.open('input.s', 'w+');
-    FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
-    FS.close(stream);
-
-    const get_user_text = cwrap('get_user_text', 'string');
-    const get_kernel_text = cwrap('get_kernel_text', 'string');
-    const get_user_stack = cwrap('get_user_stack', 'string');
-    const get_all_regs = cwrap('get_all_regs', 'string');
-    const get_reg = cwrap('get_reg', 'number', ['number']);
-    const init = cwrap('init', 'void', ['string']);
-    const run = cwrap('run', 'void');
-    const step = cwrap('step', 'void');
-
-    init("input.s");
-
-    regsDOM.innerText = get_all_regs();
-    memoryDOM.innerText = get_user_text();
-
-    runDOM.onclick = () => run();
-    stepDOM.onclick = () => step();
 }
 
 

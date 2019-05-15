@@ -246,7 +246,7 @@ void init(char *filename) {
 
   console_in.i = 0;
 
-  initialize_world(exception_file_name, true);
+  initialize_world(exception_file_name, false);
   initialize_run_stack(0, NULL);
   read_assembly_file(filename);
 }
@@ -255,6 +255,7 @@ void run() {
   bool continuable;
   if (run_program(starting_address(), DEFAULT_RUN_STEPS, false, false, &continuable))
     write_output(message_out, "Breakpoint encountered at 0x%08x\n", PC);
+  write_output(message_out, "\n");
 }
 
 void step() {
@@ -264,6 +265,7 @@ void step() {
   bool continuable;
   if (run_program(addr, 1, true, true, &continuable))
     write_output(message_out, "Breakpoint encountered at 0x%08x\n", PC);
+  write_output(message_out, "\n");
 }
 
 void conti() {
@@ -272,6 +274,7 @@ void conti() {
   bool continuable;
   if (run_program(PC, DEFAULT_RUN_STEPS, false, true, &continuable))
     write_output(message_out, "Breakpoint encountered at 0x%08x\n", PC);
+  write_output(message_out, "\n");
 }
 
 void add_bp(int addr) {

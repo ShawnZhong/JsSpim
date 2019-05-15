@@ -196,7 +196,7 @@ Module['FS_createPath']('/usr/share', 'spim', true, true);
   }
 
  }
- loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}], "remote_package_size": 5502, "package_uuid": "632c1c74-1f63-4a53-82a7-8f414143946a"});
+ loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}], "remote_package_size": 5502, "package_uuid": "8d50bae7-02d8-4646-ab88-6f01940cbba4"});
 
 })();
 
