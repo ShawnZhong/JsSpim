@@ -8,7 +8,8 @@
 <body>
 
 <div id="toolbar">
-    Toolbar
+    <button id="run">run</button>
+    <button id="step">step</button>
 </div>
 
 <div id="main">
@@ -23,15 +24,23 @@
 </div>
 
 <div id="info">
-    <pre id="output" class=".content"></pre>
-    <pre id="log" class=".content"></pre>
+    <div id="output-container">
+        <h1>Output</h1>
+        <pre id="output-content" class="content"></pre>
+    </div>
+    <div id="log-container">
+        <h1>Log</h1>
+        <pre id="log-content" class="content"></pre>
+    </div>
 </div>
 
 
 <script type='text/javascript'>
-    const outputDOM = document.getElementById('output');
+    const outputDOM = document.getElementById('output-content');
     const regsDOM = document.getElementById('regs-content');
     const memoryDOM = document.getElementById('memory-content');
+    const stepDOM = document.getElementById('step');
+    const runDOM = document.getElementById('run');
 
     var Module = {
         preRun: [],
@@ -53,11 +62,11 @@
         const init = cwrap('init', 'void', ['string']);
         const run = cwrap('run', 'void');
         const step = cwrap('step', 'void');
-        init('Tests/tt.le.s');
-        run();
+        init('Tests/fib.s');
+        runDOM.onclick = () => run();
+        stepDOM.onclick = () => step();
         regsDOM.innerText = get_all_regs();
         memoryDOM.innerText = get_user_text();
-        // console.log(get_all_regs());
     }
 
     function print(text) {

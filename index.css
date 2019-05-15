@@ -4,7 +4,6 @@ body {
 
 #toolbar {
     height: 5vh;
-    background: green;
 }
 
 #main {
@@ -18,12 +17,14 @@ body {
 
 #regs-container {
     flex: 10%;
-    background: yellow;
+}
+
+#regs-content {
+    white-space: pre-wrap;
 }
 
 #memory-container {
     flex: 60%;
-    background: wheat;
 }
 
 #info {
@@ -35,12 +36,10 @@ body {
     overflow: auto;
 }
 
-#output {
+#output-container {
     flex: 50%;
-    background: orange;
 }
 
-#log {
+#log-container {
     flex: 50%;
-    background: red;
 }

@@ -79,7 +79,7 @@ MEM_SIZES = -DTEXT_SIZE=65536 -DDATA_SIZE=131072 -DK_TEXT_SIZE=65536
 
 DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\""
 CXX = em++
-CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O -g -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
+CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
 YCFLAGS +=
 PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s \
 		  --preload-file $(TEST_DIR)@/Tests

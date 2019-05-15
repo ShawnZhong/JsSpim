@@ -108,14 +108,132 @@ char *get_kernel_data() {
 char *get_all_regs(int hex_flag) {
   static str_stream ss;
   ss_clear(&ss);
-  format_registers(&ss, hex_flag, hex_flag);
+
+  int print_gpr_hex = hex_flag;
+  int print_fpr_hex = hex_flag;
+
+  int i;
+  char *grstr, *fpstr;
+  char *grfill, *fpfill;
+
+  ss_printf(&ss, "PC=%08x\t", PC);
+  ss_printf(&ss, "EPC=%08x\t", CP0_EPC);
+  ss_printf(&ss, "Cause=%08x\t", CP0_Cause);
+  ss_printf(&ss, "BadVAddr=%08x\t", CP0_BadVAddr);
+  ss_printf(&ss, "Status=%08x\t", CP0_Status);
+  ss_printf(&ss, "HI=%08x\t", HI);
+  ss_printf(&ss, "LO=%08x\t", LO);
+
+  if (print_gpr_hex)
+    grstr = "R%-2d (%2s)=%08x", grfill = "\t";
+  else
+    grstr = "R%-2d (%2s)=%-10d", grfill = "\t";
+
+  ss_printf(&ss, "\n\nGeneral Registers\n");
+  for (i = 0; i < 8; i++) {
+    ss_printf(&ss, grstr, i, int_reg_names[i], R[i]);
+    ss_printf(&ss, grfill);
+    ss_printf(&ss, grstr, i + 8, int_reg_names[i + 8], R[i + 8]);
+    ss_printf(&ss, grfill);
+    ss_printf(&ss, grstr, i + 16, int_reg_names[i + 16], R[i + 16]);
+    ss_printf(&ss, grfill);
+    ss_printf(&ss, grstr, i + 24, int_reg_names[i + 24], R[i + 24]);
+    ss_printf(&ss, "\t");
+  }
+
+  ss_printf(&ss, "FIR=%08x\t", FIR);
+  ss_printf(&ss, "FCSR=%08x\t", FCSR);
+  ss_printf(&ss, "FCCR=%08x\t", FCCR);
+  ss_printf(&ss, "FEXR=%08x\t", FEXR);
+  ss_printf(&ss, "FENR=%08x\t", FENR);
+
+  ss_printf(&ss, "\n\nDouble Floating Point Registers\n");
+
+  if (print_fpr_hex)
+    fpstr = "FP%-2d=%08x,%08x", fpfill = "\t";
+  else
+    fpstr = "FP%-2d=%#-13.6g", fpfill = "\t";
+
+  if (print_fpr_hex)
+    for (i = 0; i < 4; i += 1) {
+      int *r1, *r2;
+
+      /* Use pointers to cast to ints without invoking float->int conversion
+         so we can just print the bits. */
+      r1 = (int *) &FPR[i];
+      r2 = r1 + 1;
+      ss_printf(&ss, fpstr, 2 * i, *r1, *r2);
+      ss_printf(&ss, fpfill);
+
+      r1 = (int *) &FPR[i + 4];
+      r2 = r1 + 1;
+      ss_printf(&ss, fpstr, 2 * i + 8, *r1, *r2);
+      ss_printf(&ss, fpfill);
+
+      r1 = (int *) &FPR[i + 8];
+      r2 = r1 + 1;
+      ss_printf(&ss, fpstr, 2 * i + 16, *r1, *r2);
+      ss_printf(&ss, fpfill);
+
+      r1 = (int *) &FPR[i + 12];
+      r2 = r1 + 1;
+      ss_printf(&ss, fpstr, 2 * i + 24, *r1, *r2);
+      ss_printf(&ss, "\t");
+    }
+  else
+    for (i = 0; i < 4; i += 1) {
+      ss_printf(&ss, fpstr, 2 * i, FPR[i]);
+      ss_printf(&ss, fpfill);
+      ss_printf(&ss, fpstr, 2 * i + 8, FPR[i + 4]);
+      ss_printf(&ss, fpfill);
+      ss_printf(&ss, fpstr, 2 * i + 16, FPR[i + 8]);
+      ss_printf(&ss, fpfill);
+      ss_printf(&ss, fpstr, 2 * i + 24, FPR[i + 12]);
+      ss_printf(&ss, "\t");
+    }
+
+  if (print_fpr_hex)
+    fpstr = "FP%-2d=%08x", fpfill = "\t";
+  else
+    fpstr = "FP%-2d=%#-13.6g", fpfill = "\t";
+
+  ss_printf(&ss, "\n\nSingle Floating Point Registers\n");
+
+  if (print_fpr_hex)
+    for (i = 0; i < 8; i += 1) {
+      /* Use pointers to cast to ints without invoking float->int conversion
+         so we can just print the bits. */
+      ss_printf(&ss, fpstr, i, *(int *) &FPR_S(i));
+      ss_printf(&ss, fpfill);
+
+      ss_printf(&ss, fpstr, i + 8, *(int *) &FPR_S(i + 8));
+      ss_printf(&ss, fpfill);
+
+      ss_printf(&ss, fpstr, i + 16, *(int *) &FPR_S(i + 16));
+      ss_printf(&ss, fpfill);
+
+      ss_printf(&ss, fpstr, i + 24, *(int *) &FPR_S(i + 24));
+      ss_printf(&ss, "\t");
+    }
+  else
+    for (i = 0; i < 8; i += 1) {
+      ss_printf(&ss, fpstr, i, FPR_S(i));
+      ss_printf(&ss, fpfill);
+      ss_printf(&ss, fpstr, i + 8, FPR_S(i + 8));
+      ss_printf(&ss, fpfill);
+      ss_printf(&ss, fpstr, i + 16, FPR_S(i + 16));
+      ss_printf(&ss, fpfill);
+      ss_printf(&ss, fpstr, i + 24, FPR_S(i + 24));
+      ss_printf(&ss, "\t");
+    }
+
   return ss_to_string(&ss);
 }
 
 char *print_fp_reg(int reg_no) {
   if ((reg_no & 1) == 0)
-    write_output(message_out, "FP reg %d = %g (double)\n", reg_no, FPR_D(reg_no));
-  write_output(message_out, "FP reg %d = %g (single)\n", reg_no, FPR_S(reg_no));
+    write_output(message_out, "FP reg %d=%g (double)\n", reg_no, FPR_D(reg_no));
+  write_output(message_out, "FP reg %d=%g (single)\n", reg_no, FPR_S(reg_no));
 }
 
 int get_reg(int reg_no) {
