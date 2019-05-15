@@ -197,7 +197,7 @@ Module['FS_createPath']('/', 'Tests', true, true);
   }
 
  }
- loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}, {"filename": "/Tests/time.s", "start": 5502, "end": 7515, "audio": 0}, {"filename": "/Tests/tt.be.s", "start": 7515, "end": 16704, "audio": 0}, {"filename": "/Tests/tt.in", "start": 16704, "end": 16746, "audio": 0}, {"filename": "/Tests/helloworld.s", "start": 16746, "end": 18668, "audio": 0}, {"filename": "/Tests/tt.le.s", "start": 18668, "end": 27762, "audio": 0}, {"filename": "/Tests/tt.bare.s", "start": 27762, "end": 34225, "audio": 0}, {"filename": "/Tests/fib.s", "start": 34225, "end": 37110, "audio": 0}, {"filename": "/Tests/tt.io.s", "start": 37110, "end": 42310, "audio": 0}, {"filename": "/Tests/timer.s", "start": 42310, "end": 43308, "audio": 0}, {"filename": "/Tests/tt.core.s", "start": 43308, "end": 107939, "audio": 0}, {"filename": "/Tests/tt.fpu.bare.s", "start": 107939, "end": 168382, "audio": 0}, {"filename": "/Tests/tt.alu.bare.s", "start": 168382, "end": 199420, "audio": 0}, {"filename": "/Tests/read.s", "start": 199420, "end": 201262, "audio": 0}], "remote_package_size": 201262, "package_uuid": "d7000f87-a647-4b76-9218-7aa5ca45d903"});
+ loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}, {"filename": "/Tests/time.s", "start": 5502, "end": 7515, "audio": 0}, {"filename": "/Tests/tt.be.s", "start": 7515, "end": 16704, "audio": 0}, {"filename": "/Tests/tt.in", "start": 16704, "end": 16746, "audio": 0}, {"filename": "/Tests/helloworld.s", "start": 16746, "end": 18668, "audio": 0}, {"filename": "/Tests/tt.le.s", "start": 18668, "end": 27762, "audio": 0}, {"filename": "/Tests/tt.bare.s", "start": 27762, "end": 34225, "audio": 0}, {"filename": "/Tests/fib.s", "start": 34225, "end": 37110, "audio": 0}, {"filename": "/Tests/tt.io.s", "start": 37110, "end": 42310, "audio": 0}, {"filename": "/Tests/timer.s", "start": 42310, "end": 43308, "audio": 0}, {"filename": "/Tests/tt.core.s", "start": 43308, "end": 107939, "audio": 0}, {"filename": "/Tests/tt.fpu.bare.s", "start": 107939, "end": 168382, "audio": 0}, {"filename": "/Tests/tt.alu.bare.s", "start": 168382, "end": 199420, "audio": 0}, {"filename": "/Tests/read.s", "start": 199420, "end": 201262, "audio": 0}], "remote_package_size": 201262, "package_uuid": "7c1b6d84-4477-435e-aafe-78ebc1a94777"});
 
 })();
 
@@ -1314,11 +1314,11 @@ function updateGlobalBufferViews() {
 
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 83872,
+    STACK_BASE = 83776,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5326752,
-    DYNAMIC_BASE = 5326752,
-    DYNAMICTOP_PTR = 83840;
+    STACK_MAX = 5326656,
+    DYNAMIC_BASE = 5326656,
+    DYNAMICTOP_PTR = 83744;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1792,7 +1792,7 @@ var ASM_CONSTS = [];
 
 
 
-// STATICTOP = STATIC_BASE + 82848;
+// STATICTOP = STATIC_BASE + 82752;
 /* global initializers */  __ATINIT__.push({ func: function() { ___emscripten_environ_constructor() } });
 
 
@@ -1803,7 +1803,7 @@ var ASM_CONSTS = [];
 
 
 /* no memory initializer */
-var tempDoublePtr = 83856
+var tempDoublePtr = 83760
 assert(tempDoublePtr % 8 == 0);
 
 function copyTempFloat(ptr) { // functions, because inlining this code increases code size too much
@@ -4966,10 +4966,6 @@ function copyTempDouble(ptr) {
 
   function ___unlock() {}
 
-  function _abort() {
-      Module['abort']();
-    }
-
   function _emscripten_get_heap_size() {
       return HEAP8.length;
     }
@@ -5104,7 +5100,6 @@ var asmLibraryArg = {
   "___syscall54": ___syscall54,
   "___syscall6": ___syscall6,
   "___unlock": ___unlock,
-  "_abort": _abort,
   "_emscripten_get_heap_size": _emscripten_get_heap_size,
   "_emscripten_memcpy_big": _emscripten_memcpy_big,
   "_emscripten_resize_heap": _emscripten_resize_heap,
