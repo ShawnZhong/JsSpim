@@ -113,7 +113,8 @@ OBJS = spim.o spim-utils.o run.o mem.o inst.o data.o sym-tbl.o parser_yacc.o lex
 
 
 spim:   $(OBJS)
-	$(CXX) -g $(OBJS) $(LDFLAGS) -o spim.html 
+	$(CXX) -g $(OBJS) $(LDFLAGS) -o spim.js
+	sed -i '' '/is not implemented yet/d' spim.js
 
 
 #
