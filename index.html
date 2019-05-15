@@ -1,16 +1,38 @@
 <!doctype html>
-<html lang="en-us">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="index.css">
     <title>JsSpim</title>
 </head>
-
 <body>
-<pre id="output" style="width: 100%; height: 100%;"></pre>
+
+<div id="toolbar">
+    Toolbar
+</div>
+
+<div id="main">
+    <div id="regs-container">
+        <h1>Register</h1>
+        <pre id="regs-content" class="content"></pre>
+    </div>
+    <div id="memory-container">
+        <h1>Memory</h1>
+        <pre id="memory-content" class="content"></pre>
+    </div>
+</div>
+
+<div id="info">
+    <pre id="output" class=".content"></pre>
+    <pre id="log" class=".content"></pre>
+</div>
+
+
 <script type='text/javascript'>
-    const output = document.getElementById('output');
+    const outputDOM = document.getElementById('output');
+    const regsDOM = document.getElementById('regs-content');
+    const memoryDOM = document.getElementById('memory-content');
+
     var Module = {
         preRun: [],
         postRun: [main],
@@ -31,15 +53,17 @@
         const init = cwrap('init', 'void', ['string']);
         const run = cwrap('run', 'void');
         const step = cwrap('step', 'void');
-        init('Tests/read.s');
+        init('Tests/tt.le.s');
         run();
-        console.log(get_all_regs());
+        regsDOM.innerText = get_all_regs();
+        memoryDOM.innerText = get_user_text();
+        // console.log(get_all_regs());
     }
 
     function print(text) {
         console.log(text);
-        output.innerHTML += text + "\n";
-        output.scrollTop = output.scrollHeight; // focus on bottom
+        outputDOM.innerHTML += text + "\n";
+        outputDOM.scrollTop = outputDOM.scrollHeight; // focus on bottom
     }
 
     function printErr(text) {

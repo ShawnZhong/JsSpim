@@ -52,9 +52,6 @@ TEST_DIR = Tests
 # Full path for the parent directory of all installed files:
 PREFIX = /usr
 
-# Full path for the directory that will hold the executable files:
-BIN_DIR = $(PREFIX)/bin
-
 # Full path for the directory that will hold the exception handler:
 EXCEPTION_DIR = $(PREFIX)/share/spim
 

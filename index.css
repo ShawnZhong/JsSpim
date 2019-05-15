@@ -1,0 +1,46 @@
+body {
+    font-family: sans-serif;
+}
+
+#toolbar {
+    height: 5vh;
+    background: green;
+}
+
+#main {
+    display: flex;
+}
+
+#main > div > .content {
+    height: 60vh;
+    overflow: auto;
+}
+
+#regs-container {
+    flex: 10%;
+    background: yellow;
+}
+
+#memory-container {
+    flex: 60%;
+    background: wheat;
+}
+
+#info {
+    display: flex;
+}
+
+#info > div > .content {
+    height: 20vh;
+    overflow: auto;
+}
+
+#output {
+    flex: 50%;
+    background: orange;
+}
+
+#log {
+    flex: 50%;
+    background: red;
+}
