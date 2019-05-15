@@ -7,9 +7,26 @@
 </head>
 <body>
 
+<fieldset>
+    <legend>Please select a xv6 file system image:</legend>
+
+    <input id="file-choice1" name="file" onChange="loadFile(this.value)" type="radio"
+           value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s">
+    <label for="file-choice1">fib.s</label>
+
+
+    <input id="file-choice0" name="file" type="radio">
+    <label for="file-choice0">
+        <input id="file-upload" onChange="loadFile(this.files[0])" type="file"/>
+    </label>
+
+</fieldset>
+
 <div id="toolbar">
     <button id="run">run</button>
     <button id="step">step</button>
+
+
 </div>
 
 <div id="main">
@@ -35,50 +52,7 @@
 </div>
 
 
-<script type='text/javascript'>
-    const outputDOM = document.getElementById('output-content');
-    const regsDOM = document.getElementById('regs-content');
-    const memoryDOM = document.getElementById('memory-content');
-    const stepDOM = document.getElementById('step');
-    const runDOM = document.getElementById('run');
-
-    var Module = {
-        preRun: [],
-        postRun: [main],
-        print,
-        printErr,
-        totalDependencies: 0,
-        monitorRunDependencies: function (left) {
-            this.totalDependencies = Math.max(this.totalDependencies, left);
-        },
-    };
-
-    function main() {
-        const get_user_text = cwrap('get_user_text', 'string');
-        const get_kernel_text = cwrap('get_kernel_text', 'string');
-        const get_user_stack = cwrap('get_user_stack', 'string');
-        const get_all_regs = cwrap('get_all_regs', 'string');
-        const get_reg = cwrap('get_reg', 'number', ['number']);
-        const init = cwrap('init', 'void', ['string']);
-        const run = cwrap('run', 'void');
-        const step = cwrap('step', 'void');
-        init('Tests/fib.s');
-        runDOM.onclick = () => run();
-        stepDOM.onclick = () => step();
-        regsDOM.innerText = get_all_regs();
-        memoryDOM.innerText = get_user_text();
-    }
-
-    function print(text) {
-        console.log(text);
-        outputDOM.innerHTML += text + "\n";
-        outputDOM.scrollTop = outputDOM.scrollHeight; // focus on bottom
-    }
-
-    function printErr(text) {
-        console.error(text);
-    }
-</script>
+<script type='text/javascript' src="index.js"></script>
 <script async type="text/javascript" src="wasm.js"></script>
 </body>
 </html>
