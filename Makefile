@@ -79,7 +79,7 @@ MEM_SIZES = -DTEXT_SIZE=65536 -DDATA_SIZE=131072 -DK_TEXT_SIZE=65536
 
 DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\""
 CXX = em++
-CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
+CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
 YCFLAGS +=
 PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s \
 		  --preload-file $(TEST_DIR)@/Tests
@@ -106,7 +106,7 @@ OBJS = spim.o spim-utils.o run.o mem.o inst.o data.o sym-tbl.o parser_yacc.o lex
 
 
 spim:   $(OBJS)
-	$(CXX) -g $(OBJS) $(LDFLAGS) -o wasm.js
+	$(CXX) $(OBJS) $(LDFLAGS) -o wasm.js
 	sed -i '' '/is not implemented yet/d' wasm.js
 
 #
@@ -116,7 +116,7 @@ TAGS:	*.cpp *.h *.l *.y
 
 
 clean:
-	rm -f wasm.* *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output
+	rm -f *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output
 
 splint: spim
 	splint -weak -preproc -warnposix +matchanyintegral spim.cpp parser_yacc.cpp lex.yy.cpp

@@ -1,9 +1,5 @@
 *.o
 .DS_Store
-wasm.data
-wasm.wasm
-wasm.wasm.map
-wasm.wast
 parser_yacc.cpp
 parser_yacc.h
 lex.yy.cpp
