@@ -121,7 +121,6 @@ Module.expectedDataFileDownloads++;
 Module['FS_createPath']('/', 'usr', true, true);
 Module['FS_createPath']('/usr', 'share', true, true);
 Module['FS_createPath']('/usr/share', 'spim', true, true);
-Module['FS_createPath']('/', 'Tests', true, true);
 
     function DataRequest(start, end, audio) {
       this.start = start;
@@ -197,7 +196,7 @@ Module['FS_createPath']('/', 'Tests', true, true);
   }
 
  }
- loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}, {"filename": "/Tests/time.s", "start": 5502, "end": 7515, "audio": 0}, {"filename": "/Tests/tt.be.s", "start": 7515, "end": 16704, "audio": 0}, {"filename": "/Tests/tt.in", "start": 16704, "end": 16746, "audio": 0}, {"filename": "/Tests/helloworld.s", "start": 16746, "end": 18668, "audio": 0}, {"filename": "/Tests/tt.le.s", "start": 18668, "end": 27762, "audio": 0}, {"filename": "/Tests/tt.bare.s", "start": 27762, "end": 34225, "audio": 0}, {"filename": "/Tests/fib.s", "start": 34225, "end": 37110, "audio": 0}, {"filename": "/Tests/tt.io.s", "start": 37110, "end": 42310, "audio": 0}, {"filename": "/Tests/timer.s", "start": 42310, "end": 43308, "audio": 0}, {"filename": "/Tests/tt.core.s", "start": 43308, "end": 107939, "audio": 0}, {"filename": "/Tests/tt.fpu.bare.s", "start": 107939, "end": 168382, "audio": 0}, {"filename": "/Tests/tt.alu.bare.s", "start": 168382, "end": 199420, "audio": 0}, {"filename": "/Tests/read.s", "start": 199420, "end": 201262, "audio": 0}], "remote_package_size": 201262, "package_uuid": "7c1b6d84-4477-435e-aafe-78ebc1a94777"});
+ loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}], "remote_package_size": 5502, "package_uuid": "632c1c74-1f63-4a53-82a7-8f414143946a"});
 
 })();
 

@@ -10,14 +10,14 @@
 <fieldset>
     <legend>Please select a xv6 file system image:</legend>
 
-    <input id="file-choice1" name="file" onChange="loadFile(this.value)" type="radio"
+    <input checked id="file-choice1" name="file" onChange="main(this.value)" type="radio"
            value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s">
     <label for="file-choice1">fib.s</label>
 
 
     <input id="file-choice0" name="file" type="radio">
     <label for="file-choice0">
-        <input id="file-upload" onChange="loadFile(this.files[0])" type="file"/>
+        <input id="file-upload" onChange="main(this.files[0])" type="file"/>
     </label>
 
 </fieldset>

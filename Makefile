@@ -81,8 +81,7 @@ DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exception
 CXX = em++
 CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
 YCFLAGS +=
-PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s \
-		  --preload-file $(TEST_DIR)@/Tests
+PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s
 EXPORTED_FUNCTIONS = '_init', \
 					 '_run', \
 					 '_step', \

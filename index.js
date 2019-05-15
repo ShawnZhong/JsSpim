@@ -1,5 +1,3 @@
-document.getElementById('file-choice1').click();
-
 const outputDOM = document.getElementById('output-content');
 const regsDOM = document.getElementById('regs-content');
 const memoryDOM = document.getElementById('memory-content');
@@ -8,7 +6,7 @@ const runDOM = document.getElementById('run');
 
 var Module = {
     preRun: [],
-    postRun: [() => ready = true, main],
+    postRun: [main],
     print,
     printErr,
     totalDependencies: 0,
@@ -17,26 +15,23 @@ var Module = {
     },
 };
 
-let ready;
-let data;
-
-async function loadFile(fileInput) {
+async function loadData(fileInput) {
     if (fileInput instanceof File) { // local file
         const reader = new FileReader();
-        reader.onload = () => data = reader.result;
-        reader.readAsArrayBuffer(fileInput);
+        return await new Promise((resolve) => {
+            reader.onload = () => resolve(reader.result);
+            reader.readAsArrayBuffer(fileInput);
+        });
     } else { // remote file
         const response = await fetch(fileInput);
-        data = await response.arrayBuffer();
+        return await response.arrayBuffer();
     }
-
-    main();
 }
 
-function main() {
-    if (!data || !ready) return;
 
-
+async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s') {
+    let data = await loadData(fileInput);
+    
     const stream = FS.open('input.s', 'w+');
     FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
     FS.close(stream);
