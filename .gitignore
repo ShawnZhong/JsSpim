@@ -1,9 +1,9 @@
 *.o
 .DS_Store
-spim.data
-spim.wasm
-spim.wasm.map
-spim.wast
+wasm.data
+wasm.wasm
+wasm.wasm.map
+wasm.wast
 parser_yacc.cpp
 parser_yacc.h
 lex.yy.cpp

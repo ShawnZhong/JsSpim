@@ -33,16 +33,6 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-#
-# To make spim, type:
-#
-#   make spim
-#
-# To verify spim works, type:
-#
-#   make test
-#
-
 .SUFFIXES:
 .SUFFIXES: .cpp .o
 
@@ -68,9 +58,6 @@ BIN_DIR = $(PREFIX)/bin
 # Full path for the directory that will hold the exception handler:
 EXCEPTION_DIR = $(PREFIX)/share/spim
 
-# Full path for the directory that will hold the man files:
-MAN_DIR = $(PREFIX)/share/man/man1
-
 
 
 # SPIM needs flex's -I flag since the scanner is used interactively.
@@ -93,9 +80,7 @@ MEM_SIZES = -DTEXT_SIZE=65536 -DDATA_SIZE=131072 -DK_TEXT_SIZE=65536
 #
 
 
-
 DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\""
-
 CXX = em++
 CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O -g -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
 YCFLAGS +=
@@ -119,58 +104,13 @@ CSH = bash
 LEXCFLAGS += -O $(CXXFLAGS)
 
 
-
 OBJS = spim.o spim-utils.o run.o mem.o inst.o data.o sym-tbl.o parser_yacc.o lex.yy.o \
        syscall.o display-utils.o string-stream.o
 
 
 spim:   $(OBJS)
-	$(CXX) -g $(OBJS) $(LDFLAGS) -o spim.js
-	sed -i '' '/is not implemented yet/d' spim.js
-
-
-#
-
-#
-# Test spim with a torture test:
-#
-
-test:	spim
-	@echo
-	@echo "Testing tt.bare.s:"
-	$(CSH) -c "./spim -delayed_branches -delayed_loads -noexception -file $(TEST_DIR)/tt.bare.s >& test.out"
-	@tail -2 test.out
-	@echo
-
-	@echo
-	@echo "Testing tt.core.s:"
-	$(CSH) -c "./spim -ef $(CPU_DIR)/exceptions.s -file $(TEST_DIR)/tt.core.s < $(TEST_DIR)/tt.in >& test.out"
-	@tail -2 test.out
-	@echo
-
-	@echo
-	@echo "Testing tt.le.s:"
-	$(CSH) -c "./spim -ef $(CPU_DIR)/exceptions.s -file $(TEST_DIR)/tt.le.s  >& test.out"
-	@tail -2 test.out
-	@echo
-	@echo
-
-# This test currently only works for little-endian machines.  The file
-# tt.alu.bare.s needs to be converted in places for big-endian machines.
-
-test_bare: spim
-	@echo
-	@echo "Testing tt.alu.bare.s:"
-	$(CSH) -c "./spim -bare -noexception -file $(TEST_DIR)/tt.alu.bare.s >& test.out"
-	@tail -2 test.out
-	@echo
-
-	@echo
-	@echo "Testing tt.fpt.bare.s:"
-	$(CSH) -c "./spim -bare -noexception -file $(TEST_DIR)/tt.fpu.bare.s >& test.out"
-	@tail -2 test.out
-	@echo
-	@echo
+	$(CXX) -g $(OBJS) $(LDFLAGS) -o wasm.js
+	sed -i '' '/is not implemented yet/d' wasm.js
 
 #
 
@@ -179,19 +119,12 @@ TAGS:	*.cpp *.h *.l *.y
 
 
 clean:
-	rm -f spim spim.exe *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output
-
-install: spim
-	install -d $(DESTDIR)$(BIN_DIR)
-	install spim $(DESTDIR)$(BIN_DIR)/spim
-	install -d $(DESTDIR)$(EXCEPTION_DIR)
-	install -m 0444 $(CPU_DIR)/exceptions.s $(DESTDIR)$(EXCEPTION_DIR)/exceptions.s
+	rm -f wasm.* *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output
 
 splint: spim
 	splint -weak -preproc -warnposix +matchanyintegral spim.cpp parser_yacc.cpp lex.yy.cpp
 
-
-.PHONY: test test_bare clean install splint
+.PHONY: clean splint
 
 #
 # Dependences not handled well by makedepend:

@@ -58,11 +58,6 @@
 #include "data.h"
 
 static void control_c_seen(int /*arg*/);
-static void flush_to_newline();
-static int get_opt_int();
-static int print_reg_from_string(char *reg);
-static int read_assembly_command();
-static int read_token();
 
 
 /* Exported Variables: */
@@ -75,13 +70,10 @@ bool delayed_branches;        /* => simulate delayed branches */
 bool delayed_loads;        /* => simulate delayed loads */
 bool accept_pseudo_insts = true;    /* => parse pseudo instructions  */
 bool quiet;            /* => no warning messages */
-bool assemble;            /* => assemble, write to stdout and exit */
 char *exception_file_name = DEFAULT_EXCEPTION_HANDLER;
 port message_out, console_out, console_in;
 bool mapped_io;            /* => activate memory-mapped IO */
-int pipe_out;
 int spim_return_value;        /* Value returned when spim exits */
-
 
 static int console_state_saved;
 
