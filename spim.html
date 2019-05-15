@@ -10,31 +10,35 @@
 <body>
 <pre id="output" style="width: 100%; height: 100%;"></pre>
 <script type='text/javascript'>
+    const output = document.getElementById('output');
     var Module = {
-      preRun: [],
-      postRun: [],
-      print: (function () {
-        var element = document.getElementById('output');
-        if (element) element.innerText = ''; // clear browser cache
-        return function (text) {
-          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-          console.log(text);
-          if (element) {
-            element.innerText += text + "\n";
-            element.scrollTop = element.scrollHeight; // focus on bottom
-          }
-        };
-      })(),
-      printErr: function (text) {
-        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-        console.error(text);
-      },
-      totalDependencies: 0,
-      monitorRunDependencies: function (left) {
-        this.totalDependencies = Math.max(this.totalDependencies, left);
-      },
-      arguments: ["Tests/fib.s"]
+        preRun: [],
+        postRun: [main],
+        print,
+        printErr,
+        totalDependencies: 0,
+        monitorRunDependencies: function (left) {
+            this.totalDependencies = Math.max(this.totalDependencies, left);
+        },
+        arguments: ['Tests/read.s']
     };
+
+    function main() {
+        const get_user_text = cwrap('get_user_text', 'string');
+        const get_kernel_text = cwrap('get_kernel_text', 'string');
+        const get_user_stack = cwrap('get_user_stack', 'string');
+        console.log(get_user_stack());
+    }
+
+    function print(text) {
+        console.log(text);
+        output.innerHTML += text + "\n";
+        output.scrollTop = output.scrollHeight; // focus on bottom
+    }
+
+    function printErr(text) {
+        console.error(text);
+    }
 
 
 </script>

@@ -69,9 +69,6 @@ static int read_assembly_command();
 static int str_prefix(char *s1, char *s2, int min_match);
 static void top_level();
 static int read_token();
-//static bool write_assembled_code(char *program_name);
-static void dump_data_seg(bool kernel_also);
-static void dump_text_seg(bool kernel_also);
 
 
 /* Exported Variables: */
@@ -163,11 +160,6 @@ enum {
   DUMPNATIVE_TEXT_CMD,
   DUMP_TEXT_CMD
 };
-
-/* Parse a SPIM command from the currently open file and execute it.
-   If REDO is true, don't read a new command; just rexecute the
-   previous one.  Return true if the command was to redo the previous
-   command. */
 
 static bool parse_spim_command(bool redo) {
   static int prev_cmd = NOP_CMD; /* Default redo */
@@ -586,41 +578,36 @@ static int read_token() {
 }
 
 /*
- * Writes the contents of the (user and optionally kernel) data segment into
- * data.asm file. If data.asm already exists, it's replaced.
- */
-
-static void dump_data_seg(bool kernel_also) {
-  static str_stream ss;
-  ss_clear(&ss);
-
-  if (kernel_also) {
-    format_data_segs(&ss);
-  } else {
-    ss_printf(&ss, "\tDATA\n");
-    format_mem(&ss, DATA_BOT, data_top);
-  }
-
-  printf("%s", ss_to_string(&ss));
-}
-
-/*
  * Writes the contents of the (user and optionally kernel) text segment in
  * text.asm file. If data.asm already exists, it's replaced.
  */
 
-static void dump_text_seg(bool kernel_also) {
+char *get_segment(mem_addr from, mem_addr to) {
   static str_stream ss;
   ss_clear(&ss);
+  format_insts(&ss, from, to);
+  return ss_to_string(&ss);
+}
 
-  if (kernel_also) {
-    format_insts(&ss, TEXT_BOT, text_top);
-    ss_printf(&ss, "\n\tKERNEL\n");
-    format_insts(&ss, K_TEXT_BOT, k_text_top);
-  } else {
-    ss_printf(&ss, "\n\tUSER TEXT SEGMENT\n");
-    format_insts(&ss, TEXT_BOT, text_top);
-  }
+extern "C" {
+char *get_user_text() {
+  return get_segment(TEXT_BOT, text_top);
+}
 
-  printf("%s", ss_to_string(&ss));
+char *get_user_data() {
+  return get_segment(DATA_BOT, data_top);
+}
+
+char *get_user_stack() {
+  return get_segment(ROUND_DOWN (R[29], BYTES_PER_WORD), STACK_TOP);
+}
+
+char *get_kernel_text() {
+  return get_segment(K_TEXT_BOT, k_text_top);
+}
+
+char *get_kernel_data() {
+  return get_segment(K_DATA_BOT, k_data_top);
+}
+
 }

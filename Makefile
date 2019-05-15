@@ -99,7 +99,15 @@ DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exception
 CXX = em++
 CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O -g -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
 YCFLAGS +=
-LDFLAGS += -lm --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s --preload-file $(TEST_DIR)@/Tests -s ENVIRONMENT=web
+PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s \
+		  --preload-file $(TEST_DIR)@/Tests
+EXPORTED_FUNCTIONS = '_main', \
+					 '_get_user_text', \
+					 '_get_user_data', \
+					 '_get_user_stack', \
+					 '_get_kernel_text', \
+					 '_get_kernel_data'
+LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
 CSH = bash
 
 # lex.yy.cpp is usually compiled with -O to speed it up.
