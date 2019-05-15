@@ -20,14 +20,20 @@
         monitorRunDependencies: function (left) {
             this.totalDependencies = Math.max(this.totalDependencies, left);
         },
-        arguments: ['Tests/read.s']
     };
 
     function main() {
         const get_user_text = cwrap('get_user_text', 'string');
         const get_kernel_text = cwrap('get_kernel_text', 'string');
         const get_user_stack = cwrap('get_user_stack', 'string');
-        console.log(get_user_stack());
+        const get_all_regs = cwrap('get_all_regs', 'string');
+        const get_reg = cwrap('get_reg', 'number', ['number']);
+        const init = cwrap('init', 'void', ['string']);
+        const run = cwrap('run', 'void');
+        const step = cwrap('step', 'void');
+        init('Tests/read.s');
+        run();
+        console.log(get_all_regs());
     }
 
     function print(text) {
@@ -39,8 +45,6 @@
     function printErr(text) {
         console.error(text);
     }
-
-
 </script>
 <script async type="text/javascript" src="spim.js"></script>
 </body>

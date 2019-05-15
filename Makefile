@@ -101,12 +101,16 @@ CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O -g -Wall -pedantic -Wextra -Wunused -
 YCFLAGS +=
 PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s \
 		  --preload-file $(TEST_DIR)@/Tests
-EXPORTED_FUNCTIONS = '_main', \
+EXPORTED_FUNCTIONS = '_init', \
+					 '_run', \
+					 '_step', \
 					 '_get_user_text', \
 					 '_get_user_data', \
 					 '_get_user_stack', \
 					 '_get_kernel_text', \
-					 '_get_kernel_data'
+					 '_get_kernel_data', \
+					 '_get_all_regs', \
+					 '_get_reg'
 LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
 CSH = bash
 
