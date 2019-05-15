@@ -2,9 +2,9 @@
 .DS_Store
 spim.data
 spim.wasm
-spim.js
-spim.html
+spim.wasm.map
 spim.wast
 parser_yacc.cpp
 parser_yacc.h
 lex.yy.cpp
+.vscode/ipch/
