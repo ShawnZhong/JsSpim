@@ -8,3 +8,5 @@ parser_yacc.cpp
 parser_yacc.h
 lex.yy.cpp
 .vscode/ipch/
+.idea/
+cmake-build-debug/
