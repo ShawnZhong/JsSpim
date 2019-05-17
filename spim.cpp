@@ -42,7 +42,6 @@
 #include <sys/select.h>
 
 #include <termios.h>
-
 #include <stdarg.h>
 
 #include "spim.h"
@@ -56,9 +55,6 @@
 #include "scanner.h"
 #include "parser_yacc.h"
 #include "data.h"
-
-static void control_c_seen(int /*arg*/);
-
 
 /* Exported Variables: */
 
@@ -290,11 +286,6 @@ void print_symbol() {
 }
 }
 
-static void control_c_seen(int /*arg*/) {
-  write_output(message_out, "\nExecution interrupted\n");
-  longjmp(spim_top_level_env, 1);
-}
-
 /* Print an error message. */
 
 void error(char *fmt, ...) {
@@ -330,27 +321,11 @@ void run_error(char *fmt, ...) {
 
 void write_output(port fp, char *fmt, ...) {
   va_list args;
-  FILE *f;
-  int restore_console_to_program = 0;
 
   va_start(args, fmt);
-  f = fp.f;
-
-  if (console_state_saved) {
-    restore_console_to_program = 1;
-  }
-
-  if (f != 0) {
-    vfprintf(f, fmt, args);
-    fflush(f);
-  } else {
-    vfprintf(stdout, fmt, args);
-    fflush(stdout);
-  }
+  vfprintf(stdout, fmt, args);
+  fflush(stdout);
   va_end(args);
-
-  if (restore_console_to_program) {
-  }
 }
 
 /* Simulate the semantics of fgets (not gets) on Unix file. */
@@ -384,26 +359,12 @@ void read_input(char *str, int str_size) {
 }
 
 int console_input_available() {
-  fd_set fdset;
-  struct timeval timeout;
-
-  if (mapped_io) {
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
-    FD_ZERO(&fdset);
-    FD_SET((int) console_in.i, &fdset);
-    return (select(sizeof(fdset) * 8, &fdset, NULL, NULL, &timeout));
-  } else
-    return (0);
+  return 0;
 }
 
 char get_console_char() {
   char buf;
-
   read((int) console_in.i, &buf, 1);
-
-  if (buf == 3) /* ^C */
-    control_c_seen(0);
   return (buf);
 }
 

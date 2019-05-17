@@ -24,9 +24,9 @@ function initSpim() {
         get_user_stack: cwrap('get_user_stack', 'string'),
         get_all_regs: cwrap('get_all_regs', 'string'),
         get_reg: cwrap('get_reg', 'number', ['number']),
-        init: cwrap('init', 'void', ['string']),
         run: cwrap('run', 'void'),
-        step: cwrap('step', 'void')
+        step: cwrap('step', 'void'),
+        init: cwrap('init', 'void', ['string']),
     }
 }
 
