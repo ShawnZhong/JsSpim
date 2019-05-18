@@ -9,16 +9,13 @@ class MemoryUtils {
         this.update();
     }
 
-    static update(address) {
+    static update(address = 0x400000) {
         if (this.highlighted) this.highlighted.style.backgroundColor = null;
-        this.highlighted = this.getDOMbyAddress(address);
+        this.highlighted = this.instructions[(address - 0x400000) / 4].DOM;
         this.highlighted.style.backgroundColor = 'yellow';
         this.highlighted.scrollIntoView(false);
     }
 
-    static getDOMbyAddress(address) {
-        return address ? this.instructions[(address - 0x400000) / 4].DOM : this.instructions[0].DOM;
-    }
 }
 
 class Instruction {

@@ -7,28 +7,33 @@
 </head>
 <body>
 
-<fieldset>
-    <legend>Please select a xv6 file system image:</legend>
-
-    <input checked id="file-choice1" name="file" onChange="main(this.value)" type="radio"
-           value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/tt.core.s">
-    <label for="file-choice1">tt.core.s</label>
-
-    <input id="file-choice2" name="file" onChange="main(this.value)" type="radio"
-           value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s">
-    <label for="file-choice2">fib.s</label>
-
-
-    <input id="file-choice0" name="file" type="radio">
-    <label for="file-choice0">
-        <input id="file-upload" onChange="main(this.files[0])" type="file"/>
-    </label>
-
-</fieldset>
-
 <div id="toolbar">
-    <button id="run">run</button>
-    <button id="step">step</button>
+    <fieldset>
+        <legend>Please select a MIPS assembly file:</legend>
+
+        <input checked id="file-choice1" name="file" onChange="main(this.value)" type="radio"
+               value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/tt.core.s">
+        <label for="file-choice1">tt.core.s</label>
+
+        <input id="file-choice2" name="file" onChange="main(this.value)" type="radio"
+               value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s">
+        <label for="file-choice2">fib.s</label>
+
+
+        <input id="file-choice0" name="file" type="radio">
+        <label for="file-choice0">
+            <input id="file-upload" onChange="main(this.files[0])" type="file"/>
+        </label>
+
+    </fieldset>
+
+    <fieldset>
+        <legend>Execution control:</legend>
+        Speed:
+        <input type="range" id="speed-selector" value="250" min="0" max="500"
+               oninput="setSpeed(this.value)">
+        <button id="play">Play</button>
+    </fieldset>
 </div>
 
 <div id="main">
@@ -64,6 +69,53 @@
 </div>
 
 
+<script type='text/javascript'>
+    const outputDOM = document.getElementById('output-content');
+    const logDOM = document.getElementById('log-content');
+    const playDOM = document.getElementById('play');
+    const speedDOM = document.getElementById('speed-selector');
+
+    const maxSpeed = parseInt(speedDOM.max);
+    let speed = parseInt(speedDOM.value);
+    let finished = false;
+
+    function setSpeed(newSpeed) {
+        speed = parseInt(newSpeed);
+
+        if (speed === 0)
+            playDOM.innerHTML = "Step";
+        else if (speed === maxSpeed)
+            playDOM.innerHTML = "Run";
+        else
+            playDOM.innerHTML = "Play";
+    }
+    
+    function play() {
+        if (finished) return;
+
+        finished = !Module.step();
+        RegisterUtils.update();
+        MemoryUtils.update(RegisterUtils.getPC());
+
+        if (speed !== 0)
+            setTimeout(play, maxSpeed - speed);
+
+    }
+
+    playDOM.onclick = () => {
+        finished = false;
+        if (speed !== maxSpeed) {
+            play();
+            return;
+        }
+
+        outputDOM.innerHTML = "";
+
+        Module.run();
+        RegisterUtils.update();
+        MemoryUtils.update(RegisterUtils.getPC());
+    };
+</script>
 <script type='text/javascript' src="js/index.js"></script>
 <script type='text/javascript' src="js/register.js"></script>
 <script type='text/javascript' src="js/memory.js"></script>

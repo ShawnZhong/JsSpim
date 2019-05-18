@@ -1,8 +1,3 @@
-const outputDOM = document.getElementById('output-content');
-const logDOM = document.getElementById('log-content');
-const stepDOM = document.getElementById('step');
-const runDOM = document.getElementById('run');
-
 var Module = {
     onRuntimeInitialized: main,
     print: (text) => {
@@ -32,23 +27,6 @@ async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/Js
     outputDOM.innerHTML = "";
     RegisterUtils.init();
     MemoryUtils.init();
-
-
-    runDOM.onclick = () => {
-        outputDOM.innerHTML = "";
-        Module.run();
-        RegisterUtils.update();
-        MemoryUtils.update(RegisterUtils.getPC());
-    };
-
-    stepDOM.onclick = () => {
-        if (Module.step() === false) {
-            console.log("finished");
-        }
-        RegisterUtils.update();
-        MemoryUtils.update(RegisterUtils.getPC());
-        return true;
-    };
 }
 
 async function loadData(fileInput) {
