@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>JsSpim</title>
 </head>
 <body>
@@ -11,8 +11,12 @@
     <legend>Please select a xv6 file system image:</legend>
 
     <input checked id="file-choice1" name="file" onChange="main(this.value)" type="radio"
+           value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/tt.core.s">
+    <label for="file-choice1">tt.core.s</label>
+
+    <input id="file-choice2" name="file" onChange="main(this.value)" type="radio"
            value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s">
-    <label for="file-choice1">fib.s</label>
+    <label for="file-choice2">fib.s</label>
 
 
     <input id="file-choice0" name="file" type="radio">
@@ -50,7 +54,7 @@
 </div>
 
 
-<script type='text/javascript' src="index.js"></script>
+<script type='text/javascript' src="js/index.js"></script>
 <script async type="text/javascript" src="wasm.js"></script>
 </body>
 </html>

@@ -79,20 +79,10 @@ MEM_SIZES = -DTEXT_SIZE=65536 -DDATA_SIZE=131072 -DK_TEXT_SIZE=65536
 
 DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\""
 CXX = em++
-CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++
+CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++  -std=c++11
 YCFLAGS +=
 PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s
-EXPORTED_FUNCTIONS = '_init', \
-					 '_run', \
-					 '_step', \
-					 '_get_user_text', \
-					 '_get_user_data', \
-					 '_get_user_stack', \
-					 '_get_kernel_text', \
-					 '_get_kernel_data', \
-					 '_get_all_regs', \
-					 '_get_reg'
-LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
+LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web --bind
 CSH = bash
 
 # lex.yy.cpp is usually compiled with -O to speed it up.
@@ -107,6 +97,7 @@ OBJS = spim.o spim-utils.o run.o mem.o inst.o data.o sym-tbl.o parser_yacc.o lex
 spim:   $(OBJS)
 	$(CXX) $(OBJS) $(LDFLAGS) -o wasm.js
 	sed -i '' '/is not implemented yet/d' wasm.js
+	mv wasm.* ../
 
 #
 

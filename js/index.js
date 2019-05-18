@@ -5,8 +5,7 @@ const stepDOM = document.getElementById('step');
 const runDOM = document.getElementById('run');
 
 var Module = {
-    preRun: [],
-    postRun: [initSpim, main],
+    onRuntimeInitialized,
     print,
     printErr,
     totalDependencies: 0,
@@ -15,36 +14,32 @@ var Module = {
     },
 };
 
-let Spim;
+const regularRegNames =
+    ["r0", "at", "v0", "v1", "a0", "a1", "a2", "a3",
+        "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
+        "s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7",
+        "t8", "t9", "k0", "k1", "gp", "sp", "s8", "ra"];
 
-function initSpim() {
-    Spim = {
-        get_user_text: cwrap('get_user_text', 'string'),
-        get_kernel_text: cwrap('get_kernel_text', 'string'),
-        get_user_stack: cwrap('get_user_stack', 'string'),
-        get_all_regs: cwrap('get_all_regs', 'string'),
-        get_reg: cwrap('get_reg', 'number', ['number']),
-        run: cwrap('run', 'void'),
-        step: cwrap('step', 'void'),
-        init: cwrap('init', 'void', ['string']),
-    }
-}
+const specialRegNames = ["PC", "EPC", "Cause", "BadVAddr", "Status", "HI", "LO",
+    "FIR", "FCSR", "FCCR", "FEXR", "FENR"];
 
 
-async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s') {
+async function onRuntimeInitialized(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/tt.core.s') {
     let data = await loadData(fileInput);
 
     const stream = FS.open('input.s', 'w+');
     FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
     FS.close(stream);
 
-    Spim.init("input.s");
+    Module.init("input.s");
 
-    // memoryDOM.innerText = Spim.get_user_text();
-    regsDOM.innerText = Spim.get_all_regs();
-
-    runDOM.onclick = () => Spim.run();
-    stepDOM.onclick = () => Spim.step();
+    console.log(Module.getGeneralRegs());
+    console.log(Module.getFloatRegs());
+    console.log(Module.getDoubleRegs());
+    console.log(Module.getSpecialRegs());
+    
+    runDOM.onclick = () => Module.run();
+    stepDOM.onclick = () => Module.step();
 }
 
 async function loadData(fileInput) {
