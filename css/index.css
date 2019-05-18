@@ -2,8 +2,12 @@ body {
     font-family: sans-serif;
 }
 
+pre {
+    margin: 0;
+}
+
+
 #toolbar {
-    height: 5vh;
 }
 
 #main {
@@ -16,11 +20,16 @@ body {
 }
 
 #regs-container {
-    flex: 10%;
+    flex: 5%;
+    /*max-width: min-content;*/
 }
 
-#regs-content {
+.reg-lines {
     white-space: pre-wrap;
+}
+
+.reg-lines > pre {
+    width: min-content;
 }
 
 #memory-container {

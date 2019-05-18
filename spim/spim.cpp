@@ -60,6 +60,21 @@ bool mapped_io;            /* => activate memory-mapped IO */
 int spim_return_value;        /* Value returned when spim exits */
 
 
+bool step() {
+  mem_addr addr = PC == 0 ? starting_address() : PC;
+
+  bool continuable;
+  if (run_program(addr, 1, false, true, &continuable))
+    printf("Breakpoint encountered at 0x%08x\n", PC);
+
+  if (!continuable)
+    printf("\n");
+
+  return continuable;
+}
+
+EMSCRIPTEN_BINDINGS(step) { function("step", &step); }
+
 void run() {
   bool continuable;
   if (run_program(starting_address(), DEFAULT_RUN_STEPS, false, false, &continuable))
@@ -67,19 +82,7 @@ void run() {
   printf("\n");
 }
 
-EMSCRIPTEN_BINDINGS(run) {function("run", &run);}
-
-void step() {
-  mem_addr addr = PC == 0 ? starting_address() : PC;
-  if (addr == 0) return;
-
-  bool continuable;
-  if (run_program(addr, 1, true, true, &continuable))
-    printf("Breakpoint encountered at 0x%08x\n", PC);
-  printf("\n");
-}
-
-EMSCRIPTEN_BINDINGS(step) {function("step", &step);}
+EMSCRIPTEN_BINDINGS(run) { function("run", &run); }
 
 void conti() {
   if (PC == 0) return;
@@ -90,35 +93,26 @@ void conti() {
   printf("\n");
 }
 
-EMSCRIPTEN_BINDINGS(conti) {function("conti", &conti);}
+EMSCRIPTEN_BINDINGS(conti) { function("conti", &conti); }
 
 void init(std::string filename) {
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
   initialize_run_stack(0, NULL);
   read_assembly_file((char *) filename.c_str());
 }
-EMSCRIPTEN_BINDINGS(init) {function("init", &init);}
+EMSCRIPTEN_BINDINGS(init) { function("init", &init); }
 
-val getGeneralRegs() {
-  return val(typed_memory_view(32, R));
-}
+val getGeneralRegVals() { return val(typed_memory_view(32, R)); }
+EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
 
-EMSCRIPTEN_BINDINGS(getGeneralRegs) {function("getGeneralRegs", &getGeneralRegs);}
+val getFloatRegVals() { return val(typed_memory_view(32, (float *) FPR)); }
+EMSCRIPTEN_BINDINGS(getFloatRegVals) { function("getFloatRegVals", &getFloatRegVals); }
 
-val getFloatRegs() {
-  return val(typed_memory_view(32, (float *) FPR));
-}
+val getDoubleRegVals() { return val(typed_memory_view(16, (double *) FPR)); }
+EMSCRIPTEN_BINDINGS(getDoubleRegVals) { function("getDoubleRegVals", &getDoubleRegVals); }
 
-EMSCRIPTEN_BINDINGS(getFloatRegs) {function("getFloatRegs", &getFloatRegs);}
-
-val getDoubleRegs() {
-  return val(typed_memory_view(16, (double *) FPR));
-}
-
-EMSCRIPTEN_BINDINGS(getDoubleRegs) {function("getDoubleRegs", &getDoubleRegs);}
-
-int specialRegs[12];
-val getSpecialRegs() {
+val getSpecialRegVals() {
+  static int specialRegs[12];
   specialRegs[0] = PC;
   specialRegs[1] = CP0_EPC;
   specialRegs[2] = CP0_Cause;
@@ -134,37 +128,32 @@ val getSpecialRegs() {
 
   return val(typed_memory_view(12, specialRegs));
 }
-
-EMSCRIPTEN_BINDINGS(getSpecialRegs) {function("getSpecialRegs", &getSpecialRegs);}
+EMSCRIPTEN_BINDINGS(getSpecialRegVals) { function("getSpecialRegVals", &getSpecialRegVals); }
 
 static str_stream ss;
-char *get_segment(mem_addr from, mem_addr to) {
+std::string getSegment(mem_addr from, mem_addr to) {
   ss_clear(&ss);
   format_insts(&ss, from, to);
-  return ss_to_string(&ss);
+  return std::string{ss_to_string(&ss)};
 }
+EMSCRIPTEN_BINDINGS(getSegment) { function("getSegment", &getSegment); }
+
+std::string getUserText() { return getSegment(TEXT_BOT, text_top); }
+EMSCRIPTEN_BINDINGS(getUserText) { function("getUserText", &getUserText); }
+
+std::string getUserData() { return getSegment(DATA_BOT, data_top); }
+EMSCRIPTEN_BINDINGS(getUserData) { function("getUserData", &getUserData); }
+
+std::string getUserStack() { return getSegment(ROUND_DOWN(R[29], BYTES_PER_WORD), STACK_TOP); }
+EMSCRIPTEN_BINDINGS(getUserStack) { function("getUserStack", &getUserStack); }
+
+std::string getKernelText() { return getSegment(K_TEXT_BOT, k_text_top); }
+EMSCRIPTEN_BINDINGS(getKernelText) { function("getKernelText", &getKernelText); }
+
+std::string getKernelData() { return getSegment(K_DATA_BOT, k_data_top); }
+EMSCRIPTEN_BINDINGS(getKernelData) { function("getKernelData", &getKernelData); }
 
 extern "C" {
-char *get_user_text() {
-  return get_segment(TEXT_BOT, text_top);
-}
-
-char *get_user_data() {
-  return get_segment(DATA_BOT, data_top);
-}
-
-char *get_user_stack() {
-  return get_segment(ROUND_DOWN(R[29], BYTES_PER_WORD), STACK_TOP);
-}
-
-char *get_kernel_text() {
-  return get_segment(K_TEXT_BOT, k_text_top);
-}
-
-char *get_kernel_data() {
-  return get_segment(K_DATA_BOT, k_data_top);
-}
-
 void add_bp(int addr) {
   add_breakpoint(addr);
 }
@@ -188,7 +177,7 @@ void error(char *fmt, ...) {
 void fatal_error(char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  fmt = va_arg(args, char * );
+  fmt = va_arg(args, char *);
   vfprintf(stderr, fmt, args);
   exit(-1);
 }
@@ -243,11 +232,11 @@ int console_input_available() {
 
 char get_console_char() {
   char buf;
-  read((int) console_in.i, &buf, 1);
+  read(0, &buf, 1);
   return (buf);
 }
 
 void put_console_char(char c) {
-  putc(c, console_out.f);
-  fflush(console_out.f);
+  putc(c, stdout);
+  fflush(stdout);
 }
