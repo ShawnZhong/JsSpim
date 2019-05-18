@@ -40,8 +40,8 @@ async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/Js
 
     Spim.init("input.s");
 
+    // memoryDOM.innerText = Spim.get_user_text();
     regsDOM.innerText = Spim.get_all_regs();
-    memoryDOM.innerText = Spim.get_user_text();
 
     runDOM.onclick = () => Spim.run();
     stepDOM.onclick = () => Spim.step();
