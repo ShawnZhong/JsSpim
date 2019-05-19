@@ -1,3 +1,6 @@
+const outputDOM = document.getElementById('output-content');
+const logDOM = document.getElementById('log-content');
+
 var Module = {
     onRuntimeInitialized: main,
     print: (text) => {
