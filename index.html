@@ -75,24 +75,8 @@
     </div>
 </div>
 
-<script type='text/javascript'>
-    const fileSelector = document.getElementById('file-selector');
-
-    const fileList = ['tt.core.s', 'fib.s', 'helloworld.s'];
-
-    fileList.forEach(addOption);
-
-    function addOption(filename) {
-        const option = document.createElement("option");
-        option.text = filename;
-        option.value = `Tests/${filename}`;
-        fileSelector.add(option);
-    }
-
-</script>
 <script type='text/javascript' src="js/index.js"></script>
-<script type='text/javascript' src="js/register.js"></script>
-<script type='text/javascript' src="js/memory.js"></script>
+<script type='text/javascript' src="js/display.js"></script>
 <script type='text/javascript' src="js/execution.js"></script>
 <script async type="text/javascript" src="wasm.js"></script>
 </body>

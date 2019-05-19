@@ -1,5 +1,16 @@
 const outputDOM = document.getElementById('output-content');
 const logDOM = document.getElementById('log-content');
+const fileSelector = document.getElementById('file-selector');
+
+const fileList = ['tt.core.s', 'fib.s', 'helloworld.s', 'change_data_seg.s'];
+fileList.forEach(filename => {
+    const option = document.createElement("option");
+    option.text = filename;
+    option.value = `Tests/${filename}`;
+    fileSelector.add(option);
+});
+
+let Spim;
 
 var Module = {
     postRun: [init, main],
@@ -25,10 +36,11 @@ function init() {
         getUserStack: cwrap('getUserStack', 'string'),
         addBreakpoint: cwrap('addBreakpoint', null, 'number'),
         deleteBreakpoint: cwrap('deleteBreakpoint', null, 'number'),
+        getPC: cwrap('getPC', 'number'),
+        getGeneralRegVals: cwrap('getGeneralRegVals', 'string'),
+        getSpecialRegVals: cwrap('getSpecialRegVals', 'string'),
     };
 }
-
-let Spim;
 
 async function main(fileInput = `Tests/${fileList[0]}`) {
     let data = await loadData(fileInput);
@@ -36,8 +48,6 @@ async function main(fileInput = `Tests/${fileList[0]}`) {
     const stream = FS.open('input.s', 'w+');
     FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
     FS.close(stream);
-
-    init();
 
     Execution.init();
 }

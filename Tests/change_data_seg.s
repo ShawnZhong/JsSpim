@@ -1,12 +1,8 @@
 .data
-   a:  .word  0
+   a:  .word  1
 
 .text
 main:
-   la $a0, a
-   li $a1, 1
-   sw $a1 ($a0)
-
    la $a0, a
    li $a1, 2
    sw $a1 ($a0)

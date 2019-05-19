@@ -10,14 +10,12 @@ class Execution {
     static run() {
         Spim.run();
         Execution.finish();
-        RegisterUtils.update();
-        MemoryUtils.update(RegisterUtils.getPC());
+        Display.update();
     }
 
     static step() {
         if (!Spim.step()) Execution.finish();
-        RegisterUtils.update();
-        MemoryUtils.update(RegisterUtils.getPC());
+        Display.update();
     }
 
     static play() {
@@ -39,6 +37,7 @@ class Execution {
     static init() {
         outputDOM.innerHTML = "";
         logDOM.innerHTML = "";
+        memoryDOM.innerHTML = '';
 
         Execution.running = false;
         playButton.disabled = false;
@@ -46,8 +45,8 @@ class Execution {
         playButton.innerHTML = getButtonLabel();
 
         Spim.init();
-        RegisterUtils.init();
-        MemoryUtils.init();
+        Display.init();
+        Display.update();
     }
 }
 

@@ -1,12 +1,12 @@
 const memoryDOM = document.getElementById('text-content');
 const dataDOM = document.getElementById('data-content');
 const stackDOM = document.getElementById('stack-content');
+const generalRegDOM = document.getElementById('general-regs');
+const specialRegDOM = document.getElementById('special-regs');
 
 
-class MemoryUtils {
+class Display {
     static init() {
-        memoryDOM.innerHTML = '';
-
         this.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
         this.instructions.forEach(e => memoryDOM.appendChild(e.DOM));
 
@@ -14,10 +14,12 @@ class MemoryUtils {
     }
 
 
-    static update(address = 0x400000) {
+    static update() {
         stackDOM.innerHTML = Spim.getUserStack();
         dataDOM.innerHTML = Spim.getUserData();
-        this.highlight(address);
+        generalRegDOM.innerHTML = Spim.getGeneralRegVals();
+        specialRegDOM.innerHTML = Spim.getSpecialRegVals();
+        this.highlight(Spim.getPC());
     }
 
     static highlight(address) {
