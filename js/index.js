@@ -19,7 +19,7 @@ var Module = {
 
 let Spim;
 
-async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s') {
+async function main(fileInput = `Tests/${fileList[0]}`) {
     let data = await loadData(fileInput);
 
     const stream = FS.open('input.s', 'w+');
@@ -39,13 +39,7 @@ async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/Js
         deleteBreakpoint: cwrap('deleteBreakpoint', null, 'number'),
     };
 
-    outputDOM.innerHTML = "";
-    logDOM.innerHTML = "";
-
-    Spim.init();
-    
-    RegisterUtils.init();
-    MemoryUtils.init();
+    Execution.init();
 }
 
 async function loadData(fileInput) {

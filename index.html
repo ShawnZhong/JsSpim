@@ -9,28 +9,16 @@
 
 <div id="toolbar">
     <fieldset>
-        <legend>Please select a MIPS assembly file:</legend>
-
-        <input checked id="file-choice1" name="file" onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/tt.core.s">
-        <label for="file-choice1">tt.core.s</label>
-
-        <input id="file-choice2" name="file" onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s">
-        <label for="file-choice2">fib.s</label>
-
-
-        <input id="file-choice0" name="file" type="radio">
-        <label for="file-choice0">
-            <input id="file-upload" onChange="main(this.files[0])" type="file"/>
-        </label>
-
+        <legend>File:</legend>
+        <select id="file-selector" onchange="main(this.value)"></select>
+        or
+        <input id="file-upload" onChange="main(this.files[0])" type="file"/>
     </fieldset>
 
     <fieldset>
         <legend>Execution control:</legend>
         Speed:
-        <input type="range" id="speed-selector" value="300" max="300" oninput="setSpeed(this.value)">
+        <input type="range" id="speed-selector" value="200" max="200" oninput="setSpeed(this.value)">
         <button id="play-button">Run</button>
         <button id="step-button">Step</button>
         <button id="reset-button">Reset</button>
@@ -87,7 +75,21 @@
     </div>
 </div>
 
+<script type='text/javascript'>
+    const fileSelector = document.getElementById('file-selector');
 
+    const fileList = ['helloworld.s', 'fib.s', 'tt.core.s'];
+
+    fileList.forEach(addOption);
+
+    function addOption(filename) {
+        const option = document.createElement("option");
+        option.text = filename;
+        option.value = `Tests/${filename}`;
+        fileSelector.add(option);
+    }
+
+</script>
 <script type='text/javascript' src="js/index.js"></script>
 <script type='text/javascript' src="js/register.js"></script>
 <script type='text/javascript' src="js/memory.js"></script>

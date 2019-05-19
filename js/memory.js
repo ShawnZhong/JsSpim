@@ -22,8 +22,9 @@ class MemoryUtils {
 
     static highlight(address) {
         if (this.highlighted) this.highlighted.style.backgroundColor = null;
-        this.highlighted = this.instructions[(address - 0x400000) / 4].DOM;
-        if (!this.highlighted) return;
+        const instruction = this.instructions[(address - 0x400000) / 4];
+        if (!instruction) return;
+        this.highlighted = instruction.DOM;
         this.highlighted.style.backgroundColor = 'yellow';
         this.highlighted.scrollIntoView(false);
     }
@@ -35,7 +36,7 @@ class Instruction {
         this.breakpoint = false;
 
         this.DOM = document.createElement("pre");
-        this.DOM.innerText = instruction.substring(0, 13) + instruction.substring(24);
+        this.DOM.innerText = instruction.substring(0, 12) + instruction.substring(24);
         this.DOM.onclick = () => {
             this.breakpoint = !this.breakpoint;
             if (this.breakpoint) {

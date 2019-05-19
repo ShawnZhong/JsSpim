@@ -14,7 +14,6 @@ class Execution {
         MemoryUtils.update(RegisterUtils.getPC());
     }
 
-
     static step() {
         if (!Spim.step()) Execution.finish();
         RegisterUtils.update();
@@ -22,15 +21,12 @@ class Execution {
     }
 
     static play() {
-        if (!Execution.running) return;
-
         if (speed === maxSpeed) {
             Execution.run();
-            return;
+        } else {
+            Execution.step();
+            setTimeout(Execution.play, maxSpeed - speed);
         }
-
-        Execution.step();
-        setTimeout(Execution.play, maxSpeed - speed);
     }
 
     static finish() {
@@ -39,16 +35,18 @@ class Execution {
         stepButton.disabled = true;
     }
 
-    static reset() {
+    static init() {
+        outputDOM.innerHTML = "";
+        logDOM.innerHTML = "";
+
         Execution.running = false;
         playButton.disabled = false;
         stepButton.disabled = false;
         playButton.innerHTML = getButtonLabel();
-        outputDOM.innerHTML = "";
-        logDOM.innerHTML = "";
+
         Spim.init();
-        RegisterUtils.update();
-        MemoryUtils.update();
+        RegisterUtils.init();
+        MemoryUtils.init();
     }
 }
 
@@ -64,7 +62,7 @@ function setSpeed(newSpeed) {
 }
 
 
-resetButton.onclick = Execution.reset;
+resetButton.onclick = Execution.init;
 stepButton.onclick = Execution.step;
 playButton.onclick = () => {
     Execution.running = !Execution.running;
