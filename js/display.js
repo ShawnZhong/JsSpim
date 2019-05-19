@@ -9,8 +9,6 @@ class Display {
     static init() {
         this.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
         this.instructions.forEach(e => memoryDOM.appendChild(e.DOM));
-
-        this.update();
     }
 
 
@@ -19,12 +17,13 @@ class Display {
         dataDOM.innerHTML = Spim.getUserData();
         generalRegDOM.innerHTML = Spim.getGeneralRegVals();
         specialRegDOM.innerHTML = Spim.getSpecialRegVals();
-        this.highlight(Spim.getPC());
+        this.highlightInstruction();
     }
 
-    static highlight(address) {
+    static highlightInstruction() {
         if (this.highlighted) this.highlighted.style.backgroundColor = null;
-        const instruction = this.instructions[(address - 0x400000) / 4];
+        const pc = Spim.getPC();
+        const instruction = this.instructions[pc === 0 ? 0 : (pc - 0x400000) / 4];
         if (!instruction) return;
         this.highlighted = instruction.DOM;
         this.highlighted.style.backgroundColor = 'yellow';

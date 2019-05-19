@@ -47,6 +47,7 @@ class Execution {
         Spim.init();
         Display.init();
         Display.update();
+        Display.update(); // to prevent highlight
     }
 }
 
@@ -60,7 +61,6 @@ function setSpeed(newSpeed) {
     speed = parseInt(newSpeed);
     playButton.innerHTML = getButtonLabel();
 }
-
 
 resetButton.onclick = Execution.init;
 stepButton.onclick = Execution.step;

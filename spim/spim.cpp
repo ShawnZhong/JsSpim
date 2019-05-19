@@ -108,13 +108,6 @@ char *getUserText() { return getText(TEXT_BOT, text_top); }
 
 char *getKernelData() {
   ss_clear(&ss);
-
-  for (mem_addr i = K_DATA_BOT; i < k_data_top; i += BYTES_PER_WORD) {
-    unsigned int val = read_mem_word(i);
-    if (val == 0) continue;
-    ss_printf(&ss, "<pre>[0x%08x] 0x%08x</pre>", i, val);
-  }
-
   return ss_to_string(&ss);
 }
 
@@ -137,7 +130,6 @@ char *getUserData() {
 
   if (prev_data_top != data_top) {
     prev_data_seg = (mem_word *) malloc(data_top - DATA_BOT);
-    memcpy(prev_data_seg, data_seg, data_top - DATA_BOT);
   }
 
   prev_data_top = data_top;
@@ -150,7 +142,7 @@ char *getUserStack() {
   ss_clear(&ss);
 
   static mem_addr prev_stack_bottom;
-  static mem_word prev_stack_seg[STACK_LIMIT / 4];
+  static mem_word prev_stack_seg[STACK_LIMIT];
   static bool prev_initialized = false;
 
   mem_addr curr_stack_bottom = ROUND_DOWN(R[29], BYTES_PER_WORD);
@@ -177,15 +169,14 @@ char *getGeneralRegVals() {
   static reg_word prev_R[R_LENGTH];
   static bool prev_initialized = false;
 
-  for (int i = 0; i < 31; i++) {
+  for (int i = 0; i < R_LENGTH; i++) {
     if (prev_initialized && R[i] != prev_R[i])
       ss_printf(&ss, PRE_H("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
     else
       ss_printf(&ss, PRE("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
-
-    prev_R[i] = R[i];
   }
 
+  memcpy(prev_R, R, sizeof(prev_R));
   prev_initialized = true;
 
   return ss_to_string(&ss);
@@ -205,10 +196,9 @@ char *getSpecialRegVals() {
       ss_printf(&ss, PRE_H("%-8s = %08x"), names[i], values[i]);
     else
       ss_printf(&ss, PRE("%-8s = %08x"), names[i], values[i]);
-
-    prev_values[i] = values[i];
   }
 
+  memcpy(prev_values, values, sizeof(prev_values));
   prev_initialized = true;
 
   return ss_to_string(&ss);
