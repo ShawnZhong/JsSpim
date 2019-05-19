@@ -21,6 +21,7 @@ class Execution {
     }
 
     static play() {
+        if (!Execution.running) return;
         if (speed === maxSpeed) {
             Execution.run();
         } else {
