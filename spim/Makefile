@@ -114,7 +114,7 @@ TAGS:	*.cpp *.h *.l *.y
 
 
 clean:
-	rm -f *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output
+	rm -f *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output ../wasm.*
 
 
 .PHONY: clean
