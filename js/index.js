@@ -2,7 +2,7 @@ const outputDOM = document.getElementById('output-content');
 const logDOM = document.getElementById('log-content');
 
 var Module = {
-    onRuntimeInitialized: main,
+    postRun: [init, main],
     print: (text) => {
         outputDOM.innerHTML += text + "\n";
         outputDOM.scrollTop = outputDOM.scrollHeight;
@@ -17,15 +17,7 @@ var Module = {
     },
 };
 
-let Spim;
-
-async function main(fileInput = `Tests/${fileList[0]}`) {
-    let data = await loadData(fileInput);
-
-    const stream = FS.open('input.s', 'w+');
-    FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
-    FS.close(stream);
-
+function init() {
     Spim = {
         init: cwrap('init'),
         run: cwrap('run'),
@@ -38,6 +30,18 @@ async function main(fileInput = `Tests/${fileList[0]}`) {
         addBreakpoint: cwrap('addBreakpoint', null, 'number'),
         deleteBreakpoint: cwrap('deleteBreakpoint', null, 'number'),
     };
+}
+
+let Spim;
+
+async function main(fileInput = `Tests/${fileList[0]}`) {
+    let data = await loadData(fileInput);
+
+    const stream = FS.open('input.s', 'w+');
+    FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
+    FS.close(stream);
+
+    init();
 
     Execution.init();
 }
