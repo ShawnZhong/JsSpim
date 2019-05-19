@@ -33,7 +33,7 @@ pre {
     width: min-content;
 }
 
-#memory-container {
+#text-container {
     flex: 60%;
 }
 
@@ -52,4 +52,15 @@ pre {
 
 #log-container {
     flex: 50%;
+}
+
+/* align stack to the bottom */
+#stack-container {
+    position: relative;
+}
+
+#stack-container > #stack-content {
+    position: absolute;
+    height: min-content;
+    bottom: 0;
 }

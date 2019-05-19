@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 /* SPIM S20 MIPS simulator.
    Terminal interface for SPIM simulator.
 
@@ -35,9 +37,8 @@
 
 #include <unistd.h>
 #include <stdio.h>
-
-#include <termios.h>
 #include <stdarg.h>
+#include <sstream>
 
 #include "spim.h"
 #include "string-stream.h"
@@ -46,6 +47,10 @@
 #include "reg.h"
 #include "mem.h"
 #include "data.h"
+
+#define BYTES_PER_LINE (4*BYTES_PER_WORD)
+#define PRE(text)  "<pre>" text "</pre>"
+#define PRE_H(text) "<pre style='background-color: yellow;'>" text "</pre>"
 
 using namespace emscripten;
 
@@ -59,6 +64,7 @@ port message_out, console_out, console_in;
 bool mapped_io;            /* => activate memory-mapped IO */
 int spim_return_value;        /* Value returned when spim exits */
 
+extern "C" {
 
 bool step() {
   mem_addr addr = PC == 0 ? starting_address() : PC;
@@ -73,16 +79,13 @@ bool step() {
   return continuable;
 }
 
-EMSCRIPTEN_BINDINGS(step) { function("step", &step); }
-
 void run() {
+  mem_addr addr = PC == 0 ? starting_address() : PC;
   bool continuable;
-  if (run_program(starting_address(), DEFAULT_RUN_STEPS, false, false, &continuable))
+  if (run_program(addr, DEFAULT_RUN_STEPS, false, false, &continuable))
     printf("Breakpoint encountered at 0x%08x\n", PC);
   printf("\n");
 }
-
-EMSCRIPTEN_BINDINGS(run) { function("run", &run); }
 
 void conti() {
   if (PC == 0) return;
@@ -93,73 +96,141 @@ void conti() {
   printf("\n");
 }
 
-EMSCRIPTEN_BINDINGS(conti) { function("conti", &conti); }
-
-void init(std::string filename) {
+void init() {
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
-  initialize_run_stack(0, NULL);
-  read_assembly_file((char *) filename.c_str());
+  initialize_run_stack(0, nullptr);
+  read_assembly_file("input.s");
 }
-EMSCRIPTEN_BINDINGS(init) { function("init", &init); }
 
-val getGeneralRegVals() { return val(typed_memory_view(32, R)); }
-EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
-
-val getFloatRegVals() { return val(typed_memory_view(32, (float *) FPR)); }
-EMSCRIPTEN_BINDINGS(getFloatRegVals) { function("getFloatRegVals", &getFloatRegVals); }
-
-val getDoubleRegVals() { return val(typed_memory_view(16, (double *) FPR)); }
-EMSCRIPTEN_BINDINGS(getDoubleRegVals) { function("getDoubleRegVals", &getDoubleRegVals); }
-
-val getSpecialRegVals() {
-  static int specialRegs[12];
-  specialRegs[0] = PC;
-  specialRegs[1] = CP0_EPC;
-  specialRegs[2] = CP0_Cause;
-  specialRegs[3] = CP0_BadVAddr;
-  specialRegs[4] = CP0_Status;
-  specialRegs[5] = HI;
-  specialRegs[6] = LO;
-  specialRegs[7] = FIR;
-  specialRegs[8] = FCSR;
-  specialRegs[9] = FCCR;
-  specialRegs[10] = FEXR;
-  specialRegs[11] = FENR;
-
-  return val(typed_memory_view(12, specialRegs));
-}
-EMSCRIPTEN_BINDINGS(getSpecialRegVals) { function("getSpecialRegVals", &getSpecialRegVals); }
+//void addBreakpoint(int addr) { add_breakpoint(addr); }
+//EMSCRIPTEN_BINDINGS(addBreakpoint) { function("addBreakpoint", &addBreakpoint); }
+//
+//void deleteBreakpoint(int addr) { delete_breakpoint(addr); }
+//EMSCRIPTEN_BINDINGS(deleteBreakpoint) { function("deleteBreakpoint", &deleteBreakpoint); }
 
 static str_stream ss;
-std::string getSegment(mem_addr from, mem_addr to) {
+
+char *getText(mem_addr from, mem_addr to) {
   ss_clear(&ss);
   format_insts(&ss, from, to);
-  return std::string{ss_to_string(&ss)};
-}
-EMSCRIPTEN_BINDINGS(getSegment) { function("getSegment", &getSegment); }
-
-std::string getUserText() { return getSegment(TEXT_BOT, text_top); }
-EMSCRIPTEN_BINDINGS(getUserText) { function("getUserText", &getUserText); }
-
-std::string getUserData() { return getSegment(DATA_BOT, data_top); }
-EMSCRIPTEN_BINDINGS(getUserData) { function("getUserData", &getUserData); }
-
-std::string getUserStack() { return getSegment(ROUND_DOWN(R[29], BYTES_PER_WORD), STACK_TOP); }
-EMSCRIPTEN_BINDINGS(getUserStack) { function("getUserStack", &getUserStack); }
-
-std::string getKernelText() { return getSegment(K_TEXT_BOT, k_text_top); }
-EMSCRIPTEN_BINDINGS(getKernelText) { function("getKernelText", &getKernelText); }
-
-std::string getKernelData() { return getSegment(K_DATA_BOT, k_data_top); }
-EMSCRIPTEN_BINDINGS(getKernelData) { function("getKernelData", &getKernelData); }
-
-extern "C" {
-void add_bp(int addr) {
-  add_breakpoint(addr);
+  return ss_to_string(&ss);
 }
 
-void delete_bp(int addr) {
-  delete_breakpoint(addr);
+char *getKernelText() { return getText(K_TEXT_BOT, k_text_top); }
+
+char *getUserText() { return getText(TEXT_BOT, text_top); }
+
+char *getKernelData() {
+  ss_clear(&ss);
+
+  for (mem_addr i = K_DATA_BOT; i < k_data_top; i += BYTES_PER_WORD) {
+    unsigned int val = read_mem_word(i);
+    if (val == 0) continue;
+    ss_printf(&ss, "<pre>[0x%08x] 0x%08x</pre>", i, val);
+  }
+
+  return ss_to_string(&ss);
+}
+
+char *getUserData() {
+  ss_clear(&ss);
+
+  static mem_word *prev_data_seg = (mem_word *) calloc(data_top - DATA_BOT, 1);
+  static mem_addr prev_data_top = data_top;
+  static bool prev_initialized = false;
+
+  for (mem_addr i = DATA_BOT; i < data_top; i += BYTES_PER_WORD) {
+    int index = (i - DATA_BOT) / 4;
+    if (data_seg[index] == 0) continue;
+    if (prev_data_seg)
+      if (prev_initialized && data_seg[index] != prev_data_seg[index])
+        ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), i, data_seg[index]);
+      else
+        ss_printf(&ss, PRE("[0x%08x] 0x%08x"), i, data_seg[index]);
+    prev_data_seg[index] = data_seg[index];
+  }
+
+  if (prev_data_top != data_top) {
+    prev_data_seg = (mem_word *) malloc(data_top - DATA_BOT);
+    memcpy(prev_data_seg, data_seg, data_top - DATA_BOT);
+  }
+
+  prev_data_top = data_top;
+  prev_initialized = true;
+
+  return ss_to_string(&ss);
+}
+
+char *getUserStack() {
+  ss_clear(&ss);
+
+  static mem_addr prev_stack_bottom;
+  static mem_word prev_stack_seg[STACK_LIMIT / 4];
+  static bool prev_initialized = false;
+
+  mem_addr curr_stack_bottom = ROUND_DOWN(R[29], BYTES_PER_WORD);
+
+  for (mem_addr i = curr_stack_bottom; i < STACK_TOP; i += BYTES_PER_WORD) {
+    int index = (i - stack_bot) / 4;
+    if (prev_initialized && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
+      ss_printf(&ss, PRE_H("0x%08x"), stack_seg[index]);
+    else
+      ss_printf(&ss, PRE("0x%08x"), stack_seg[index]);
+
+    prev_stack_seg[index] = stack_seg[index];
+  }
+
+  prev_stack_bottom = curr_stack_bottom;
+  prev_initialized = true;
+
+  return ss_to_string(&ss);
+}
+
+char *getGeneralRegVals() {
+  ss_clear(&ss);
+
+  static reg_word prev_R[R_LENGTH];
+  static bool prev_initialized = false;
+
+  for (int i = 0; i < 31; i++) {
+    if (prev_initialized && R[i] != prev_R[i])
+      ss_printf(&ss, PRE_H("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
+    else
+      ss_printf(&ss, PRE("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
+
+    prev_R[i] = R[i];
+  }
+
+  prev_initialized = true;
+
+  return ss_to_string(&ss);
+}
+
+char *getSpecialRegVals() {
+  ss_clear(&ss);
+
+  static mem_word prev_values[7];
+  static bool prev_initialized = false;
+
+  const char *names[]{"PC", "EPC", "Cause", "BadVAddr", "Status", "HI", "LO"};
+  mem_word values[]{(mem_word) PC, CP0_EPC, CP0_Cause, CP0_BadVAddr, CP0_Status, HI, LO};
+
+  for (int i = 0; i < 7; ++i) {
+    if (prev_initialized && values[i] != prev_values[i])
+      ss_printf(&ss, PRE_H("%-8s = %08x"), names[i], values[i]);
+    else
+      ss_printf(&ss, PRE("%-8s = %08x"), names[i], values[i]);
+
+    prev_values[i] = values[i];
+  }
+
+  prev_initialized = true;
+
+  return ss_to_string(&ss);
+}
+
+int getPC() {
+  return PC;
 }
 }
 

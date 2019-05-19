@@ -30,9 +30,18 @@
     <fieldset>
         <legend>Execution control:</legend>
         Speed:
-        <input type="range" id="speed-selector" value="250" max="500" oninput="setSpeed(this.value)">
-        <button id="play">Play</button>
+        <input type="range" id="speed-selector" value="250" max="300" oninput="setSpeed(this.value)">
+        <button id="play-button">Play</button>
+        <button id="step-button">Step</button>
+        <button id="reset-button">Reset</button>
     </fieldset>
+
+    <fieldset>
+        <legend>Settings:</legend>
+        <input type="checkbox" id="stop-at-bp">
+        <label for="stop-at-bp">Stop at breakpoint</label>
+    </fieldset>
+
 </div>
 
 <div id="main">
@@ -50,9 +59,20 @@
         </div>
 
     </div>
-    <div id="memory-container">
-        <h1>Memory</h1>
-        <div id="memory-content" class="content"></div>
+
+    <div id="text-container">
+        <h1>Text</h1>
+        <div id="text-content" class="content"></div>
+    </div>
+
+    <div id="data-container">
+        <h1>Data</h1>
+        <div id="data-content" class="content"></div>
+    </div>
+
+    <div id="stack-container">
+        <h1>Stack</h1>
+        <div id="stack-content" class="content"></div>
     </div>
 </div>
 

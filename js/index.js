@@ -17,6 +17,7 @@ var Module = {
     },
 };
 
+let Spim;
 
 async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/JsSpim/dev/Tests/fib.s') {
     let data = await loadData(fileInput);
@@ -24,8 +25,22 @@ async function main(fileInput = 'https://raw.githubusercontent.com/ShawnZhong/Js
     const stream = FS.open('input.s', 'w+');
     FS.write(stream, new Uint8Array(data), 0, data.byteLength, 0);
     FS.close(stream);
+    
+    Spim = {
+        init: cwrap('init', 'void'),
+        run: cwrap('run', 'void'),
+        step: cwrap('step', 'number'),
 
-    Module.init("input.s");
+        getUserData: cwrap('getUserData', 'string'),
+        getUserText: cwrap('getUserText', 'string'),
+
+        getKernelText: cwrap('getKernelText', 'string'),
+        getKernelData: cwrap('getKernelData', 'string'),
+
+        getUserStack: cwrap('getUserStack', 'string')
+    };
+
+    Spim.init();
 
     outputDOM.innerHTML = "";
     RegisterUtils.init();

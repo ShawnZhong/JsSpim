@@ -1,75 +1,72 @@
-const playDOM = document.getElementById('play');
-const speedDOM = document.getElementById('speed-selector');
+const playButton = document.getElementById('play-button');
+const resetButton = document.getElementById('reset-button');
+const stepButton = document.getElementById('step-button');
+const speedSelector = document.getElementById('speed-selector');
 
-const Status = {
-    INITIAL: -1,
-    STOPPED: 0,
-    RUNNING: 1,
-    FINISHED: 2,
-};
+const maxSpeed = parseInt(speedSelector.max);
+let speed = parseInt(speedSelector.value);
 
-const maxSpeed = parseInt(speedDOM.max);
-let speed = parseInt(speedDOM.value);
-let status = Status.FINISHED;
+class Execution {
+    static run() {
+        Spim.run();
+        Execution.finish();
+        RegisterUtils.update();
+        MemoryUtils.update(RegisterUtils.getPC());
+    }
 
+
+    static step() {
+        if (!Spim.step()) Execution.finish();
+        RegisterUtils.update();
+        MemoryUtils.update(RegisterUtils.getPC());
+    }
+
+    static play() {
+        if (!Execution.running) return;
+
+        if (speed === maxSpeed) {
+            Execution.run();
+            return;
+        }
+
+        Execution.step();
+        setTimeout(Execution.play, maxSpeed - speed);
+    }
+
+    static finish() {
+        Execution.running = false;
+        playButton.disabled = true;
+        stepButton.disabled = true;
+    }
+
+    static reset() {
+        Execution.running = false;
+        playButton.disabled = false;
+        stepButton.disabled = false;
+        playButton.innerHTML = getButtonLabel();
+        outputDOM.innerHTML = "";
+        Spim.init();
+        RegisterUtils.update();
+        MemoryUtils.update();
+    }
+}
+
+
+function getButtonLabel() {
+    if (Execution.running) return "Pause";
+    return speed === maxSpeed ? "Run" : "Play"
+}
 
 function setSpeed(newSpeed) {
     speed = parseInt(newSpeed);
-
-    if (speed === 0) {
-        status = Status.STOPPED;
-        playDOM.innerHTML = "Step";
-    } else if (speed === maxSpeed)
-        playDOM.innerHTML = "Run ";
-    else {
-        console.log(status);
-        if (status === Status.FINISHED)
-            playDOM.innerHTML = "Play";
-        else if (status === Status.STOPPED) {
-            playDOM.innerHTML = "Continue";
-        }
-    }
+    playButton.innerHTML = getButtonLabel();
 }
 
-function play() {
-    console.log(status);
-    if (status === Status.FINISHED) {
-        playDOM.innerHTML = "Play";
-        return;
-    }
 
-    if (speed === maxSpeed) {
-        outputDOM.innerHTML = "";
-        Module.run();
-        status = Status.FINISHED;
-        playDOM.innerHTML = "Run";
-    } else {
-        const finished = !Module.step();
-        if (finished) status = Status.FINISHED;
-    }
-
-    RegisterUtils.update();
-    MemoryUtils.update(RegisterUtils.getPC());
-
-    if (status === Status.RUNNING)
-        setTimeout(play, maxSpeed - speed);
-}
-
-playDOM.onclick = () => {
-    if (status === Status.RUNNING) {
-        status = Status.STOPPED;
-        playDOM.innerHTML = "Continue";
-        return;
-    }
-
-    if (status === Status.FINISHED) {
-        status = Status.RUNNING;
-        outputDOM.innerHTML = "";
-        Module.init("input.s");
-    } else if (status === Status.STOPPED && speed !== 0) {
-        status = Status.RUNNING;
-        playDOM.innerHTML = "Pause";
-    }
-
-    play();
+resetButton.onclick = Execution.reset;
+stepButton.onclick = Execution.step;
+playButton.onclick = () => {
+    Execution.running = !Execution.running;
+    Execution.play();
+    playButton.innerHTML = getButtonLabel();
 };

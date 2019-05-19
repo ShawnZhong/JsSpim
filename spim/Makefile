@@ -82,7 +82,19 @@ CXX = em++
 CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++  -std=c++11
 YCFLAGS +=
 PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s
-LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web --bind
+EXPORTED_FUNCTIONS = '_getUserData', \
+					 '_getUserText', \
+					 '_getKernelText', \
+					 '_getKernelData', \
+					 '_getUserStack', \
+					 '_getGeneralRegVals', \
+					 '_getSpecialRegVals', \
+					 '_getPC', \
+					 '_step', \
+					 '_run', \
+					 '_conti', \
+					 '_init'
+LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web --bind -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
 CSH = bash
 
 # lex.yy.cpp is usually compiled with -O to speed it up.
