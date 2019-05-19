@@ -93,7 +93,9 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_step', \
 					 '_run', \
 					 '_conti', \
-					 '_init'
+					 '_init', \
+					 '_addBreakpoint', \
+					 '_deleteBreakpoint'
 LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web --bind -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
 CSH = bash
 
@@ -120,10 +122,8 @@ TAGS:	*.cpp *.h *.l *.y
 clean:
 	rm -f *.o TAGS test.out lex.yy.cpp parser_yacc.cpp parser_yacc.h y.output
 
-splint: spim
-	splint -weak -preproc -warnposix +matchanyintegral spim.cpp parser_yacc.cpp lex.yy.cpp
 
-.PHONY: clean splint
+.PHONY: clean
 
 #
 # Dependences not handled well by makedepend:

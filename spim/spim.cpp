@@ -1,5 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
 /* SPIM S20 MIPS simulator.
    Terminal interface for SPIM simulator.
 
@@ -32,9 +30,6 @@
    OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <emscripten/bind.h>
-#include <emscripten/val.h>
-
 #include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -48,11 +43,8 @@
 #include "mem.h"
 #include "data.h"
 
-#define BYTES_PER_LINE (4*BYTES_PER_WORD)
 #define PRE(text)  "<pre>" text "</pre>"
 #define PRE_H(text) "<pre style='background-color: yellow;'>" text "</pre>"
-
-using namespace emscripten;
 
 bool bare_machine;        /* => simulate bare machine */
 bool delayed_branches;        /* => simulate delayed branches */
@@ -66,12 +58,14 @@ int spim_return_value;        /* Value returned when spim exits */
 
 extern "C" {
 
+static str_stream ss;
+
 bool step() {
   mem_addr addr = PC == 0 ? starting_address() : PC;
 
   bool continuable;
   if (run_program(addr, 1, false, true, &continuable))
-    printf("Breakpoint encountered at 0x%08x\n", PC);
+    error("Breakpoint encountered at 0x%08x\n", PC);
 
   if (!continuable)
     printf("\n");
@@ -83,7 +77,7 @@ void run() {
   mem_addr addr = PC == 0 ? starting_address() : PC;
   bool continuable;
   if (run_program(addr, DEFAULT_RUN_STEPS, false, false, &continuable))
-    printf("Breakpoint encountered at 0x%08x\n", PC);
+    error("Breakpoint encountered at 0x%08x\n", PC);
   printf("\n");
 }
 
@@ -92,7 +86,7 @@ void conti() {
 
   bool continuable;
   if (run_program(PC, DEFAULT_RUN_STEPS, false, true, &continuable))
-    printf("Breakpoint encountered at 0x%08x\n", PC);
+    error("Breakpoint encountered at 0x%08x\n", PC);
   printf("\n");
 }
 
@@ -101,14 +95,6 @@ void init() {
   initialize_run_stack(0, nullptr);
   read_assembly_file("input.s");
 }
-
-//void addBreakpoint(int addr) { add_breakpoint(addr); }
-//EMSCRIPTEN_BINDINGS(addBreakpoint) { function("addBreakpoint", &addBreakpoint); }
-//
-//void deleteBreakpoint(int addr) { delete_breakpoint(addr); }
-//EMSCRIPTEN_BINDINGS(deleteBreakpoint) { function("deleteBreakpoint", &deleteBreakpoint); }
-
-static str_stream ss;
 
 char *getText(mem_addr from, mem_addr to) {
   ss_clear(&ss);
@@ -142,11 +128,10 @@ char *getUserData() {
   for (mem_addr i = DATA_BOT; i < data_top; i += BYTES_PER_WORD) {
     int index = (i - DATA_BOT) / 4;
     if (data_seg[index] == 0) continue;
-    if (prev_data_seg)
-      if (prev_initialized && data_seg[index] != prev_data_seg[index])
-        ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), i, data_seg[index]);
-      else
-        ss_printf(&ss, PRE("[0x%08x] 0x%08x"), i, data_seg[index]);
+    if (prev_initialized && data_seg[index] != prev_data_seg[index])
+      ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), i, data_seg[index]);
+    else
+      ss_printf(&ss, PRE("[0x%08x] 0x%08x"), i, data_seg[index]);
     prev_data_seg[index] = data_seg[index];
   }
 
@@ -229,9 +214,9 @@ char *getSpecialRegVals() {
   return ss_to_string(&ss);
 }
 
-int getPC() {
-  return PC;
-}
+int getPC() { return PC; }
+void addBreakpoint(mem_addr addr) { add_breakpoint(addr); }
+void deleteBreakpoint(mem_addr addr) { delete_breakpoint(addr); }
 }
 
 /* Print an error message. */
@@ -257,9 +242,7 @@ void fatal_error(char *fmt, ...) {
 
 void run_error(char *fmt, ...) {
   va_list args;
-
   va_start(args, fmt);
-
   vfprintf(stderr, fmt, args);
   va_end(args);
 }
@@ -268,7 +251,6 @@ void run_error(char *fmt, ...) {
 
 void write_output(port fp, char *fmt, ...) {
   va_list args;
-
   va_start(args, fmt);
   vfprintf(stdout, fmt, args);
   fflush(stdout);
@@ -279,9 +261,7 @@ void write_output(port fp, char *fmt, ...) {
 
 void read_input(char *str, int str_size) {
   char *ptr;
-
   ptr = str;
-
   while (1 < str_size) /* Reserve space for null */
   {
     char buf[1];

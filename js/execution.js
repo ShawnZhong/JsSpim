@@ -45,6 +45,7 @@ class Execution {
         stepButton.disabled = false;
         playButton.innerHTML = getButtonLabel();
         outputDOM.innerHTML = "";
+        logDOM.innerHTML = "";
         Spim.init();
         RegisterUtils.update();
         MemoryUtils.update();

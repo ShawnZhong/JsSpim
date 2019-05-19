@@ -7,8 +7,8 @@ class MemoryUtils {
     static init() {
         memoryDOM.innerHTML = '';
 
-        this.instructions = Spim.getUserText().split("\n").map(this.getInstructionDOM);
-        this.instructions.forEach(e => memoryDOM.appendChild(e));
+        this.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
+        this.instructions.forEach(e => memoryDOM.appendChild(e.DOM));
 
         this.update();
     }
@@ -22,19 +22,29 @@ class MemoryUtils {
 
     static highlight(address) {
         if (this.highlighted) this.highlighted.style.backgroundColor = null;
-        this.highlighted = this.instructions[(address - 0x400000) / 4];
+        this.highlighted = this.instructions[(address - 0x400000) / 4].DOM;
         if (!this.highlighted) return;
         this.highlighted.style.backgroundColor = 'yellow';
         this.highlighted.scrollIntoView(false);
     }
+}
 
-    static getInstructionDOM(instruction) {
-        const node = document.createElement("pre");
-        node.innerText = instruction.substring(0, 13) + instruction.substring(24);
-        node.onclick = () => {
-            const address = parseInt(node.innerText.substr(1, 10));
-            console.log(address);
+class Instruction {
+    constructor(instruction) {
+        this.address = instruction.substr(1, 10);
+        this.breakpoint = false;
+
+        this.DOM = document.createElement("pre");
+        this.DOM.innerText = instruction.substring(0, 13) + instruction.substring(24);
+        this.DOM.onclick = () => {
+            this.breakpoint = !this.breakpoint;
+            if (this.breakpoint) {
+                Spim.addBreakpoint(this.address);
+                this.DOM.style.fontWeight = "bold";
+            } else {
+                Spim.deleteBreakpoint(this.address);
+                this.DOM.style.fontWeight = null;
+            }
         };
-        return node;
     }
 }

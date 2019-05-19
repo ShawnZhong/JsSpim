@@ -196,7 +196,7 @@ Module['FS_createPath']('/usr/share', 'spim', true, true);
   }
 
  }
- loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}], "remote_package_size": 5502, "package_uuid": "c4f9d091-98e9-447a-be88-c71325de1452"});
+ loadPackage({"files": [{"filename": "/usr/share/spim/exceptions.s", "start": 0, "end": 5502, "audio": 0}], "remote_package_size": 5502, "package_uuid": "e0d1a9b6-46f2-4386-b1b2-232f3bcff6d6"});
 
 })();
 
@@ -5741,10 +5741,22 @@ var real___get_environ = asm["__get_environ"]; asm["__get_environ"] = function()
   return real___get_environ.apply(null, arguments);
 };
 
+var real__addBreakpoint = asm["_addBreakpoint"]; asm["_addBreakpoint"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return real__addBreakpoint.apply(null, arguments);
+};
+
 var real__conti = asm["_conti"]; asm["_conti"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return real__conti.apply(null, arguments);
+};
+
+var real__deleteBreakpoint = asm["_deleteBreakpoint"]; asm["_deleteBreakpoint"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return real__deleteBreakpoint.apply(null, arguments);
 };
 
 var real__fflush = asm["_fflush"]; asm["_fflush"] = function() {
@@ -5885,10 +5897,18 @@ var __get_environ = Module["__get_environ"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["__get_environ"].apply(null, arguments) };
+var _addBreakpoint = Module["_addBreakpoint"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_addBreakpoint"].apply(null, arguments) };
 var _conti = Module["_conti"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["_conti"].apply(null, arguments) };
+var _deleteBreakpoint = Module["_deleteBreakpoint"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["_deleteBreakpoint"].apply(null, arguments) };
 var _fflush = Module["_fflush"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
