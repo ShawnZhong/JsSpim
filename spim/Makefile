@@ -45,10 +45,6 @@
 CPU_DIR = CPU
 VPATH = src:$(CPU_DIR)
 
-# Path of directory that contains SPIM tests:
-TEST_DIR = Tests
-
-
 # Full path for the parent directory of all installed files:
 PREFIX = /usr
 
@@ -79,8 +75,7 @@ MEM_SIZES = -DTEXT_SIZE=65536 -DDATA_SIZE=131072 -DK_TEXT_SIZE=65536
 
 DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\""
 CXX = em++
-CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++  -std=c++11
-YCFLAGS +=
+CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++ -std=c++11
 PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s
 EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getUserText', \
@@ -96,8 +91,7 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_init', \
 					 '_addBreakpoint', \
 					 '_deleteBreakpoint'
-LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web --bind -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
-CSH = bash
+LDFLAGS += -lm $(PRELOAD) -s ENVIRONMENT=web -s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"
 
 # lex.yy.cpp is usually compiled with -O to speed it up.
 

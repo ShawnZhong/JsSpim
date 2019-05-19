@@ -10,11 +10,7 @@ var Module = {
     printErr: (text) => {
         logDOM.innerHTML += text + "\n";
         logDOM.scrollTop = outputDOM.scrollHeight;
-    },
-    totalDependencies: 0,
-    monitorRunDependencies: function (left) {
-        this.totalDependencies = Math.max(this.totalDependencies, left);
-    },
+    }
 };
 
 function init() {
