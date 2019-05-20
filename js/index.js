@@ -28,7 +28,7 @@ function init() {
     Spim = {
         init: cwrap('init'),
         run: cwrap('run', 'bool'),
-        step: cwrap('step', 'bool'),
+        step: cwrap('step', 'number'),
         getUserData: cwrap('getUserData', 'string'),
         getUserText: cwrap('getUserText', 'string'),
         getKernelText: cwrap('getKernelText', 'string'),

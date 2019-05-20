@@ -66,17 +66,30 @@ void init() {
   read_assembly_file("input.s");
 }
 
-bool step() {
+int step() {
+  static mem_addr prev_addr = PC;
   mem_addr addr = PC == 0 ? starting_address() : PC;
 
-  bool continuable;
-  if (run_program(addr, 1, false, true, &continuable))
+  bool continuable, bp_encountered;
+  bp_encountered = run_program(addr, 1, false, prev_addr == addr, &continuable);
+
+  if (bp_encountered) {
     error("Breakpoint encountered at 0x%08x\n", PC);
+  }
 
   if (!continuable)
     printf("\n");
 
-  return continuable;
+  prev_addr = addr;
+
+  if (!continuable) {
+    return 1; // finished
+  }
+
+  if (bp_encountered)
+    return 2;
+
+  return 3;// no problem
 }
 
 bool run() {

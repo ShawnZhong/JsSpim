@@ -20,6 +20,7 @@ class Execution {
         stepButton.disabled = false;
         playButton.disabled = false;
         playButton.innerHTML = "Play";
+        runButton.innerHTML = "Run";
 
         Spim.init();
         Display.init();
@@ -27,40 +28,57 @@ class Execution {
         Display.update(); // to prevent highlight
     }
 
+    static finish() {
+        Execution.playing = false;
+        Execution.finished = true;
+
+        playButton.disabled = true;
+        stepButton.disabled = true;
+        runButton.disabled = true;
+        playButton.innerHTML = "Play";
+        runButton.innerHTML = "Run";
+    }
 
     static run() {
+        runButton.innerHTML = "Continue";
         Execution.finished = !Spim.run();
         if (Execution.finished) Execution.finish();
         Display.update();
     }
 
     static step() {
-        Execution.finished = !Spim.step();
-        if (Execution.finished) Execution.finish();
+        const result = Spim.step();
+
+        if (result === 1)  // finished
+            Execution.finish();
+        else if (result === 2 && Execution.playing)  // break point encountered
+            Execution.pause();
+
         Display.update();
     }
 
-    static play() {
-        Execution.playing = !Execution.playing;
-        Execution.playHandler();
-        playButton.innerHTML = Execution.finished ? "Play" : " Pause";
+    static togglePlay() {
+        if (Execution.playing) {
+            Execution.pause();
+        } else {
+            Execution.playing = true;
+            playButton.innerHTML = "Pause";
+            Execution.play();
+        }
     }
 
-    static playHandler() {
+    static pause() {
+        Execution.playing = false;
+        playButton.innerHTML = "Continue";
+    }
+
+    static play() {
         if (!Execution.playing || Execution.finished) return;
         Execution.step();
-        setTimeout(Execution.playHandler, maxSpeed - speed);
-    }
-
-    static finish() {
-        Execution.playing = false;
-        Execution.finished = true;
-        playButton.disabled = true;
-        stepButton.disabled = true;
-        runButton.disabled = true;
+        setTimeout(Execution.play, maxSpeed - speed);
     }
 }
 resetButton.onclick = Execution.init;
 stepButton.onclick = Execution.step;
 runButton.onclick = Execution.run;
-playButton.onclick = Execution.play;
+playButton.onclick = Execution.togglePlay;
