@@ -18,3 +18,5 @@ main:
    la $a0, a
    li $a1, 5
    sw $a1 ($a0)
+
+   jr $ra
