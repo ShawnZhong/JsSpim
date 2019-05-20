@@ -73,10 +73,9 @@ MEM_SIZES = -DTEXT_SIZE=65536 -DDATA_SIZE=131072 -DK_TEXT_SIZE=65536
 #
 
 
-DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\"" -DWASM
+DEFINES = $(MEM_SIZES) -DDEFAULT_EXCEPTION_HANDLER="\"$(EXCEPTION_DIR)/exceptions.s\""
 CXX = em++
 CXXFLAGS += -I. -I$(CPU_DIR) $(DEFINES) -O2 -Wall -pedantic -Wextra -Wunused -Wno-write-strings -x c++ -std=c++11
-PRELOAD = --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s
 EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getUserText', \
 					 '_getKernelText', \
@@ -89,10 +88,10 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_init', \
 					 '_addBreakpoint', \
 					 '_deleteBreakpoint'
-LDFLAGS += -lm $(PRELOAD) -O2 \
+LDFLAGS += -lm -O2 --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s\
 			-s ENVIRONMENT=web \
 			-s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"\
-			-s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]'
+			-s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']"
 
 # lex.yy.cpp is usually compiled with -O to speed it up.
 
