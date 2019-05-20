@@ -16,17 +16,12 @@ pre {
 
 .group {
     display: flex;
-}
-
-#toolbar-group {
-    display: flex;
     justify-content: space-around;
 }
+
 
 #main-group {
-    display: flex;
-    justify-content: space-around;
-    flex: 80%;
+    flex-grow: 1;
 }
 
 #main-group .content {
@@ -45,15 +40,12 @@ pre {
     bottom: 0;
 }
 
-#info-group {
-    display: flex;
-    justify-content: space-around;
+#info-group .panel {
+    display: inline;
+    width: 50%;
 }
 
-#info-group #output-panel {
-    width: 45%;
-}
-
-#info-group #log-panel {
-    width: 45%;
+#info-group .content {
+    height: 20vh;
+    overflow: auto;
 }
