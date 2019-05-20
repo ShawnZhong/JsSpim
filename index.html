@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<div id="toolbar">
+<div id="toolbar-group" class="group">
     <fieldset>
         <legend>File:</legend>
         <select id="file-selector" onchange="main(this.value)"></select>
@@ -32,8 +32,8 @@
 
 </div>
 
-<div id="main">
-    <div id="regs-container">
+<div id="main-group" class="group">
+    <div id="regs-panel" class="panel">
         <h1>Register</h1>
         <div class="content">
             <h4>Special</h4>
@@ -48,28 +48,28 @@
 
     </div>
 
-    <div id="text-container">
+    <div id="text-panel" class="panel">
         <h1>Text</h1>
         <div id="text-content" class="content"></div>
     </div>
 
-    <div id="data-container">
+    <div id="data-panel" class="panel">
         <h1>Data</h1>
         <div id="data-content" class="content"></div>
     </div>
 
-    <div id="stack-container">
+    <div id="stack-panel" class="panel">
         <h1>Stack</h1>
         <div id="stack-content" class="content"></div>
     </div>
 </div>
 
-<div id="info">
-    <div id="output-container">
+<div id="info-group" class="group">
+    <div id="output-panel" class="panel">
         <h1>Output</h1>
         <pre id="output-content" class="content"></pre>
     </div>
-    <div id="log-container">
+    <div id="log-panel" class="panel">
         <h1>Log</h1>
         <pre id="log-content" class="content"></pre>
     </div>
