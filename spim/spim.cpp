@@ -94,19 +94,6 @@ int step(int step_size, bool cont_bkpt) {
   return 3;// no problem
 }
 
-//bool run() {
-//  mem_addr addr = PC == 0 ? starting_address() : PC;
-//
-//  bool continuable;
-//  if (run_program(addr, DEFAULT_RUN_STEPS, false, true, &continuable))
-//    error("Breakpoint encountered at 0x%08x\n", PC);
-//
-//  if (!continuable)
-//    printf("\n");
-//
-//  return continuable;
-//}
-
 char *getText(mem_addr from, mem_addr to) {
   ss_clear(&ss);
   format_insts(&ss, from, to);
