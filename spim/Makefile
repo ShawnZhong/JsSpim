@@ -86,7 +86,6 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getSpecialRegVals', \
 					 '_getPC', \
 					 '_step', \
-					 '_run', \
 					 '_init', \
 					 '_addBreakpoint', \
 					 '_deleteBreakpoint'

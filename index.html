@@ -16,11 +16,11 @@
     </fieldset>
 
     <fieldset>
-        <legend>Execution control:</legend>
+        <legend>Execution:</legend>
         Speed:
-        <input type="range" id="speed-selector" value="200" max="200" oninput="speed=parseInt(this.value)">
+        <input type="range" id="speed-selector" value="200" max="200" oninput="Execution.setSpeed(this.value)">
         <button id="play-button">Play</button>
-        <button id="run-button">Run</button>
+        <button id="continue-button" style="display: none;">Continue</button>
         <button id="step-button">Step</button>
         <button id="reset-button">Reset</button>
     </fieldset>
@@ -28,7 +28,7 @@
     <fieldset>
         <legend>Settings:</legend>
         <input type="checkbox" id="stop-at-bp">
-        <label for="stop-at-bp">Stop at breakpoint</label>
+        <label for="stop-at-bp">N/A</label>
     </fieldset>
 
 </div>

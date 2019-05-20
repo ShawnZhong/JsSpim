@@ -66,12 +66,14 @@ void init() {
   read_assembly_file("input.s");
 }
 
-int step() {
+int step(int step_size, bool cont_bkpt) {
   static mem_addr prev_addr = PC;
   mem_addr addr = PC == 0 ? starting_address() : PC;
 
+  if (step_size == 0) step_size = DEFAULT_RUN_STEPS;
+
   bool continuable, bp_encountered;
-  bp_encountered = run_program(addr, 1, false, prev_addr == addr, &continuable);
+  bp_encountered = run_program(addr, step_size, false, cont_bkpt, &continuable);
 
   if (bp_encountered) {
     error("Breakpoint encountered at 0x%08x\n", PC);
@@ -92,18 +94,18 @@ int step() {
   return 3;// no problem
 }
 
-bool run() {
-  mem_addr addr = PC == 0 ? starting_address() : PC;
-
-  bool continuable;
-  if (run_program(addr, DEFAULT_RUN_STEPS, false, true, &continuable))
-    error("Breakpoint encountered at 0x%08x\n", PC);
-
-  if (!continuable)
-    printf("\n");
-
-  return continuable;
-}
+//bool run() {
+//  mem_addr addr = PC == 0 ? starting_address() : PC;
+//
+//  bool continuable;
+//  if (run_program(addr, DEFAULT_RUN_STEPS, false, true, &continuable))
+//    error("Breakpoint encountered at 0x%08x\n", PC);
+//
+//  if (!continuable)
+//    printf("\n");
+//
+//  return continuable;
+//}
 
 char *getText(mem_addr from, mem_addr to) {
   ss_clear(&ss);

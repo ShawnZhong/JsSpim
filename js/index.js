@@ -27,8 +27,7 @@ var Module = {
 function init() {
     Spim = {
         init: cwrap('init'),
-        run: cwrap('run', 'bool'),
-        step: cwrap('step', 'number'),
+        step: cwrap('step', 'number', ['number', 'boolean']),
         getUserData: cwrap('getUserData', 'string'),
         getUserText: cwrap('getUserText', 'string'),
         getKernelText: cwrap('getKernelText', 'string'),
