@@ -18,8 +18,9 @@
     <fieldset>
         <legend>Execution control:</legend>
         Speed:
-        <input type="range" id="speed-selector" value="200" max="200" oninput="setSpeed(this.value)">
-        <button id="play-button">Run</button>
+        <input type="range" id="speed-selector" value="200" max="200" oninput="speed=parseInt(this.value)">
+        <button id="play-button">Play</button>
+        <button id="run-button">Run</button>
         <button id="step-button">Step</button>
         <button id="reset-button">Reset</button>
     </fieldset>

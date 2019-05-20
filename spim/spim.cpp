@@ -60,6 +60,12 @@ extern "C" {
 
 static str_stream ss;
 
+void init() {
+  initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
+  initialize_run_stack(0, nullptr);
+  read_assembly_file("input.s");
+}
+
 bool step() {
   mem_addr addr = PC == 0 ? starting_address() : PC;
 
@@ -73,27 +79,17 @@ bool step() {
   return continuable;
 }
 
-void run() {
+bool run() {
   mem_addr addr = PC == 0 ? starting_address() : PC;
-  bool continuable;
-  if (run_program(addr, DEFAULT_RUN_STEPS, false, false, &continuable))
-    error("Breakpoint encountered at 0x%08x\n", PC);
-  printf("\n");
-}
-
-void conti() {
-  if (PC == 0) return;
 
   bool continuable;
-  if (run_program(PC, DEFAULT_RUN_STEPS, false, true, &continuable))
+  if (run_program(addr, DEFAULT_RUN_STEPS, false, true, &continuable))
     error("Breakpoint encountered at 0x%08x\n", PC);
-  printf("\n");
-}
 
-void init() {
-  initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
-  initialize_run_stack(0, nullptr);
-  read_assembly_file("input.s");
+  if (!continuable)
+    printf("\n");
+
+  return continuable;
 }
 
 char *getText(mem_addr from, mem_addr to) {

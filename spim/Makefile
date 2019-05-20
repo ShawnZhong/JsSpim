@@ -87,7 +87,6 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getPC', \
 					 '_step', \
 					 '_run', \
-					 '_conti', \
 					 '_init', \
 					 '_addBreakpoint', \
 					 '_deleteBreakpoint'

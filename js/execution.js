@@ -1,71 +1,66 @@
 const playButton = document.getElementById('play-button');
 const resetButton = document.getElementById('reset-button');
 const stepButton = document.getElementById('step-button');
+const runButton = document.getElementById('run-button');
 const speedSelector = document.getElementById('speed-selector');
 
-const maxSpeed = parseInt(speedSelector.max);
+const maxSpeed = speedSelector.max;
 let speed = parseInt(speedSelector.value);
 
 class Execution {
-    static run() {
-        Spim.run();
-        Execution.finish();
-        Display.update();
-    }
-
-    static step() {
-        if (!Spim.step()) Execution.finish();
-        Display.update();
-    }
-
-    static play() {
-        if (!Execution.running) return;
-        if (speed === maxSpeed) {
-            Execution.run();
-        } else {
-            Execution.step();
-            setTimeout(Execution.play, maxSpeed - speed);
-        }
-    }
-
-    static finish() {
-        Execution.running = false;
-        playButton.disabled = true;
-        stepButton.disabled = true;
-    }
-
     static init() {
         outputDOM.innerHTML = "";
         logDOM.innerHTML = "";
         memoryDOM.innerHTML = '';
 
-        Execution.running = false;
-        playButton.disabled = false;
+        Execution.finished = false;
+        Execution.playing = false;
+
+        runButton.disabled = false;
         stepButton.disabled = false;
-        playButton.innerHTML = getButtonLabel();
+        playButton.disabled = false;
+        playButton.innerHTML = "Play";
 
         Spim.init();
         Display.init();
         Display.update();
         Display.update(); // to prevent highlight
     }
+
+
+    static run() {
+        Execution.finished = !Spim.run();
+        if (Execution.finished) Execution.finish();
+        Display.update();
+    }
+
+    static step() {
+        Execution.finished = !Spim.step();
+        if (Execution.finished) Execution.finish();
+        Display.update();
+    }
+
+    static play() {
+        Execution.playing = !Execution.playing;
+        Execution.playHandler();
+        playButton.innerHTML = Execution.finished ? "Play" : " Pause";
+    }
+
+    static playHandler() {
+        if (!Execution.playing || Execution.finished) return;
+        Execution.step();
+        setTimeout(Execution.playHandler, maxSpeed - speed);
+    }
+
+    static finish() {
+        Execution.playing = false;
+        Execution.finished = true;
+        playButton.disabled = true;
+        stepButton.disabled = true;
+        runButton.disabled = true;
+    }
 }
-
-
-function getButtonLabel() {
-    if (Execution.running) return "Pause";
-    return speed === maxSpeed ? "Run" : "Play"
-}
-
-function setSpeed(newSpeed) {
-    speed = parseInt(newSpeed);
-    playButton.innerHTML = getButtonLabel();
-}
-
 resetButton.onclick = Execution.init;
 stepButton.onclick = Execution.step;
-playButton.onclick = () => {
-    Execution.running = !Execution.running;
-    Execution.play();
-    playButton.innerHTML = getButtonLabel();
-};
+runButton.onclick = Execution.run;
+playButton.onclick = Execution.play;
