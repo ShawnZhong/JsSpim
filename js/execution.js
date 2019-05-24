@@ -20,13 +20,13 @@ class Execution {
     static step(stepSize = 1) {
         const result = Spim.step(stepSize, Execution.playing ? Execution.skipBreakpoint : true);
 
-        if (result === 1)  // finished
+        if (result === 0)  // finished
             Execution.finish();
-        else if (result === 2) {  // break point encountered
+        else if (result === -1) {  // break point encountered
             Execution.skipBreakpoint = true;
             Execution.playing = false;
             Elements.playButton.innerHTML = "Continue";
-        } else { // break point not encountered
+        } else if (result === 1) { // break point not encountered
             Execution.skipBreakpoint = false;
         }
 

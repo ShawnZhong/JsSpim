@@ -57,7 +57,6 @@ bool mapped_io;            /* => activate memory-mapped IO */
 int spim_return_value;        /* Value returned when spim exits */
 
 extern "C" {
-
 static str_stream ss;
 
 void init() {
@@ -73,19 +72,17 @@ int step(int step_size, bool cont_bkpt) {
   bool continuable, bp_encountered;
   bp_encountered = run_program(addr, step_size, false, cont_bkpt, &continuable);
 
-  if (bp_encountered) {
-    error("Breakpoint encountered at 0x%08x\n", PC);
-  }
-
   if (!continuable) {
     printf("\n");
-    return 1; // finished
+    return 0; // finished
   }
 
-  if (bp_encountered)
-    return 2;
+  if (bp_encountered) {
+    error("Breakpoint encountered at 0x%08x\n", PC);
+    return -1;
+  }
 
-  return 3;
+  return 1;
 }
 
 char *getText(mem_addr from, mem_addr to) {
