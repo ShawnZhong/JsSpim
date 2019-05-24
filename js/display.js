@@ -1,51 +1,51 @@
-const memoryDOM = document.getElementById('text-content');
-const dataDOM = document.getElementById('data-content');
-const stackDOM = document.getElementById('stack-content');
-const generalRegDOM = document.getElementById('general-regs');
-const specialRegDOM = document.getElementById('special-regs');
-
-
 class Display {
     static init() {
-        this.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
-        this.instructions.forEach(e => memoryDOM.appendChild(e.DOM));
+        Elements.output.innerHTML = '';
+        Elements.log.innerHTML = '';
+        Elements.text.innerHTML = '';
+
+        Display.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
+        Display.instructions.forEach(e => Elements.text.appendChild(e.node));
     }
 
-
     static update() {
-        stackDOM.innerHTML = Spim.getUserStack();
-        dataDOM.innerHTML = Spim.getUserData();
-        generalRegDOM.innerHTML = Spim.getGeneralReg();
-        specialRegDOM.innerHTML = Spim.getSpecialReg();
-        this.highlightInstruction();
+        Elements.stack.innerHTML = Spim.getUserStack();
+        Elements.data.innerHTML = Spim.getUserData();
+        Elements.generalReg.innerHTML = Spim.getGeneralReg();
+        Elements.specialReg.innerHTML = Spim.getSpecialReg();
+        Display.highlightInstruction();
     }
 
     static highlightInstruction() {
-        if (this.highlighted) this.highlighted.style.backgroundColor = null;
+        if (Display.highlighted)
+            Display.highlighted.style.backgroundColor = null;
+
         const pc = Spim.getPC();
-        const instruction = this.instructions[pc === 0 ? 0 : (pc - 0x400000) / 4];
+        const instruction = Display.instructions[pc === 0 ? 0 : (pc - 0x400000) / 4];
         if (!instruction) return;
-        this.highlighted = instruction.DOM;
-        this.highlighted.style.backgroundColor = 'yellow';
-        this.highlighted.scrollIntoView(false);
+
+        Display.highlighted = instruction.node;
+        Display.highlighted.style.backgroundColor = 'yellow';
+        Display.highlighted.scrollIntoView(false);
     }
 }
 
 class Instruction {
     constructor(instruction) {
+        this.instruction = instruction;
         this.address = instruction.substr(1, 10);
         this.breakpoint = false;
 
-        this.DOM = document.createElement("pre");
-        this.DOM.innerText = instruction.substring(0, 12) + instruction.substring(24);
-        this.DOM.onclick = () => {
+        this.node = document.createElement("pre");
+        this.node.innerText = instruction.substring(0, 12) + instruction.substring(24);
+        this.node.onclick = () => {
             this.breakpoint = !this.breakpoint;
             if (this.breakpoint) {
                 Spim.addBreakpoint(this.address);
-                this.DOM.style.fontWeight = "bold";
+                this.node.style.fontWeight = "bold";
             } else {
                 Spim.deleteBreakpoint(this.address);
-                this.DOM.style.fontWeight = null;
+                this.node.style.fontWeight = null;
             }
         };
     }

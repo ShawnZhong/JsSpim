@@ -1,24 +1,15 @@
-const playButton = document.getElementById('play-button');
-const resetButton = document.getElementById('reset-button');
-const stepButton = document.getElementById('step-button');
-const speedSelector = document.getElementById('speed-selector');
-
-const maxSpeed = speedSelector.max;
-let speed = speedSelector.value;
+const maxSpeed = Elements.speedSelector.max;
+let speed = Elements.speedSelector.value;
 
 class Execution {
     static init() {
-        outputDOM.innerHTML = '';
-        logDOM.innerHTML = '';
-        memoryDOM.innerHTML = '';
-
         Execution.started = false;
         Execution.playing = false;
         Execution.skipBreakpoint = false;
 
-        stepButton.disabled = false;
-        playButton.disabled = false;
-        playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
+        Elements.stepButton.disabled = false;
+        Elements.playButton.disabled = false;
+        Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
 
         Spim.init();
         Display.init();
@@ -34,7 +25,7 @@ class Execution {
         else if (result === 2) {  // break point encountered
             Execution.skipBreakpoint = true;
             Execution.playing = false;
-            playButton.innerHTML = "Continue";
+            Elements.playButton.innerHTML = "Continue";
         } else { // break point not encountered
             Execution.skipBreakpoint = false;
         }
@@ -46,10 +37,10 @@ class Execution {
         Execution.started = true;
         if (Execution.playing) {
             Execution.playing = false;
-            playButton.innerHTML = "Continue"
+            Elements.playButton.innerHTML = "Continue"
         } else {
             Execution.playing = true;
-            playButton.innerHTML = "Pause";
+            Elements.playButton.innerHTML = "Pause";
             Execution.play();
         }
     }
@@ -67,19 +58,19 @@ class Execution {
     static finish() {
         Execution.playing = false;
 
-        playButton.disabled = true;
-        stepButton.disabled = true;
+        Elements.playButton.disabled = true;
+        Elements.stepButton.disabled = true;
 
-        playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
+        Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
     }
 
     static setSpeed(newSpeed) {
         speed = newSpeed;
         if (Execution.started) return;
-        playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
+        Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
     }
 }
 
-resetButton.onclick = Execution.init;
-stepButton.onclick = () => Execution.step(1);
-playButton.onclick = Execution.togglePlay;
+Elements.resetButton.onclick = Execution.init;
+Elements.stepButton.onclick = () => Execution.step(1);
+Elements.playButton.onclick = Execution.togglePlay;

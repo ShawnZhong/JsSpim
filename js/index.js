@@ -1,30 +1,18 @@
-const outputDOM = document.getElementById('output-content');
-const logDOM = document.getElementById('log-content');
-const fileSelector = document.getElementById('file-selector');
-
-const fileList = ['tt.core.s', 'fib.s', 'helloworld.s', 'change_data_seg.s'];
-fileList.forEach(filename => {
-    const option = document.createElement("option");
-    option.text = filename;
-    option.value = `Tests/${filename}`;
-    fileSelector.add(option);
-});
-
 let Spim;
 
 var Module = {
-    postRun: [init, main],
+    postRun: [initSpim, main],
     print: (text) => {
-        outputDOM.innerHTML += text + "\n";
-        outputDOM.scrollTop = outputDOM.scrollHeight;
+        Elements.output.innerHTML += text + "\n";
+        Elements.output.scrollTop = Elements.output.scrollHeight;
     },
     printErr: (text) => {
-        logDOM.innerHTML += text + "\n";
-        logDOM.scrollTop = outputDOM.scrollHeight;
+        Elements.log.innerHTML += text + "\n";
+        Elements.log.scrollTop = Elements.output.scrollHeight;
     }
 };
 
-function init() {
+function initSpim() {
     Spim = {
         init: cwrap('init'),
         step: cwrap('step', 'number', ['number', 'boolean']),

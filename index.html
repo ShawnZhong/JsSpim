@@ -1,4 +1,5 @@
 <!doctype html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -19,8 +20,7 @@
         <legend>Execution:</legend>
         Speed:
         <input type="range" id="speed-selector" value="200" max="200" oninput="Execution.setSpeed(this.value)">
-        <button id="play-button">Play</button>
-        <button id="continue-button" style="display: none;">Continue</button>
+        <button id="play-button">Run</button>
         <button id="step-button">Step</button>
         <button id="reset-button">Reset</button>
     </fieldset>
@@ -28,30 +28,38 @@
     <fieldset>
         <legend>Memory:</legend>
 
-        <input type="checkbox">
-        <label>kernel data</label>
+        <label>
+            <input id="toggle-kernel-data" type="checkbox">
+            kernel data
+        </label>
 
-        <input type="checkbox">
-        <label>kernel text</label>
+        <label>
+            <input id="toggle-kernel-text" type="checkbox">
+            kernel text
+        </label>
 
-        <input type="checkbox">
-        <label>instruction value</label>
+        <label>
+            <input id="toggle-instruction-value" type="checkbox">
+            instruction value
+        </label>
 
-        <input type="checkbox">
-        <label>comments</label>
+        <label>
+            <input id="toggle-comment" type="checkbox">
+            comment
+        </label>
     </fieldset>
 
     <fieldset>
         <legend>Radix:</legend>
 
-        <input type="radio">
-        <label>dec</label>
+        <input type="radio" name="radix" id="radix-hex" checked>
+        <label for="radix-hex">hex</label>
 
-        <input type="radio">
-        <label>bin</label>
+        <input type="radio" name="radix" id="radix-dec">
+        <label for="radix-dec">dec</label>
 
-        <input type="radio">
-        <label>hex</label>
+        <input type="radio" name="radix" id="radix-bin">
+        <label for="radix-bin">bin</label>
     </fieldset>
 
 </div>
@@ -98,6 +106,31 @@
         <pre id="log-content" class="content"></pre>
     </div>
 </div>
+
+<script type='text/javascript'>
+    const Elements = Object.freeze({
+        output: document.getElementById('output-content'),
+        log: document.getElementById('log-content'),
+        fileSelector: document.getElementById('file-selector'),
+        playButton: document.getElementById('play-button'),
+        resetButton: document.getElementById('reset-button'),
+        stepButton: document.getElementById('step-button'),
+        speedSelector: document.getElementById('speed-selector'),
+        text: document.getElementById('text-content'),
+        data: document.getElementById('data-content'),
+        stack: document.getElementById('stack-content'),
+        generalReg: document.getElementById('general-regs'),
+        specialReg: document.getElementById('special-regs')
+    });
+
+    const fileList = ['tt.core.s', 'fib.s', 'helloworld.s', 'change_data_seg.s'];
+    fileList.forEach(filename => {
+        const option = document.createElement("option");
+        option.text = filename;
+        option.value = `Tests/${filename}`;
+        Elements.fileSelector.add(option);
+    });
+</script>
 
 <script type='text/javascript' src="js/index.js"></script>
 <script type='text/javascript' src="js/display.js"></script>
