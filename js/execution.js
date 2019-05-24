@@ -8,13 +8,13 @@ let speed = speedSelector.value;
 
 class Execution {
     static init() {
-        outputDOM.innerHTML = "";
-        logDOM.innerHTML = "";
+        outputDOM.innerHTML = '';
+        logDOM.innerHTML = '';
         memoryDOM.innerHTML = '';
 
-        Execution.paused = false;
+        Execution.started = false;
         Execution.playing = false;
-        Execution.continueBreakpoint = false;
+        Execution.skipBreakpoint = false;
 
         stepButton.disabled = false;
         playButton.disabled = false;
@@ -26,8 +26,46 @@ class Execution {
         Display.update(); // to prevent highlight
     }
 
+    static step(stepSize = 1) {
+        const result = Spim.step(stepSize, Execution.playing ? Execution.skipBreakpoint : true);
+
+        if (result === 1)  // finished
+            Execution.finish();
+        else if (result === 2) {  // break point encountered
+            Execution.skipBreakpoint = true;
+            Execution.playing = false;
+            playButton.innerHTML = "Continue";
+        } else { // break point not encountered
+            Execution.skipBreakpoint = false;
+        }
+
+        Display.update();
+    }
+
+    static togglePlay() {
+        Execution.started = true;
+        if (Execution.playing) {
+            Execution.playing = false;
+            playButton.innerHTML = "Continue"
+        } else {
+            Execution.playing = true;
+            playButton.innerHTML = "Pause";
+            Execution.play();
+        }
+    }
+
+    static play() {
+        if (!Execution.playing) return;
+        if (speed === maxSpeed) {
+            Execution.step(0);
+        } else {
+            Execution.step();
+            setTimeout(Execution.play, maxSpeed - speed);
+        }
+    }
+
     static finish() {
-        Execution.pause();
+        Execution.playing = false;
 
         playButton.disabled = true;
         stepButton.disabled = true;
@@ -35,57 +73,10 @@ class Execution {
         playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
     }
 
-    static step(stepSize = 1) {
-        const result = Spim.step(stepSize, Execution.playing ? Execution.continueBreakpoint : true);
-
-        if (Execution.continueBreakpoint)
-            Execution.continueBreakpoint = false;
-
-        if (result === 1)  // finished
-            Execution.finish();
-        else if (result === 2) {  // break point encountered
-            Execution.pause();
-            if (Execution.playing)
-                Execution.continueBreakpoint = true;
-        }
-
-        Display.update();
-    }
-
-    static togglePlay() {
-        if (speed === maxSpeed) {
-            Execution.step(0);
-        } else if (Execution.playing) {
-            Execution.pause();
-        } else {
-            Execution.playing = true;
-            Execution.play();
-            playButton.innerHTML = Execution.getLabel();
-        }
-    }
-
-    static pause() {
-        Execution.playing = false;
-        Execution.paused = true;
-        playButton.innerHTML = "Continue"
-    }
-
-    static play() {
-        if (!Execution.playing) return;
-        Execution.step();
-        setTimeout(Execution.play, maxSpeed - speed);
-    }
-
-
     static setSpeed(newSpeed) {
         speed = newSpeed;
-        playButton.innerHTML = Execution.getLabel();
-    }
-
-    static getLabel() {
-        if (Execution.playing) return "Pause";
-        if (Execution.paused) return "Continue";
-        return (speed === maxSpeed) ? "Run" : "Play";
+        if (Execution.started) return;
+        playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
     }
 }
 

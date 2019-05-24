@@ -67,9 +67,7 @@ void init() {
 }
 
 int step(int step_size, bool cont_bkpt) {
-  static mem_addr prev_addr = PC;
   mem_addr addr = PC == 0 ? starting_address() : PC;
-
   if (step_size == 0) step_size = DEFAULT_RUN_STEPS;
 
   bool continuable, bp_encountered;
@@ -79,19 +77,15 @@ int step(int step_size, bool cont_bkpt) {
     error("Breakpoint encountered at 0x%08x\n", PC);
   }
 
-  if (!continuable)
-    printf("\n");
-
-  prev_addr = addr;
-
   if (!continuable) {
+    printf("\n");
     return 1; // finished
   }
 
   if (bp_encountered)
     return 2;
 
-  return 3;// no problem
+  return 3;
 }
 
 char *getText(mem_addr from, mem_addr to) {
