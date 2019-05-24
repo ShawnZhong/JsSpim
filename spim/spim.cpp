@@ -161,7 +161,7 @@ char *getUserStack() {
   return ss_to_string(&ss);
 }
 
-char *getGeneralRegVals() {
+char *getGeneralReg() {
   ss_clear(&ss);
 
   static reg_word prev_R[R_LENGTH];
@@ -180,7 +180,7 @@ char *getGeneralRegVals() {
   return ss_to_string(&ss);
 }
 
-char *getSpecialRegVals() {
+char *getSpecialReg() {
   ss_clear(&ss);
 
   static mem_word prev_values[7];

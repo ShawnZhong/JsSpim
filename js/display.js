@@ -15,8 +15,8 @@ class Display {
     static update() {
         stackDOM.innerHTML = Spim.getUserStack();
         dataDOM.innerHTML = Spim.getUserData();
-        generalRegDOM.innerHTML = Spim.getGeneralRegVals();
-        specialRegDOM.innerHTML = Spim.getSpecialRegVals();
+        generalRegDOM.innerHTML = Spim.getGeneralReg();
+        specialRegDOM.innerHTML = Spim.getSpecialReg();
         this.highlightInstruction();
     }
 

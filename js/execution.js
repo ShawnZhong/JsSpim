@@ -13,13 +13,12 @@ class Execution {
         memoryDOM.innerHTML = '';
 
         Execution.paused = false;
-        Execution.finished = false;
         Execution.playing = false;
         Execution.continueBreakpoint = false;
 
         stepButton.disabled = false;
         playButton.disabled = false;
-        playButton.innerHTML = Execution.getLabel();
+        playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
 
         Spim.init();
         Display.init();
@@ -28,25 +27,26 @@ class Execution {
     }
 
     static finish() {
-        Execution.playing = false;
-        Execution.finished = true;
+        Execution.pause();
 
         playButton.disabled = true;
         stepButton.disabled = true;
 
-        playButton.innerHTML = Execution.getLabel();
+        playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
     }
 
     static step(stepSize = 1) {
         const result = Spim.step(stepSize, Execution.playing ? Execution.continueBreakpoint : true);
 
-        if (Execution.continueBreakpoint) Execution.continueBreakpoint = false;
+        if (Execution.continueBreakpoint)
+            Execution.continueBreakpoint = false;
 
         if (result === 1)  // finished
             Execution.finish();
-        else if (result === 2 && Execution.playing) {  // break point encountered
+        else if (result === 2) {  // break point encountered
             Execution.pause();
-            Execution.continueBreakpoint = true;
+            if (Execution.playing)
+                Execution.continueBreakpoint = true;
         }
 
         Display.update();
@@ -59,25 +59,25 @@ class Execution {
             Execution.pause();
         } else {
             Execution.playing = true;
-            Execution.setSpeed();
             Execution.play();
+            playButton.innerHTML = Execution.getLabel();
         }
     }
 
     static pause() {
         Execution.playing = false;
         Execution.paused = true;
-        playButton.innerHTML = Execution.getLabel();
+        playButton.innerHTML = "Continue"
     }
 
     static play() {
-        if (!Execution.playing || Execution.finished) return;
+        if (!Execution.playing) return;
         Execution.step();
         setTimeout(Execution.play, maxSpeed - speed);
     }
 
 
-    static setSpeed(newSpeed = speed) {
+    static setSpeed(newSpeed) {
         speed = newSpeed;
         playButton.innerHTML = Execution.getLabel();
     }
@@ -85,8 +85,7 @@ class Execution {
     static getLabel() {
         if (Execution.playing) return "Pause";
         if (Execution.paused) return "Continue";
-        if (speed === maxSpeed) return "Run";
-        return "Play";
+        return (speed === maxSpeed) ? "Run" : "Play";
     }
 }
 

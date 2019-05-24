@@ -81,8 +81,8 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getKernelText', \
 					 '_getKernelData', \
 					 '_getUserStack', \
-					 '_getGeneralRegVals', \
-					 '_getSpecialRegVals', \
+					 '_getGeneralReg', \
+					 '_getSpecialReg', \
 					 '_getPC', \
 					 '_step', \
 					 '_init', \

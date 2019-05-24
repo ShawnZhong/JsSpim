@@ -36,8 +36,8 @@ function init() {
         addBreakpoint: cwrap('addBreakpoint', null, ['number']),
         deleteBreakpoint: cwrap('deleteBreakpoint', null, ['number']),
         getPC: cwrap('getPC', 'number'),
-        getGeneralRegVals: cwrap('getGeneralRegVals', 'string'),
-        getSpecialRegVals: cwrap('getSpecialRegVals', 'string'),
+        getGeneralReg: cwrap('getGeneralReg', 'string'),
+        getSpecialReg: cwrap('getSpecialReg', 'string'),
     };
 }
 
@@ -54,12 +54,12 @@ async function main(fileInput = `Tests/${fileList[0]}`) {
 async function loadData(fileInput) {
     if (fileInput instanceof File) { // local file
         const reader = new FileReader();
-        return await new Promise((resolve) => {
+        return new Promise((resolve) => {
             reader.onload = () => resolve(reader.result);
             reader.readAsArrayBuffer(fileInput);
         });
     } else { // remote file
         const response = await fetch(fileInput);
-        return await response.arrayBuffer();
+        return response.arrayBuffer();
     }
 }
