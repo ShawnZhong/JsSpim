@@ -2,7 +2,7 @@ const maxSpeed = Elements.speedSelector.max;
 let speed = Elements.speedSelector.value;
 
 class Execution {
-    static init() {
+    static init(reset = false) {
         Execution.started = false;
         Execution.playing = false;
         Execution.skipBreakpoint = false;
@@ -12,9 +12,7 @@ class Execution {
         Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
 
         Spim.init();
-        Display.init();
-        Display.update();
-        Display.update(); // to prevent highlight
+        Display.init(reset);
     }
 
     static step(stepSize = 1) {
@@ -71,6 +69,6 @@ class Execution {
     }
 }
 
-Elements.resetButton.onclick = Execution.init;
+Elements.resetButton.onclick = () => Execution.init(true);
 Elements.stepButton.onclick = () => Execution.step(1);
 Elements.playButton.onclick = Execution.togglePlay;

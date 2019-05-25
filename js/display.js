@@ -1,11 +1,26 @@
 class Display {
-    static init() {
+    static init(reset = false) {
         Elements.output.innerHTML = '';
         Elements.log.innerHTML = '';
-        Elements.text.innerHTML = '';
 
-        Display.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
-        Display.instructions.forEach(e => Elements.text.appendChild(e.node));
+        if (reset) {
+            Display.instructions.filter(e => e.breakpoint).forEach(e => e.removeBreakpoint());
+        } else {
+            Elements.text.innerHTML = '';
+
+            Display.instructions = Spim.getUserText().split("\n").slice(0, -1).map(e => new Instruction(e));
+            Display.instructions.forEach(e => Elements.text.appendChild(e.element));
+
+            Display.highlightCode();
+        }
+
+        Display.update();
+    }
+
+    static highlightCode() {
+        const worker = new Worker('js/highlight.min.js');
+        worker.onmessage = (event) => event.data.forEach((e, i) => Display.instructions[i].element.innerHTML = e);
+        worker.postMessage(Display.instructions.map(e => e.innerHTML));
     }
 
     static update() {
@@ -13,10 +28,8 @@ class Display {
         Elements.data.innerHTML = Spim.getUserData();
         Elements.generalReg.innerHTML = Spim.getGeneralReg();
         Elements.specialReg.innerHTML = Spim.getSpecialReg();
-        Display.highlightInstruction();
-    }
 
-    static highlightInstruction() {
+        // highlight instruction
         if (Display.highlighted)
             Display.highlighted.style.backgroundColor = null;
 
@@ -24,29 +37,50 @@ class Display {
         const instruction = Display.instructions[pc === 0 ? 0 : (pc - 0x400000) / 4];
         if (!instruction) return;
 
-        Display.highlighted = instruction.node;
+        Display.highlighted = instruction.element;
         Display.highlighted.style.backgroundColor = 'yellow';
         Display.highlighted.scrollIntoView(false);
     }
 }
 
 class Instruction {
-    constructor(instruction) {
-        this.instruction = instruction;
-        this.address = instruction.substr(1, 10);
+    constructor(text) {
         this.breakpoint = false;
+        this.address = text.substring(1, 11);
+        this.innerHTML = this.getInnerHTML(text);
+        this.element = this.getElement();
+    }
 
-        this.node = document.createElement("pre");
-        this.node.innerText = instruction.substring(0, 12) + instruction.substring(24);
-        this.node.onclick = () => {
+    getInnerHTML(text) {
+        const indexOfComma = text.indexOf(';');
+        const binary = text.substring(13, 23);
+        const instruction = indexOfComma > 0 ? text.substring(25, indexOfComma) : text.substring(25);
+        const comment = indexOfComma > 0 ? text.substring(indexOfComma) : "";
+
+        return `[${this.address}] ${instruction} ${comment}`
+    }
+
+    getElement() {
+        const element = document.createElement("pre");
+        element.innerHTML = this.innerHTML;
+        element.onclick = () => {
             this.breakpoint = !this.breakpoint;
-            if (this.breakpoint) {
-                Spim.addBreakpoint(this.address);
-                this.node.style.fontWeight = "bold";
-            } else {
-                Spim.deleteBreakpoint(this.address);
-                this.node.style.fontWeight = null;
-            }
+            if (this.breakpoint)
+                this.addBreakpoint();
+            else
+                this.removeBreakpoint();
         };
+
+        return element;
+    }
+
+    addBreakpoint() {
+        Spim.addBreakpoint(this.address);
+        this.element.style.fontWeight = "bold";
+    }
+
+    removeBreakpoint() {
+        Spim.deleteBreakpoint(this.address);
+        this.element.style.fontWeight = null;
     }
 }
