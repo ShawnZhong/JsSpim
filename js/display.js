@@ -14,7 +14,7 @@ class Display {
             Display.highlightCode();
         }
 
-        Display.update();
+        Display.update(reset);
     }
 
     static toggleInstructionBinary(showBinary) {
@@ -39,11 +39,11 @@ class Display {
         worker.postMessage(Display.instructions.map(e => e.element.innerHTML));
     }
 
-    static update() {
-        Elements.stack.innerHTML = Spim.getUserStack();
-        Elements.data.innerHTML = Spim.getUserData();
-        Elements.generalReg.innerHTML = Spim.getGeneralReg();
-        Elements.specialReg.innerHTML = Spim.getSpecialReg();
+    static update(computeDiff = true) {
+        Elements.stack.innerHTML = Spim.getUserStack(computeDiff);
+        Elements.data.innerHTML = Spim.getUserData(computeDiff);
+        Elements.generalReg.innerHTML = Spim.getGeneralReg(computeDiff);
+        Elements.specialReg.innerHTML = Spim.getSpecialReg(computeDiff);
 
         // highlight instruction
         if (Display.highlighted)

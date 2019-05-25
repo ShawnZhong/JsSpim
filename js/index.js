@@ -15,17 +15,20 @@ var Module = {
 function initSpim() {
     Spim = {
         init: cwrap('init'),
+        getPC: cwrap('getPC', 'number'),
         step: cwrap('step', 'number', ['number', 'boolean']),
-        getUserData: cwrap('getUserData', 'string'),
-        getUserText: cwrap('getUserText', 'string'),
-        getKernelText: cwrap('getKernelText', 'string'),
+
+        getGeneralReg: cwrap('getGeneralReg', 'string', ['boolean']),
+        getSpecialReg: cwrap('getSpecialReg', 'string', ['boolean']),
+
+        getUserData: cwrap('getUserData', 'string', ['boolean']),
+        getUserText: cwrap('getUserText', 'string', ['boolean']),
         getKernelData: cwrap('getKernelData', 'string'),
-        getUserStack: cwrap('getUserStack', 'string'),
+        getKernelText: cwrap('getKernelText', 'string'),
+        getUserStack: cwrap('getUserStack', 'string', ['boolean']),
+        
         addBreakpoint: cwrap('addBreakpoint', null, ['number']),
         deleteBreakpoint: cwrap('deleteBreakpoint', null, ['number']),
-        getPC: cwrap('getPC', 'number'),
-        getGeneralReg: cwrap('getGeneralReg', 'string'),
-        getSpecialReg: cwrap('getSpecialReg', 'string'),
     };
 }
 

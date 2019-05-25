@@ -57,12 +57,20 @@ bool mapped_io;            /* => activate memory-mapped IO */
 int spim_return_value;        /* Value returned when spim exits */
 
 extern "C" {
-static str_stream ss;
+
+str_stream ss;
+mem_word *prev_data_seg;
+mem_addr prev_data_top;
 
 void init() {
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
   initialize_run_stack(0, nullptr);
   read_assembly_file("input.s");
+
+  if (prev_data_top != data_top) {
+    prev_data_seg = (mem_word *) calloc(data_top - DATA_BOT, 1);
+  }
+  prev_data_top = data_top;
 }
 
 int step(int step_size, bool cont_bkpt) {
@@ -72,9 +80,9 @@ int step(int step_size, bool cont_bkpt) {
   bool continuable, bp_encountered;
   bp_encountered = run_program(addr, step_size, false, cont_bkpt, &continuable);
 
-  if (!continuable) {
+  if (!continuable) { // finished
     printf("\n");
-    return 0; // finished
+    return 0;
   }
 
   if (bp_encountered) {
@@ -100,17 +108,13 @@ char *getKernelData() {
   return ss_to_string(&ss);
 }
 
-char *getUserData() {
+char *getUserData(bool compute_diff) {
   ss_clear(&ss);
-
-  static mem_word *prev_data_seg = (mem_word *) calloc(data_top - DATA_BOT, 1);
-  static mem_addr prev_data_top = data_top;
-  static bool prev_initialized = false;
 
   for (mem_addr i = DATA_BOT; i < data_top; i += BYTES_PER_WORD) {
     int index = (i - DATA_BOT) / 4;
     if (data_seg[index] == 0) continue;
-    if (prev_initialized && data_seg[index] != prev_data_seg[index])
+    if (compute_diff && data_seg[index] != prev_data_seg[index])
       ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), i, data_seg[index]);
     else
       ss_printf(&ss, PRE("[0x%08x] 0x%08x"), i, data_seg[index]);
@@ -122,23 +126,21 @@ char *getUserData() {
   }
 
   prev_data_top = data_top;
-  prev_initialized = true;
 
   return ss_to_string(&ss);
 }
 
-char *getUserStack() {
+char *getUserStack(bool compute_diff) {
   ss_clear(&ss);
 
   static mem_addr prev_stack_bottom;
   static mem_word prev_stack_seg[STACK_LIMIT];
-  static bool prev_initialized = false;
 
   mem_addr curr_stack_bottom = ROUND_DOWN(R[29], BYTES_PER_WORD);
 
   for (mem_addr i = curr_stack_bottom; i < STACK_TOP; i += BYTES_PER_WORD) {
     int index = (i - stack_bot) / 4;
-    if (prev_initialized && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
+    if (compute_diff && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
       ss_printf(&ss, PRE_H("0x%08x"), stack_seg[index]);
     else
       ss_printf(&ss, PRE("0x%08x"), stack_seg[index]);
@@ -147,48 +149,43 @@ char *getUserStack() {
   }
 
   prev_stack_bottom = curr_stack_bottom;
-  prev_initialized = true;
 
   return ss_to_string(&ss);
 }
 
-char *getGeneralReg() {
+char *getGeneralReg(bool compute_diff) {
   ss_clear(&ss);
 
   static reg_word prev_R[R_LENGTH];
-  static bool prev_initialized = false;
 
   for (int i = 0; i < R_LENGTH; i++) {
-    if (prev_initialized && R[i] != prev_R[i])
+    if (compute_diff && R[i] != prev_R[i])
       ss_printf(&ss, PRE_H("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
     else
       ss_printf(&ss, PRE("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
   }
 
   memcpy(prev_R, R, sizeof(prev_R));
-  prev_initialized = true;
 
   return ss_to_string(&ss);
 }
 
-char *getSpecialReg() {
+char *getSpecialReg(bool compute_diff) {
   ss_clear(&ss);
 
   static mem_word prev_values[7];
-  static bool prev_initialized = false;
 
   const char *names[]{"PC", "EPC", "Cause", "BadVAddr", "Status", "HI", "LO"};
   mem_word values[]{(mem_word) PC, CP0_EPC, CP0_Cause, CP0_BadVAddr, CP0_Status, HI, LO};
 
   for (int i = 0; i < 7; ++i) {
-    if (prev_initialized && values[i] != prev_values[i])
+    if (compute_diff && values[i] != prev_values[i])
       ss_printf(&ss, PRE_H("%-8s = %08x"), names[i], values[i]);
     else
       ss_printf(&ss, PRE("%-8s = %08x"), names[i], values[i]);
   }
 
   memcpy(prev_values, values, sizeof(prev_values));
-  prev_initialized = true;
 
   return ss_to_string(&ss);
 }
