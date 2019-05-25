@@ -17,10 +17,26 @@ class Display {
         Display.update();
     }
 
+    static toggleInstructionBinary(showBinary) {
+        Display.instructions.forEach(e => {
+            e.showBinary = showBinary;
+            e.element.innerHTML = e.getInnerHTML();
+        });
+        Display.highlightCode()
+    }
+
+    static toggleInstructionComment(showComment) {
+        Display.instructions.forEach(e => {
+            e.showComment = showComment;
+            e.element.innerHTML = e.getInnerHTML();
+        });
+        Display.highlightCode()
+    }
+
     static highlightCode() {
         const worker = new Worker('js/highlight.min.js');
         worker.onmessage = (event) => event.data.forEach((e, i) => Display.instructions[i].element.innerHTML = e);
-        worker.postMessage(Display.instructions.map(e => e.innerHTML));
+        worker.postMessage(Display.instructions.map(e => e.element.innerHTML));
     }
 
     static update() {
@@ -45,24 +61,37 @@ class Display {
 
 class Instruction {
     constructor(text) {
+        this.text = text;
+
         this.breakpoint = false;
+        this.showBinary = false;
+        this.showComment = true;
+        this.showInstruction = true;
+
         this.address = text.substring(1, 11);
-        this.innerHTML = this.getInnerHTML(text);
         this.element = this.getElement();
     }
 
-    getInnerHTML(text) {
-        const indexOfComma = text.indexOf(';');
-        const binary = text.substring(13, 23);
-        const instruction = indexOfComma > 0 ? text.substring(25, indexOfComma) : text.substring(25);
-        const comment = indexOfComma > 0 ? text.substring(indexOfComma) : "";
+    getInnerHTML() {
+        const indexOfComma = this.text.indexOf(';');
 
-        return `[${this.address}] ${instruction} ${comment}`
+        let result = `[${this.address}] `;
+
+        if (this.showBinary)
+            result += this.text.substring(13, 24);
+
+        if (this.showInstruction)
+            result += indexOfComma > 0 ? this.text.substring(24, indexOfComma) : this.text.substring(24);
+
+        if (this.showComment && indexOfComma > 0)
+            result += this.text.substring(indexOfComma);
+
+        return result;
     }
 
     getElement() {
         const element = document.createElement("pre");
-        element.innerHTML = this.innerHTML;
+        element.innerHTML = this.getInnerHTML();
         element.onclick = () => {
             this.breakpoint = !this.breakpoint;
             if (this.breakpoint)

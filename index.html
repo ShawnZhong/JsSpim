@@ -40,12 +40,14 @@
         </label>
 
         <label>
-            <input id="toggle-instruction-value" type="checkbox">
+            <input id="toggle-instruction-value" type="checkbox"
+                   onchange="Display.toggleInstructionBinary(this.checked)">
             instruction value
         </label>
 
         <label>
-            <input id="toggle-comment" type="checkbox">
+            <input id="toggle-comment" type="checkbox" checked
+                   onchange="Display.toggleInstructionComment(this.checked)">
             comment
         </label>
     </fieldset>
