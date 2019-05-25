@@ -35,19 +35,19 @@ class InstructionUtils {
     }
 
     static toggleInstructionBinary(showBinary) {
-        Display.instructions.forEach(e => {
+        InstructionUtils.instructions.forEach(e => {
             e.showBinary = showBinary;
             e.element.innerHTML = e.getInnerHTML();
         });
-        Display.formatCode()
+        InstructionUtils.formatCode()
     }
 
     static toggleInstructionComment(showComment) {
-        Display.instructions.forEach(e => {
+        InstructionUtils.instructions.forEach(e => {
             e.showComment = showComment;
             e.element.innerHTML = e.getInnerHTML();
         });
-        Display.formatCode()
+        InstructionUtils.formatCode()
     }
 }
 
