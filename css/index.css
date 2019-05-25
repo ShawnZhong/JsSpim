@@ -1,9 +1,14 @@
 body {
     font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    height: 100%;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-areas: "header header header header" "reg text data stack" "footer footer footer footer";
+    grid-template-rows: min-content min-content min-content;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    justify-content: stretch;
 }
 
 pre {
@@ -15,38 +20,53 @@ pre {
     overflow: auto;
 }
 
-.group {
+#toolbar-group {
+    grid-area: header;
     display: flex;
     justify-content: space-around;
 }
 
-
-#main-group {
-    flex-grow: 1;
+#regs-panel {
+    grid-area: reg;
 }
 
-#main-group .content {
-    max-height: 70vh;
-    width: min-content;
+#text-panel {
+    grid-area: text;
 }
+
+#data-panel {
+    grid-area: data;
+}
+
+#stack-panel {
+    grid-area: stack;
+}
+
+.content {
+    max-height: 65vh;
+}
+
+#footer {
+    grid-area: footer;
+    display: flex;
+}
+
+#output-panel {
+    flex: 1;
+}
+
+#log-panel {
+    flex: 1;
+}
+
 
 /* align stack to the bottom */
-#main-group #stack-panel {
+#stack-panel {
     position: relative;
 }
 
-#main-group #stack-content {
+#stack-content {
     position: absolute;
     height: min-content;
     bottom: 0;
-}
-
-#info-group .panel {
-    display: inline;
-    width: 50%;
-}
-
-#info-group .content {
-    height: 20vh;
-    overflow: auto;
 }
