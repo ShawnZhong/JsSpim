@@ -141,9 +141,9 @@ char *getUserStack(bool compute_diff) {
   for (mem_addr i = curr_stack_bottom; i < STACK_TOP; i += BYTES_PER_WORD) {
     int index = (i - stack_bot) / 4;
     if (compute_diff && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
-      ss_printf(&ss, PRE_H("0x%08x"), stack_seg[index]);
+      ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), index, stack_seg[index]);
     else
-      ss_printf(&ss, PRE("0x%08x"), stack_seg[index]);
+      ss_printf(&ss, PRE("[0x%08x] 0x%08x"), index, stack_seg[index]);
 
     prev_stack_seg[index] = stack_seg[index];
   }
