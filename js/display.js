@@ -1,10 +1,7 @@
 class Display {
     static init(reset = false) {
-        Elements.output.innerHTML = '';
-        Elements.log.innerHTML = '';
-
         if (reset) {
-            Display.instructions.filter(e => e.breakpoint).forEach(e => e.removeBreakpoint());
+            Display.instructions.filter(e => e.breakpoint).forEach(e => e.element.style.fontWeight = null);
         } else {
             Elements.text.innerHTML = '';
 

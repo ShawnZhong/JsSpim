@@ -11,6 +11,9 @@ class Execution {
         Elements.playButton.disabled = false;
         Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
 
+        Elements.output.innerHTML = '';
+        Elements.log.innerHTML = '';
+
         Spim.init();
         Display.init(reset);
     }
