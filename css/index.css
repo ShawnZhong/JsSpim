@@ -6,8 +6,7 @@ body {
 
     display: grid;
     grid-template-areas: "header header header header" "reg text data stack" "footer footer footer footer";
-    grid-template-rows: min-content 70vh 20vh;
-    grid-template-columns: min-content min-content min-content min-content;
+    grid-template-rows: min-content minmax(0, 75vh) 11rem;
     align-items: stretch;
     justify-content: space-around;
 }
@@ -25,13 +24,12 @@ pre {
 
 .content {
     overflow: auto;
-    /*max-height: 60vh;*/
 }
 
 #toolbar-group {
     grid-area: header;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 #regs-panel {
@@ -47,7 +45,6 @@ pre {
 }
 
 #stack-panel {
-    align-self: baseline;
     grid-area: stack;
 }
 
@@ -55,6 +52,11 @@ pre {
     height: 100%;
     display: flex;
     align-items: flex-end;
+}
+
+#stack-content {
+    max-height: 100%;
+    overflow: auto;
 }
 
 #footer {

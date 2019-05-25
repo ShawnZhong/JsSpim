@@ -59,18 +59,11 @@ int spim_return_value;        /* Value returned when spim exits */
 extern "C" {
 
 str_stream ss;
-mem_word *prev_data_seg;
-mem_addr prev_data_top;
 
 void init() {
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
   initialize_run_stack(0, nullptr);
   read_assembly_file("input.s");
-
-  if (prev_data_top != data_top) {
-    prev_data_seg = (mem_word *) calloc(data_top - DATA_BOT, 1);
-  }
-  prev_data_top = data_top;
 }
 
 int step(int step_size, bool cont_bkpt) {
@@ -108,23 +101,39 @@ char *getKernelData() {
   return ss_to_string(&ss);
 }
 
+mem_word *prev_data_seg;
+mem_addr prev_data_top;
+
+bool isUserDataChanged() {
+  if (prev_data_top != data_top)
+    return true;
+
+  for (int i = 0; i < (data_top - DATA_BOT) / 4; ++i)
+    if (data_seg[i] != prev_data_seg[i])
+      return true;
+
+  return false;
+}
+
 char *getUserData(bool compute_diff) {
   ss_clear(&ss);
 
-  for (mem_addr i = DATA_BOT; i < data_top; i += BYTES_PER_WORD) {
-    int index = (i - DATA_BOT) / 4;
-    if (data_seg[index] == 0) continue;
-    if (compute_diff && data_seg[index] != prev_data_seg[index])
-      ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), i, data_seg[index]);
-    else
-      ss_printf(&ss, PRE("[0x%08x] 0x%08x"), i, data_seg[index]);
-    prev_data_seg[index] = data_seg[index];
+  for (mem_addr addr = DATA_BOT; addr < data_top; addr += BYTES_PER_WORD) {
+    int i = (addr - DATA_BOT) / 4;
+    if (data_seg[i] == 0) continue;
+    if (compute_diff && (data_seg[i] != prev_data_seg[i] || addr > prev_data_top)) {
+      ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), addr, data_seg[i]);
+    } else {
+      ss_printf(&ss, PRE("[0x%08x] 0x%08x"), addr, data_seg[i]);
+    }
   }
 
   if (prev_data_top != data_top) {
+    free(prev_data_seg);
     prev_data_seg = (mem_word *) malloc(data_top - DATA_BOT);
   }
 
+  memcpy(prev_data_seg, data_seg, data_top - DATA_BOT);
   prev_data_top = data_top;
 
   return ss_to_string(&ss);

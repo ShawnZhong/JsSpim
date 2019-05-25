@@ -1,21 +1,24 @@
-const maxSpeed = Elements.speedSelector.max;
-let speed = Elements.speedSelector.value;
-
 class Execution {
     static init(reset = false) {
+        Execution.maxSpeed = Elements.speedSelector.max;
+        Execution.speed = Elements.speedSelector.value;
+
         Execution.started = false;
         Execution.playing = false;
         Execution.skipBreakpoint = false;
 
         Elements.stepButton.disabled = false;
         Elements.playButton.disabled = false;
-        Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
+        Elements.playButton.innerHTML = (Execution.speed === Execution.maxSpeed) ? "Run" : "Play";
 
         Elements.output.innerHTML = '';
         Elements.log.innerHTML = '';
 
         Spim.init();
-        Display.init(reset);
+        if (reset)
+            Display.reset();
+        else
+            Display.init();
     }
 
     static step(stepSize = 1) {
@@ -48,11 +51,11 @@ class Execution {
 
     static play() {
         if (!Execution.playing) return;
-        if (speed === maxSpeed) {
+        if (Execution.speed === Execution.maxSpeed) {
             Execution.step(0);
         } else {
             Execution.step();
-            setTimeout(Execution.play, maxSpeed - speed);
+            setTimeout(Execution.play, Execution.maxSpeed - Execution.speed);
         }
     }
 
@@ -62,16 +65,16 @@ class Execution {
         Elements.playButton.disabled = true;
         Elements.stepButton.disabled = true;
 
-        Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
+        Elements.playButton.innerHTML = (Execution.speed === Execution.maxSpeed) ? "Run" : "Play";
     }
 
     static setSpeed(newSpeed) {
-        speed = newSpeed;
+        Execution.speed = newSpeed;
         if (Execution.started) return;
-        Elements.playButton.innerHTML = (speed === maxSpeed) ? "Run" : "Play";
+        Elements.playButton.innerHTML = (Execution.speed === Execution.maxSpeed) ? "Run" : "Play";
     }
 }
 
 Elements.resetButton.onclick = () => Execution.init(true);
 Elements.stepButton.onclick = () => Execution.step(1);
-Elements.playButton.onclick = Execution.togglePlay;
+Elements.playButton.onclick = () => Execution.togglePlay();

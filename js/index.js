@@ -21,6 +21,8 @@ function initSpim() {
         getGeneralReg: cwrap('getGeneralReg', 'string', ['boolean']),
         getSpecialReg: cwrap('getSpecialReg', 'string', ['boolean']),
 
+        isUserDataChanged: cwrap('isUserDataChanged', 'boolean'),
+
         getUserData: cwrap('getUserData', 'string', ['boolean']),
         getUserText: cwrap('getUserText', 'string', ['boolean']),
         getKernelData: cwrap('getKernelData', 'string'),

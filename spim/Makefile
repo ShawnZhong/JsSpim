@@ -87,7 +87,8 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_step', \
 					 '_init', \
 					 '_addBreakpoint', \
-					 '_deleteBreakpoint'
+					 '_deleteBreakpoint', \
+					 '_isUserDataChanged'
 LDFLAGS += -lm -O2 --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s\
 			-s ENVIRONMENT=web \
 			-s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"\
