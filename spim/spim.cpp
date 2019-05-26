@@ -127,9 +127,15 @@ char *getUserData(bool compute_diff) {
     int i = (addr - DATA_BOT) / 4;
     if (data_seg[i] == 0) continue;
     if (compute_diff && (data_seg[i] != prev_data_seg[i] || addr > prev_data_top)) {
-      ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), addr, data_seg[i]);
+      ss_printf(&ss,
+                PRE_H("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
+                addr,
+                data_seg[i]);
     } else {
-      ss_printf(&ss, PRE("[0x%08x] 0x%08x"), addr, data_seg[i]);
+      ss_printf(&ss,
+                PRE("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
+                addr,
+                data_seg[i]);
     }
   }
 
@@ -155,9 +161,15 @@ char *getUserStack(bool compute_diff) {
   for (mem_addr i = curr_stack_bottom; i < STACK_TOP; i += BYTES_PER_WORD) {
     int index = (i - stack_bot) / 4;
     if (compute_diff && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
-      ss_printf(&ss, PRE_H("[0x%08x] 0x%08x"), index, stack_seg[index]);
+      ss_printf(&ss,
+                PRE_H("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
+                index,
+                stack_seg[index]);
     else
-      ss_printf(&ss, PRE("[0x%08x] 0x%08x"), index, stack_seg[index]);
+      ss_printf(&ss,
+                PRE("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
+                index,
+                stack_seg[index]);
 
     prev_stack_seg[index] = stack_seg[index];
   }

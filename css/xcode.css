@@ -4,19 +4,6 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
 
 */
 
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: #fff;
-  color: black;
-}
-
-/* Gray DOCTYPE selectors like WebKit */
-.xml .hljs-meta {
-  color: #c0c0c0;
-}
-
 .hljs-comment,
 .hljs-quote {
   color: #007400;
@@ -69,7 +56,7 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
 }
 
 .hljs-attr {
-  color: #836C28;
+  color: rgb(71, 170, 149);
 }
 
 .hljs-subst {
