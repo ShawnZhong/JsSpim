@@ -17,11 +17,11 @@
         <input id="file-upload" onChange="main(this.files[0])" type="file"/>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="execution-fieldset">
         <legend>Execution:</legend>
         Speed:
-        <input type="range" id="speed-selector" value="200" max="200" oninput="Execution.setSpeed(this.value)">
-        <button id="play-button">Run</button>
+        <input type="range" id="speed-selector" value="195" max="200" oninput="Execution.setSpeed(this.value)">
+        <button id="play-button">Play</button>
         <button id="step-button">Step</button>
         <button id="reset-button">Reset</button>
     </fieldset>
@@ -44,11 +44,9 @@
                    onchange="InstructionUtils.toggleInstructionBinary(this.checked)">
             instruction value
         </label>
-
-        <label>
-            <input id="toggle-comment" type="checkbox" checked
-                   onchange="InstructionUtils.toggleInstructionComment(this.checked)">
-            comment
+        <label> <input id="toggle-comment" type="checkbox" checked
+                       onchange="InstructionUtils.toggleInstructionComment(this.checked)">
+            source code
         </label>
     </fieldset>
 
@@ -83,7 +81,7 @@
 
     </div>
 
-    <div id="text-panel" class="panel">
+    <div id="text-panel" class="panel" title="Click to toggle breakpoint">
         <h1>Text</h1>
         <div id="text-content" class="content"></div>
     </div>
@@ -131,7 +129,7 @@
         doubleReg: document.getElementById('double-regs'),
     });
 
-    const fileList = ['float.s', 'fib.s', 'helloworld.s', 'tt.core.s', 'data_seg.s'];
+    const fileList = ['fib.s', 'fib.s', 'read.s', 'tt.core.s', 'data_seg.s'];
     fileList.forEach(filename => {
         const option = document.createElement("option");
         option.text = filename;

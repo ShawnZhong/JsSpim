@@ -11,7 +11,7 @@ body {
 
     display: grid;
     grid-template-areas: "toolbar" "main" "footer";
-    grid-template-rows: min-content 75vh auto;
+    grid-template-rows: min-content 75vh 11rem;
 }
 
 .panel {
@@ -22,6 +22,7 @@ body {
 
 .content {
     overflow: auto;
+    width: min-content;
 }
 
 #main {
@@ -36,6 +37,11 @@ body {
     grid-area: toolbar;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#execution-fieldset button {
+    width: 9ch;
 }
 
 #regs-panel {
@@ -71,6 +77,10 @@ body {
 
 #footer {
     grid-area: footer;
-    display: grid;
-    grid-template-columns: auto auto;
+    display: flex;
 }
+
+#footer .panel {
+    flex: 1;
+}
+

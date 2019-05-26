@@ -1,172 +1,104 @@
 .text
-fib:
-	sw    $ra, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	sw    $fp, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	subu  $sp, $sp, 0
-	addu  $fp, $sp, 8
-
-	lw    $v0, 4($fp)
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	li    $v0, 0
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v1, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	seq   $v0, $v0, $v1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	li    $v1, 1
-	beq   $v0, $v1, .L2
-	lw    $v0, 4($fp)
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	li    $v0, 1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v1, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	seq   $v0, $v0, $v1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	j     .L1
-.L2: 
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-.L1: 
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	li    $v1, 0
-	beq   $v0, $v1, .L0
-	li    $v0, 1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	j     _fib_exit
-
-.L0: 
-	lw    $v0, 4($fp)
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	li    $v0, 1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v1, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	sub   $v0, $v0, $v1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	jal   fib
-	lw    $v0, 4($fp)
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	li    $v0, 2
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v1, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	sub   $v0, $v0, $v1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	jal   fib
-	lw    $v1, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	add   $v0, $v0, $v1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-
-	j     _fib_exit
-
-_fib_exit:
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $ra, 0($fp)
-	move  $t0, $fp
-	lw    $fp, -4($fp)
-	move  $sp, $t0
-	addi  $sp, $sp, 4
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	jr    $ra
-
-.text
 main:
-__start:
-	sw    $ra, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	sw    $fp, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	subu  $sp, $sp, 4
-	addu  $fp, $sp, 12
+la $a0, prompt1
+li $v0, 4           # print
+syscall
 
-	li    $v0, 0
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	sw    $v0, -8($fp)
+la $a0, prompt2
+li $v0, 4           # print
+syscall
 
-.L4: 
-	lw    $v0, -8($fp)
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
+li $v0, 5           # read int
+syscall
 
-	li    $v0, 20
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v1, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	slt   $v0, $v0, $v1
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
-	lw    $v0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	li    $v1, 0
-	beq   $v0, $v1, .L3
-	lw    $v0, -8($fp)
-	sw    $v0, 0($sp)	#PUSH
-	subu  $sp, $sp, 4
+move $t4, $v0       # $t4 <- n
+addi $t4, $t4, 1
 
-	jal   fib
-	lw    $a0, 4($sp)	#POP
-	addu  $sp, $sp, 4
-	li    $v0, 1
-	syscall
+li $t2, 1           # $t2 is an index i
+
+loop:
+move $a0, $t2
+move $v0, $t2
+jal fib             # call fib (n)
+move $t3, $v0       # result is in $t3
+
+# Output message and n
+la $a0, result      # Print F_
+li $v0, 4
+syscall
+
+move $a0, $t2       # Print n
+li $v0, 1
+syscall
+
+la $a0, result2     # Print =
+li $v0, 4
+syscall
+
+move $a0, $t3       # Print the answer
+li $v0, 1
+syscall
+
+la $a0, endl        # Print '\n'
+li $v0, 4
+syscall
+
+addi $t2, $t2, 1    # i++
+bne $t2, $t4, loop
+
+# End program
+li $v0, 10
+syscall
+
+fib:
+# Compute and return fibonacci number
+beqz $a0, zero      # if n == 0 return 0
+beq $a0, 1, one     # if n == 1 return 1
+
+# Calling fib(n-1)
+sub $sp, $sp, 4     # storing return address
+sw $ra, 0($sp)
+
+sub $a0, $a0, 1     # n-1
+jal fib             # fib(n-1)
+add $a0, $a0, 1
+
+lw $ra, 0($sp)      # restoring return address
+add $sp, $sp, 4
+
+
+sub $sp, $sp, 4     # Push return value
+sw $v0, 0($sp)
+
+# Calling fib(n-2)
+sub $sp, $sp, 4     # storing return address
+sw $ra, 0($sp)
+
+sub $a0, $a0, 2     # n = n-2
+jal fib             # call fib(n-2)
+add $a0, $a0, 2
+
+lw $ra, 0($sp)      # restoring return address
+add $sp, $sp, 4
+# ---------------
+lw $s7, 0($sp)      # Pop return value
+add $sp, $sp, 4
+
+add $v0, $v0, $s7   # f(n - 2)+fib(n-1)
+
+jr $ra              # decrement/next in stack
+
+zero:
+li $v0, 0
+jr $ra
+
+one:
+li $v0, 1
+jr $ra
 
 .data
-.L5: .asciiz "\n"
-.text
-	la    $a0, .L5
-	li    $v0, 4
-	syscall
-
-	lw    $v0, -8($fp)
-	addi  $v0, $v0, 1
-	sw    $v0, -8($fp)
-
-	j     .L4
-.L3: 
-_main_exit:
-	li    $v0, 10
-	syscall
+prompt1: .asciiz "This program calculates Fibonacci sequence from 1 to n.\n"
+prompt2: .asciiz "Enter a non-negative number n: \n"
+result: .asciiz "F_"
+result2: .asciiz " = "
+endl: .asciiz "\n"

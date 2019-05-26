@@ -70,7 +70,7 @@ class Instruction {
 
         this.indexOfComma = this.text.indexOf(';');
 
-        this.element.innerHTML = `[<span class="hljs-attr">${this.address}</span>]`;
+        this.element.innerHTML = `[<span class="hljs-attr">${this.address}</span>] `;
 
         this.binaryElement = document.createElement("span");
         this.binaryElement.innerText = this.getBinaryInnerText();
