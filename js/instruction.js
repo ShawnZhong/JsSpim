@@ -5,7 +5,7 @@ class InstructionUtils {
     static showInstructions() {
         Elements.text.innerHTML = '';
 
-        InstructionUtils.instructions = Spim.getUserText().split("\n").slice(0, -1).map(e => new Instruction(e));
+        InstructionUtils.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
         InstructionUtils.instructions.forEach(e => Elements.text.appendChild(e.element));
 
         InstructionUtils.formatCode();
@@ -60,12 +60,19 @@ class Instruction {
         this.showComment = true;
         this.showInstruction = true;
 
-        this.address = text.substring(1, 11);
+
         this.element = this.getElement();
     }
 
     getElement() {
         const element = document.createElement("pre");
+
+        if (this.text.length === 0) {
+            element.innerHTML = " ";
+            return element;
+        }
+
+        this.address = this.text.substring(1, 11);
         element.innerHTML = this.getInnerHTML();
         element.onclick = () => {
             if (this.isBreakpoint)

@@ -30,6 +30,9 @@
    OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "emscripten/bind.h"
+#include "emscripten/val.h"
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -45,6 +48,8 @@
 
 #define PRE(text)  "<pre>" text "</pre>"
 #define PRE_H(text) "<pre style='background-color: yellow;'>" text "</pre>"
+
+using namespace emscripten;
 
 bool bare_machine;        /* => simulate bare machine */
 bool delayed_branches;        /* => simulate delayed branches */
@@ -162,47 +167,38 @@ char *getUserStack(bool compute_diff) {
   return ss_to_string(&ss);
 }
 
-char *getGeneralReg(bool compute_diff) {
-  ss_clear(&ss);
-
-  static reg_word prev_R[R_LENGTH];
-
-  for (int i = 0; i < R_LENGTH; i++) {
-    if (compute_diff && R[i] != prev_R[i])
-      ss_printf(&ss, PRE_H("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
-    else
-      ss_printf(&ss, PRE("R%-2d (%2s) = %08x"), i, int_reg_names[i], R[i]);
-  }
-
-  memcpy(prev_R, R, sizeof(prev_R));
-
-  return ss_to_string(&ss);
-}
-
-char *getSpecialReg(bool compute_diff) {
-  ss_clear(&ss);
-
-  static mem_word prev_values[7];
-
-  const char *names[]{"PC", "EPC", "Cause", "BadVAddr", "Status", "HI", "LO"};
-  mem_word values[]{(mem_word) PC, CP0_EPC, CP0_Cause, CP0_BadVAddr, CP0_Status, HI, LO};
-
-  for (int i = 0; i < 7; ++i) {
-    if (compute_diff && values[i] != prev_values[i])
-      ss_printf(&ss, PRE_H("%-8s = %08x"), names[i], values[i]);
-    else
-      ss_printf(&ss, PRE("%-8s = %08x"), names[i], values[i]);
-  }
-
-  memcpy(prev_values, values, sizeof(prev_values));
-
-  return ss_to_string(&ss);
-}
-
 int getPC() { return PC; }
 void addBreakpoint(mem_addr addr) { add_breakpoint(addr); }
 void deleteBreakpoint(mem_addr addr) { delete_breakpoint(addr); }
 }
+
+val getGeneralRegVals() { return val(typed_memory_view(32, R)); }
+EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
+
+val getFloatRegVals() { return val(typed_memory_view(32, (float *) FPR)); }
+EMSCRIPTEN_BINDINGS(getFloatRegVals) { function("getFloatRegVals", &getFloatRegVals); }
+
+val getDoubleRegVals() { return val(typed_memory_view(16, (double *) FPR)); }
+EMSCRIPTEN_BINDINGS(getDoubleRegVals) { function("getDoubleRegVals", &getDoubleRegVals); }
+
+val getSpecialRegVals() {
+  static int specialRegs[12];
+  specialRegs[0] = PC;
+  specialRegs[1] = CP0_EPC;
+  specialRegs[2] = CP0_Cause;
+  specialRegs[3] = CP0_BadVAddr;
+  specialRegs[4] = CP0_Status;
+  specialRegs[5] = HI;
+  specialRegs[6] = LO;
+  specialRegs[7] = FIR;
+  specialRegs[8] = FCSR;
+  specialRegs[9] = FCCR;
+  specialRegs[10] = FEXR;
+  specialRegs[11] = FENR;
+
+  return val(typed_memory_view(12, specialRegs));
+}
+EMSCRIPTEN_BINDINGS(getSpecialRegVals) { function("getSpecialRegVals", &getSpecialRegVals); }
 
 /* Print an error message. */
 

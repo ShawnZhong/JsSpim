@@ -18,17 +18,18 @@ function initSpim() {
         getPC: cwrap('getPC', 'number'),
         step: cwrap('step', 'number', ['number', 'boolean']),
 
-        getGeneralReg: cwrap('getGeneralReg', 'string', ['boolean']),
-        getSpecialReg: cwrap('getSpecialReg', 'string', ['boolean']),
-
         isUserDataChanged: cwrap('isUserDataChanged', 'boolean'),
 
+        getGeneralRegVals: Module.getGeneralRegVals,
+        getSpecialRegVals: Module.getSpecialRegVals,
+        getFloatRegVals: Module.getFloatRegVals,
+        getDoubleRegVals: Module.getDoubleRegVals,
+        
         getUserData: cwrap('getUserData', 'string', ['boolean']),
         getUserText: cwrap('getUserText', 'string', ['boolean']),
         getKernelData: cwrap('getKernelData', 'string'),
         getKernelText: cwrap('getKernelText', 'string'),
         getUserStack: cwrap('getUserStack', 'string', ['boolean']),
-        
         addBreakpoint: cwrap('addBreakpoint', null, ['number']),
         deleteBreakpoint: cwrap('deleteBreakpoint', null, ['number']),
     };

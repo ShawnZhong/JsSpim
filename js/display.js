@@ -1,5 +1,6 @@
 class Display {
     static init() {
+        RegisterUtils.init();
         InstructionUtils.showInstructions();
         Display.update(false, true);
     }
@@ -15,9 +16,7 @@ class Display {
         if (forceUpdate || Spim.isUserDataChanged())
             Elements.data.innerHTML = Spim.getUserData(compareDiff);
 
-        Elements.generalReg.innerHTML = Spim.getGeneralReg(compareDiff);
-        Elements.specialReg.innerHTML = Spim.getSpecialReg(compareDiff);
-
+        RegisterUtils.update();
         InstructionUtils.highlightCurrentInstruction()
     }
 }

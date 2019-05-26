@@ -81,15 +81,14 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getKernelText', \
 					 '_getKernelData', \
 					 '_getUserStack', \
-					 '_getGeneralReg', \
-					 '_getSpecialReg', \
 					 '_getPC', \
 					 '_step', \
 					 '_init', \
 					 '_addBreakpoint', \
 					 '_deleteBreakpoint', \
 					 '_isUserDataChanged'
-LDFLAGS += -lm -O2 --preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s\
+LDFLAGS += -lm -O2 --bind\
+			--preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s\
 			-s ENVIRONMENT=web \
 			-s EXPORTED_FUNCTIONS="[$(EXPORTED_FUNCTIONS)]"\
 			-s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']"
