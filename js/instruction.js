@@ -1,11 +1,11 @@
 const worker = new Worker('js/highlight.min.js');
-worker.onmessage = (event) => event.data.forEach((e, i) => InstructionUtils.instructions[i].element.innerHTML = e);
+worker.onmessage = (event) => event.data.forEach((e, i) => InstructionUtils.instructions[i].instructionElement.innerHTML = e);
 
 class InstructionUtils {
     static showInstructions() {
         Elements.text.innerHTML = '';
 
-        InstructionUtils.instructions = Spim.getUserText().split("\n").map(e => new Instruction(e));
+        InstructionUtils.instructions = Spim.getUserText().split("\n").slice(0, -1).map(e => new Instruction(e));
         InstructionUtils.instructions.forEach(e => Elements.text.appendChild(e.element));
 
         InstructionUtils.formatCode();
@@ -14,7 +14,10 @@ class InstructionUtils {
     static removeAllBreakpoints() {
         InstructionUtils.instructions
             .filter(e => e.isBreakpoint)
-            .forEach(e => e.element.style.fontWeight = null);
+            .forEach(e => {
+                e.isBreakpoint = false;
+                e.element.style.fontWeight = null;
+            });
     }
 
     static highlightCurrentInstruction() {
@@ -31,23 +34,21 @@ class InstructionUtils {
     }
 
     static formatCode() {
-        worker.postMessage(InstructionUtils.instructions.map(e => e.element.innerHTML));
+        worker.postMessage(InstructionUtils.instructions.map(e => e.instructionElement.innerHTML));
     }
 
     static toggleInstructionBinary(showBinary) {
         InstructionUtils.instructions.forEach(e => {
             e.showBinary = showBinary;
-            e.element.innerHTML = e.getInnerHTML();
+            e.binaryElement.innerText = e.getBinaryInnerText();
         });
-        InstructionUtils.formatCode()
     }
 
     static toggleInstructionComment(showComment) {
         InstructionUtils.instructions.forEach(e => {
             e.showComment = showComment;
-            e.element.innerHTML = e.getInnerHTML();
+            e.commentElement.innerText = e.getCommentInnerText();
         });
-        InstructionUtils.formatCode()
     }
 }
 
@@ -58,58 +59,61 @@ class Instruction {
         this.isBreakpoint = false;
         this.showBinary = false;
         this.showComment = true;
-        this.showInstruction = true;
-
-
-        this.element = this.getElement();
-    }
-
-    getElement() {
-        const element = document.createElement("pre");
-
-        if (this.text.length === 0) {
-            element.innerHTML = " ";
-            return element;
-        }
 
         this.address = this.text.substring(1, 11);
-        element.innerHTML = this.getInnerHTML();
-        element.onclick = () => {
-            if (this.isBreakpoint)
-                this.removeBreakpoint();
-            else
-                this.addBreakpoint();
-        };
 
-        return element;
+        this.initElement()
     }
 
-    getInnerHTML() {
-        const indexOfComma = this.text.indexOf(';');
+    initElement() {
+        this.element = document.createElement("pre");
 
-        let result = `[${this.address}] `;
+        this.indexOfComma = this.text.indexOf(';');
 
-        if (this.showBinary)
-            result += this.text.substring(13, 24);
+        const result = document.createElement("span");
+        result.innerText = `[${this.address}] `;
+        result.classList.add("hljs-number");
+        this.element.appendChild(result);
 
-        if (this.showInstruction)
-            result += indexOfComma > 0 ? this.text.substring(24, indexOfComma) : this.text.substring(24);
+        this.binaryElement = document.createElement("span");
+        this.binaryElement.innerText = this.getBinaryInnerText();
+        this.binaryElement.classList.add("hljs-number");
+        this.element.appendChild(this.binaryElement);
 
-        if (this.showComment && indexOfComma > 0)
-            result += this.text.substring(indexOfComma);
+        this.instructionElement = document.createElement("span");
+        this.instructionElement.innerText = this.getInstructionInnerText();
+        this.element.appendChild(this.instructionElement);
 
-        return result;
+        this.commentElement = document.createElement("span");
+        this.commentElement.classList.add("hljs-comment");
+        this.commentElement.innerText = this.getCommentInnerText();
+        this.element.appendChild(this.commentElement);
+
+        this.element.onclick = () => this.toggleBreakpoint();
+        return this.element;
     }
 
-    addBreakpoint() {
-        this.isBreakpoint = true;
-        Spim.addBreakpoint(this.address);
-        this.element.style.fontWeight = "bold";
+    getBinaryInnerText() {
+        return this.showBinary ? this.text.substring(13, 24) : "";
     }
 
-    removeBreakpoint() {
-        this.isBreakpoint = false;
-        Spim.deleteBreakpoint(this.address);
-        this.element.style.fontWeight = null;
+    getCommentInnerText() {
+        return (this.showComment && this.indexOfComma > 0) ? this.text.substring(this.indexOfComma) : "";
+    }
+
+    getInstructionInnerText() {
+        return this.indexOfComma > 0 ? this.text.substring(24, this.indexOfComma) : this.text.substring(24);
+    }
+
+    toggleBreakpoint() {
+        this.isBreakpoint = !this.isBreakpoint;
+        if (this.isBreakpoint) {
+            Spim.addBreakpoint(this.address);
+            this.element.style.fontWeight = "bold";
+        } else {
+            Spim.deleteBreakpoint(this.address);
+            this.element.style.fontWeight = null;
+        }
+
     }
 }

@@ -1,19 +1,17 @@
-body {
-    font-family: sans-serif;
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-
-    display: grid;
-    grid-template-areas: "header header header header" "reg text data stack" "footer footer footer footer";
-    grid-template-rows: min-content minmax(0, 75vh) 11rem;
-    align-items: stretch;
-    justify-content: space-around;
-}
-
 pre {
     margin: 0;
     padding: 0 !important;
+}
+
+body {
+    font-family: sans-serif;
+    height: 100vh;
+    padding: 0 8%;
+    overflow: hidden;
+
+    display: grid;
+    grid-template-areas: "toolbar" "main" "footer";
+    grid-template-rows: min-content 75vh auto;
 }
 
 .panel {
@@ -26,8 +24,16 @@ pre {
     overflow: auto;
 }
 
-#toolbar-group {
-    grid-area: header;
+#main {
+    grid-area: main;
+    display: grid;
+    grid-template-areas: "reg text data stack";
+    grid-template-rows: 100%;
+    grid-template-columns: 1fr 4fr 1fr 1fr;
+}
+
+#toolbar {
+    grid-area: toolbar;
     display: flex;
     flex-wrap: wrap;
 }
@@ -38,6 +44,10 @@ pre {
 
 #text-panel {
     grid-area: text;
+}
+
+#text-panel pre {
+    cursor: pointer;
 }
 
 #data-panel {
@@ -61,13 +71,6 @@ pre {
 
 #footer {
     grid-area: footer;
-    display: flex;
-}
-
-#output-panel {
-    flex: 1;
-}
-
-#log-panel {
-    flex: 1;
+    display: grid;
+    grid-template-columns: auto auto;
 }
