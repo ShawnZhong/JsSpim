@@ -123,20 +123,35 @@ bool isUserDataChanged() {
 char *getUserData(bool compute_diff) {
   ss_clear(&ss);
 
-  for (mem_addr addr = DATA_BOT; addr < data_top; addr += BYTES_PER_WORD) {
+  for (mem_addr addr = DATA_BOT; addr < data_top; addr += BYTES_PER_WORD * 4) {
+
     int i = (addr - DATA_BOT) / 4;
-    if (data_seg[i] == 0) continue;
-    if (compute_diff && (data_seg[i] != prev_data_seg[i] || addr > prev_data_top)) {
-      ss_printf(&ss,
-                PRE_H("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
-                addr,
-                data_seg[i]);
-    } else {
-      ss_printf(&ss,
-                PRE("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
-                addr,
-                data_seg[i]);
+    // skip empty
+    if (data_seg[i] == 0 && data_seg[i + 1] == 0 && data_seg[i + 2] == 0 && data_seg[i + 3] == 0)
+      continue;
+
+    // open tag
+    ss_printf(&ss, "<pre>[<span class='hljs-attr'>0x%08x</span>]  ", addr);
+
+    // print hex
+    for (int j = 0; j < 4; ++j) {
+      if (compute_diff && (data_seg[i + j] != prev_data_seg[i + j] || addr > prev_data_top))
+        ss_printf(&ss, "<span class='hljs-number' style='background-color: yellow;'>0x%08x</span> ", data_seg[i + j]);
+      else
+        ss_printf(&ss, "<span class='hljs-number'>0x%08x</span> ", data_seg[i + j]);
     }
+
+    // print ascii
+    char *start = (char *) &data_seg[i];
+    for (int k = 0; k < 16; ++k) {
+      if (start[k] >= 32 && start[k] <= 127)
+        ss_printf(&ss, "%c", start[k]);
+      else
+        ss_printf(&ss, " ");
+    }
+
+    // close tag
+    ss_printf(&ss, "</pre>", addr);
   }
 
   if (prev_data_top != data_top) {
@@ -184,7 +199,7 @@ void addBreakpoint(mem_addr addr) { add_breakpoint(addr); }
 void deleteBreakpoint(mem_addr addr) { delete_breakpoint(addr); }
 }
 
-val getGeneralRegVals() { return val(typed_memory_view(32, R)); }
+val getGeneralRegVals() { return val(typed_memory_view(32, (unsigned int *) R)); }
 EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
 
 val getFloatRegVals() { return val(typed_memory_view(32, (float *) FPR)); }
@@ -194,7 +209,7 @@ val getDoubleRegVals() { return val(typed_memory_view(16, (double *) FPR)); }
 EMSCRIPTEN_BINDINGS(getDoubleRegVals) { function("getDoubleRegVals", &getDoubleRegVals); }
 
 val getSpecialRegVals() {
-  static int specialRegs[12];
+  static unsigned int specialRegs[12];
   specialRegs[0] = PC;
   specialRegs[1] = CP0_EPC;
   specialRegs[2] = CP0_Cause;
