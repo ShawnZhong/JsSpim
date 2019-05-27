@@ -122,7 +122,7 @@ class Instruction {
     }
 
     getInstructionInnerText() {
-        return this.indexOfComma > 0 ? this.text.substring(24, this.indexOfComma) : this.text.substring(24);
+        return this.indexOfComma > 0 ? this.text.substring(25, this.indexOfComma) : this.text.substring(25);
     }
 
     toggleBreakpoint() {

@@ -40,6 +40,7 @@ class RegisterUtils {
     }
 
     static update() {
+        // values in special registers needs to be refreshed
         this.specialRegVals = Spim.getSpecialRegVals();
         this.specialIntRegs.forEach((reg, i) => reg.updateValue(this.specialRegVals[i]));
         this.specialFloatRegs.forEach((reg, i) => reg.updateValue(this.specialRegVals[i + 7]));
