@@ -3,11 +3,16 @@ worker.onmessage = (event) => event.data.forEach((e, i) => InstructionUtils.inst
 
 class InstructionUtils {
     static showInstructions() {
-        Elements.text.innerHTML = '';
+        Elements.userTextContent.innerHTML = '';
+        Elements.kernelTextContent.innerHTML = '';
 
-        InstructionUtils.instructions = Spim.getUserText().split("\n").slice(0, -1).map(e => new Instruction(e));
-        InstructionUtils.instructions.forEach(e => Elements.text.appendChild(e.element));
+        const userText = Spim.getUserText().split("\n").slice(0, -1).map(e => new Instruction(e));
+        userText.forEach(e => Elements.userTextContent.appendChild(e.element));
 
+        const kernelText = Spim.getKernelText().split("\n").slice(0, -1).map(e => new Instruction(e));
+        kernelText.forEach(e => Elements.kernelTextContent.appendChild(e.element));
+
+        InstructionUtils.instructions = [...userText, ...kernelText];
         InstructionUtils.formatCode();
     }
 
@@ -37,18 +42,25 @@ class InstructionUtils {
         worker.postMessage(InstructionUtils.instructions.map(e => e.instructionElement.innerHTML));
     }
 
-    static toggleInstructionBinary(showBinary) {
+    static toggleBinary(showBinary) {
         InstructionUtils.instructions.forEach(e => {
             e.showBinary = showBinary;
             e.binaryElement.innerText = e.getBinaryInnerText();
         });
     }
 
-    static toggleInstructionComment(showComment) {
+    static toggleSourceCode(showSourceCode) {
         InstructionUtils.instructions.forEach(e => {
-            e.showComment = showComment;
+            e.showSourceCode = showSourceCode;
             e.commentElement.innerText = e.getCommentInnerText();
         });
+    }
+
+    static toggleKernelText(shoeKernelText) {
+        if (shoeKernelText)
+            Elements.kernelTextContainer.style.display = null;
+        else
+            Elements.kernelTextContainer.style.display = 'none';
     }
 }
 
@@ -58,7 +70,7 @@ class Instruction {
 
         this.isBreakpoint = false;
         this.showBinary = false;
-        this.showComment = true;
+        this.showSourceCode = true;
 
         this.address = this.text.substring(3, 11);
 
@@ -95,7 +107,7 @@ class Instruction {
     }
 
     getCommentInnerText() {
-        return (this.showComment && this.indexOfComma > 0) ? this.text.substring(this.indexOfComma) : "";
+        return (this.showSourceCode && this.indexOfComma > 0) ? this.text.substring(this.indexOfComma) : "";
     }
 
     getInstructionInnerText() {

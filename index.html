@@ -5,9 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/xcode.css">
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <title>JsSpim</title>
 </head>
 <body>
@@ -26,37 +24,25 @@
             </div>
         </div>
     </div>
-
-    <!--    <div>-->
-    <!--        <label>-->
-    <!--            <input id="toggle-kernel-data" type="checkbox">-->
-    <!--            kernel data-->
-    <!--        </label>-->
-
-    <!--        <label>-->
-    <!--            <input id="toggle-kernel-text" type="checkbox">-->
-    <!--            kernel text-->
-    <!--        </label>-->
-
-    <!--    </div>-->
-
-    <!--    <div>-->
-    <!--        <legend>Radix:</legend>-->
-
-    <!--        <input type="radio" name="radix" id="radix-hex" checked>-->
-    <!--        <label for="radix-hex">hex</label>-->
-
-    <!--        <input type="radio" name="radix" id="radix-dec">-->
-    <!--        <label for="radix-dec">dec</label>-->
-
-    <!--        <input type="radio" name="radix" id="radix-bin">-->
-    <!--        <label for="radix-bin">bin</label>-->
-    <!--    </div>-->
 </nav>
 
 <div id="regs-panel" class="card">
-    <h5 class="card-header">Register</h5>
-    <div class="content card-body">
+    <div class="card-header">
+        <h5 class="float-left">Regs</h5>
+        <div class="float-right">
+            <input type="radio" name="radix" id="radix-hex" checked>
+            <label for="radix-hex">hex</label>
+
+            <input type="radio" name="radix" id="radix-dec">
+            <label for="radix-dec">dec</label>
+
+            <input type="radio" name="radix" id="radix-bin">
+            <label for="radix-bin">bin</label>
+        </div>
+    </div>
+
+
+    <div class="card-body">
         <h6>Special</h6>
         <pre id="special-regs" class="reg-lines"></pre>
         <h6>General</h6>
@@ -73,16 +59,30 @@
         <h5 class="float-left">Text</h5>
         <div class="float-right">
             <input id="toggle-instruction-value" type="checkbox"
-                   onchange="InstructionUtils.toggleInstructionBinary(this.checked)">
+                   onchange="InstructionUtils.toggleBinary(this.checked)">
             <label for="toggle-instruction-value"> instruction value </label>
 
             <input id="toggle-comment" type="checkbox" checked
-                   onchange="InstructionUtils.toggleInstructionComment(this.checked)">
+                   onchange="InstructionUtils.toggleSourceCode(this.checked)">
             <label for="toggle-comment"> source code </label>
+
+            <input id="toggle-kernel-text" type="checkbox" checked
+                   onchange="InstructionUtils.toggleKernelText(this.checked)">
+            <label for="toggle-kernel-text"> kernel text </label>
         </div>
     </div>
 
-    <pre id="text-content" class="content card-body"></pre>
+    <div class="card-body">
+        <div id="user-text-container">
+            <pre>User Text Segment</pre>
+            <pre id="user-text-content"></pre>
+        </div>
+        <div id="kernel-text-container">
+            <pre>Kernel Text Segment</pre>
+            <pre id="kernel-text-content"></pre>
+        </div>
+    </div>
+
 
     <div class="form-inline card-footer" id="execution-fieldset">
         <div class="form-group">
@@ -102,25 +102,31 @@
 </div>
 
 <div id="data-panel" class="card">
-    <h5 class="card-header"> Data </h5>
-    <pre id="data-content" class="content card-body"></pre>
+    <div class="card-header">
+        <h5 class="float-left"> Data </h5>
+        <div class="float-right">
+            <input id="toggle-kernel-data" type="checkbox">
+            <label for="toggle-kernel-data"> kernel data </label>
+        </div>
+    </div>
+    <pre id="data-content" class="card-body"></pre>
 </div>
 
 <div id="stack-panel" class="card">
     <h5 class="card-header">Stack</h5>
     <div id="stack-wrapper">
-        <pre id="stack-content" class="content card-body"></pre>
+        <pre id="stack-content" class="card-body"></pre>
     </div>
 </div>
 
 <div id="output-panel" class="card">
     <h5 class="card-header">Output</h5>
-    <pre id="output-content" class="content"></pre>
+    <pre id="output-content" class="card-body"></pre>
 </div>
 
 <div id="log-panel" class="card">
     <h5 class="card-header">Log</h5>
-    <pre id="log-content" class="content"></pre>
+    <pre id="log-content" class="card-body"></pre>
 </div>
 <script type='text/javascript'>
     const Elements = Object.freeze({
@@ -131,7 +137,9 @@
         resetButton: document.getElementById('reset-button'),
         stepButton: document.getElementById('step-button'),
         speedSelector: document.getElementById('speed-selector'),
-        text: document.getElementById('text-content'),
+        userTextContent: document.getElementById('user-text-content'),
+        kernelTextContent: document.getElementById('kernel-text-content'),
+        kernelTextContainer: document.getElementById('kernel-text-container'),
         data: document.getElementById('data-content'),
         stack: document.getElementById('stack-content'),
         generalReg: document.getElementById('general-regs'),
@@ -140,7 +148,7 @@
         doubleReg: document.getElementById('double-regs'),
     });
 
-    const fileList = ['tt.core.s', 'fib.s', 'fib.s', 'read.s', 'data_seg.s'];
+    const fileList = ['fib.s', 'tt.core.s', 'read.s', 'data_seg.s'];
     fileList.forEach(filename => {
         const option = document.createElement("option");
         option.text = filename;

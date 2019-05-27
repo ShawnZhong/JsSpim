@@ -4,17 +4,17 @@
     height: 100%;
 }
 
-.content {
+.card-body {
     overflow: auto;
 }
 
 body {
-    height: 100vh;
+    height: 99vh;
     width: max-content;
     margin: auto !important;
     display: grid;
     grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text stack" "reg text text stack" "reg text text data" "reg output log data";
-    grid-template-rows: min-content 22% 22% 22% 22%;
+    grid-template-rows: min-content 1fr 1fr 1fr 1fr;
     grid-template-columns: 24ch 40ch 40ch min-content;
     grid-gap: 15px;
 }
