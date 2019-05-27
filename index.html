@@ -12,7 +12,9 @@
 
 <nav class="navbar navbar-light bg-light" id="toolbar">
     <div class="form-inline">
-        <div>Please choose a MIPS assembly file: &nbsp</div>
+        <div>Please choose a <a href="https://github.com/ShawnZhong/JsSpim/tree/master/Tests">MIPS assembly file</a>:
+            &nbsp
+        </div>
         <div>
             <select id="file-selector" onchange="main(this.value)" class="form-control form-control"></select>
         </div>
@@ -63,6 +65,12 @@
     <div class="card-header">
         <h5 class="float-left">Text Segment</h5>
         <div class="float-right">
+            <input id="toggle-kernel-text" type="checkbox" checked
+                   onchange="InstructionUtils.toggleKernelText(this.checked)">
+            <label for="toggle-kernel-text"> kernel text </label>
+
+            &nbsp
+
             <input id="toggle-instruction-value" type="checkbox"
                    onchange="InstructionUtils.toggleBinary(this.checked)">
             <label for="toggle-instruction-value"> instruction value </label>
@@ -72,12 +80,6 @@
             <input id="toggle-comment" type="checkbox" checked
                    onchange="InstructionUtils.toggleSourceCode(this.checked)">
             <label for="toggle-comment"> source code </label>
-
-            &nbsp
-
-            <input id="toggle-kernel-text" type="checkbox" checked
-                   onchange="InstructionUtils.toggleKernelText(this.checked)">
-            <label for="toggle-kernel-text"> kernel text </label>
         </div>
     </div>
 

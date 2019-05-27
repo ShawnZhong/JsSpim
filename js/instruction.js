@@ -40,7 +40,7 @@ class InstructionUtils {
 
         InstructionUtils.highlighted = instruction.element;
         InstructionUtils.highlighted.style.backgroundColor = 'yellow';
-        InstructionUtils.highlighted.scrollIntoView(false);
+        InstructionUtils.highlighted.scrollIntoView({block: "nearest"});
     }
 
     static formatCode() {

@@ -103,7 +103,7 @@ class Register {
         switch (RegisterUtils.radix) {
             case 2:
                 const str = this.value.toString(RegisterUtils.radix).padStart(32, '0');
-                return `\n    ${str.substr(0, 8)} ${str.substr(8, 8)}\n    ${str.substr(16, 8)} ${str.substr(24, 8)}`;
+                return `\n${str.substr(0, 8)} ${str.substr(8, 8)}\n${str.substr(16, 8)} ${str.substr(24, 8)}`;
             case 16:
                 return this.value.toString(RegisterUtils.radix).padStart(8, '0');
             default:

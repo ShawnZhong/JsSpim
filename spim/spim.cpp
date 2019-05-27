@@ -145,10 +145,10 @@ char *getUserData(bool compute_diff) {
     // print ascii
     char *start = (char *) &data_seg[i];
     for (int k = 0; k < 16; ++k) {
-      if (start[k] >= 32 && start[k] <= 127)
+      if (start[k] >= 32 && start[k] < 127)
         ss_printf(&ss, "%c", start[k]);
       else
-        ss_printf(&ss, ".");
+        ss_printf(&ss, "�");
     }
 
     // close tag
@@ -196,10 +196,10 @@ char *getUserStack(bool compute_diff) {
     // print ascii
     char *start = (char *) &stack_seg[i];
     for (int k = 0; k < 16; ++k) {
-      if (start[k] >= 32 && start[k] <= 127)
+      if (start[k] >= 32 && start[k] < 127)
         ss_printf(&ss, "%c", start[k]);
       else
-        ss_printf(&ss, ".");
+        ss_printf(&ss, "�");
     }
 
     // close tag

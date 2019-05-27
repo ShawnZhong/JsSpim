@@ -3,7 +3,7 @@ body {
     width: max-content;
     margin: auto !important;
     display: grid;
-    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text stack" "reg text text stack" "reg text text data" "reg output log data";
+    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text data" "reg text text data" "reg text text stack" "reg output log stack";
     grid-template-rows: min-content 1fr 1fr 1fr min-content;
     grid-template-columns: 24ch 40ch 40ch min-content;
     grid-gap: 12px;
