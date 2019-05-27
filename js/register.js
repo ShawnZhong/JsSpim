@@ -53,24 +53,39 @@ class Register {
         this.value = undefined;
         this.radix = radix;
         this.highlighted = false;
+
+        // init element
         this.element = document.createElement("pre");
+
+        const nameElement = document.createElement('span');
+        nameElement.classList.add('hljs-string');
+        nameElement.innerText = this.name;
+        this.element.appendChild(nameElement);
+
+        this.element.appendChild(document.createTextNode(' = '));
+
+        this.valueElement = document.createElement('span');
+        this.valueElement.classList.add("hljs-number");
+        this.element.appendChild(this.valueElement);
     }
 
     updateValue(newValue) {
         if (this.value === newValue) {
-            if (this.highlighted)
-                this.element.style.backgroundColor = null;
+            if (this.highlighted) this.toggleHighlight();
             return;
         }
 
         this.value = newValue;
-        this.element.innerHTML = this.getInnerHTML();
-        this.element.style.backgroundColor = 'yellow';
-        this.highlighted = true;
+        this.valueElement.innerText = this.formatValue();
+        this.toggleHighlight();
     }
 
-    getInnerHTML() {
-        return `<span class='hljs-string'>${this.name}</span> = <span class='hljs-number'>${this.formatValue()}</span>`;
+    toggleHighlight() {
+        if (this.highlighted)
+            this.valueElement.style.backgroundColor = null;
+        else
+            this.valueElement.style.backgroundColor = 'yellow';
+        this.highlighted = !this.highlighted;
     }
 
     formatValue() {
