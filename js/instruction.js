@@ -66,7 +66,7 @@ class Instruction {
     }
 
     initElement() {
-        this.element = document.createElement("pre");
+        this.element = document.createElement("div");
 
         this.indexOfComma = this.text.indexOf(';');
 

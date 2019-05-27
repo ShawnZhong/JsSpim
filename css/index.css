@@ -1,20 +1,4 @@
-pre {
-    margin: 0;
-    padding: 0 !important;
-}
-
-body {
-    font-family: sans-serif;
-    height: 100vh;
-    padding: 0 10%;
-    overflow: hidden;
-
-    display: grid;
-    grid-template-areas: "toolbar" "main" "footer";
-    grid-template-rows: min-content 75vh 11rem;
-}
-
-.panel {
+.card {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -22,15 +6,17 @@ body {
 
 .content {
     overflow: auto;
-    width: min-content;
 }
 
-#main {
-    grid-area: main;
+body {
+    height: 100vh;
+    width: max-content;
+    margin: auto !important;
     display: grid;
-    grid-template-areas: "reg text stack" "reg data stack";
-    grid-template-rows: 70% 30%;
-    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text stack" "reg text text stack" "reg text text data" "reg output log data";
+    grid-template-rows: min-content 22% 22% 22% 22%;
+    grid-template-columns: 24ch 40ch 40ch min-content;
+    grid-gap: 15px;
 }
 
 #toolbar {
@@ -60,10 +46,6 @@ body {
     grid-area: data;
 }
 
-#data-content {
-    width: 100%;
-}
-
 #stack-panel {
     grid-area: stack;
 }
@@ -79,12 +61,19 @@ body {
     overflow: auto;
 }
 
-#footer {
-    grid-area: footer;
-    display: flex;
+#output-panel {
+    grid-area: output;
 }
 
-#footer .panel {
-    flex: 1;
+#output-panel > .content {
+    width: 100%;
+    word-wrap: break-word;
 }
 
+#log-panel {
+    grid-area: log;
+}
+
+.card-header * {
+    margin: 0;
+}

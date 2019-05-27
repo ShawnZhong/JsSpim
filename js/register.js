@@ -55,7 +55,7 @@ class Register {
         this.highlighted = false;
 
         // init element
-        this.element = document.createElement("pre");
+        this.element = document.createElement("div");
 
         const nameElement = document.createElement('span');
         nameElement.classList.add('hljs-string');

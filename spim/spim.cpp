@@ -46,8 +46,8 @@
 #include "mem.h"
 #include "data.h"
 
-#define PRE(text)  "<pre>" text "</pre>"
-#define PRE_H(text) "<pre style='background-color: yellow;'>" text "</pre>"
+#define PRE(text)  "<div>" text "</pre>"
+#define PRE_H(text) "<div style='background-color: yellow;'>" text "</pre>"
 
 using namespace emscripten;
 
@@ -131,7 +131,7 @@ char *getUserData(bool compute_diff) {
       continue;
 
     // open tag
-    ss_printf(&ss, "<pre>[<span class='hljs-attr'>%08x</span>] ", addr);
+    ss_printf(&ss, "<div>[<span class='hljs-attr'>%08x</span>] ", addr);
 
     // print hex
     for (int j = 0; j < 4; ++j) {
@@ -171,23 +171,41 @@ char *getUserStack(bool compute_diff) {
   static mem_addr prev_stack_bottom;
   static mem_word prev_stack_seg[STACK_LIMIT];
 
-  mem_addr curr_stack_bottom = ROUND_DOWN(R[29], BYTES_PER_WORD);
+  mem_addr curr_stack_bottom = ROUND_DOWN(R[29], BYTES_PER_WORD * 4);
 
-  for (mem_addr i = curr_stack_bottom; i < STACK_TOP; i += BYTES_PER_WORD) {
-    int index = (i - stack_bot) / 4;
-    if (compute_diff && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
-      ss_printf(&ss,
-                PRE_H("[<span class='hljs-attr'>%08x</span>] <span class='hljs-number'>%08x</span>"),
-                index,
-                stack_seg[index]);
-    else
-      ss_printf(&ss,
-                PRE("[<span class='hljs-attr'>%08x</span>] <span class='hljs-number'>%08x</span>"),
-                index,
-                stack_seg[index]);
+  for (mem_addr addr = curr_stack_bottom; addr < STACK_TOP; addr += BYTES_PER_WORD * 4) {
 
-    prev_stack_seg[index] = stack_seg[index];
+    int i = (addr - stack_bot) / 4;
+
+    // open tag
+    ss_printf(&ss, "<div>[<span class='hljs-attr'>%08x</span>] ", addr);
+
+    // print hex
+    for (int j = 0; j < 4; ++j) {
+      ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", stack_seg[i + j]);
+
+      //      if (compute_diff && (stack_seg[i + j] || i + j < prev_stack_bottom))
+      //        ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", stack_seg[i + j]);
+      //        //                  ss_printf(&ss, "<span class='hljs-number' style='background-color: yellow;'>%08x</span> ", stack_seg[i + j]);
+      //      else
+      //        ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", stack_seg[i + j]);
+    }
+
+
+    // print ascii
+    char *start = (char *) &stack_seg[i];
+    for (int k = 0; k < 16; ++k) {
+      if (start[k] >= 32 && start[k] <= 127)
+        ss_printf(&ss, "%c", start[k]);
+      else
+        ss_printf(&ss, ".");
+    }
+
+    // close tag
+    ss_printf(&ss, "</pre>", addr);
   }
+
+  memcpy(prev_stack_seg, stack_seg, STACK_LIMIT);
 
   prev_stack_bottom = curr_stack_bottom;
 

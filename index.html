@@ -5,112 +5,123 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/xcode.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>JsSpim</title>
 </head>
 <body>
 
-<div id="toolbar">
-    <fieldset>
-        <legend>Please choose a MIPS assembly file:</legend>
-        <select id="file-selector" onchange="main(this.value)"></select>
-        &nbspor&nbsp
-        <input id="file-upload" onChange="main(this.files[0])" type="file"/>
-    </fieldset>
+<nav class="navbar navbar-light bg-light" id="toolbar">
+    <div class="form-inline">
+        <div>Please choose a MIPS assembly file: &nbsp</div>
+        <div>
+            <select id="file-selector" onchange="main(this.value)" class="form-control form-control"></select>
+        </div>
+        <div>&nbsp or &nbsp</div>
+        <div>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="file-upload" onChange="main(this.files[0])">
+                <div class="custom-file-label">upload one</div>
+            </div>
+        </div>
+    </div>
 
-    <fieldset id="execution-fieldset">
-        <legend>Execution:</legend>
-        Speed:
-        <input type="range" id="speed-selector" value="195" max="200" oninput="Execution.setSpeed(this.value)">
-        <button id="play-button">Play</button>
-        <button id="step-button">Step</button>
-        <button id="reset-button">Reset</button>
-    </fieldset>
+    <!--    <div>-->
+    <!--        <label>-->
+    <!--            <input id="toggle-kernel-data" type="checkbox">-->
+    <!--            kernel data-->
+    <!--        </label>-->
 
-    <fieldset>
-        <legend>Memory:</legend>
+    <!--        <label>-->
+    <!--            <input id="toggle-kernel-text" type="checkbox">-->
+    <!--            kernel text-->
+    <!--        </label>-->
 
-        <label>
-            <input id="toggle-kernel-data" type="checkbox">
-            kernel data
-        </label>
+    <!--    </div>-->
 
-        <label>
-            <input id="toggle-kernel-text" type="checkbox">
-            kernel text
-        </label>
+    <!--    <div>-->
+    <!--        <legend>Radix:</legend>-->
 
-        <label>
+    <!--        <input type="radio" name="radix" id="radix-hex" checked>-->
+    <!--        <label for="radix-hex">hex</label>-->
+
+    <!--        <input type="radio" name="radix" id="radix-dec">-->
+    <!--        <label for="radix-dec">dec</label>-->
+
+    <!--        <input type="radio" name="radix" id="radix-bin">-->
+    <!--        <label for="radix-bin">bin</label>-->
+    <!--    </div>-->
+</nav>
+
+<div id="regs-panel" class="card">
+    <h5 class="card-header">Register</h5>
+    <div class="content card-body">
+        <h6>Special</h6>
+        <pre id="special-regs" class="reg-lines"></pre>
+        <h6>General</h6>
+        <pre id="general-regs" class="reg-lines"></pre>
+        <h6>Single</h6>
+        <pre id="float-regs" class="reg-lines"></pre>
+        <h6>Double</h6>
+        <pre id="double-regs" class="reg-lines"></pre>
+    </div>
+</div>
+
+<div id="text-panel" class="card" title="Click to toggle breakpoint">
+    <div class="card-header">
+        <h5 class="float-left">Text</h5>
+        <div class="float-right">
             <input id="toggle-instruction-value" type="checkbox"
                    onchange="InstructionUtils.toggleInstructionBinary(this.checked)">
-            instruction value
-        </label>
-        <label> <input id="toggle-comment" type="checkbox" checked
-                       onchange="InstructionUtils.toggleInstructionComment(this.checked)">
-            source code
-        </label>
-    </fieldset>
+            <label for="toggle-instruction-value"> instruction value </label>
 
-    <fieldset>
-        <legend>Radix:</legend>
-
-        <input type="radio" name="radix" id="radix-hex" checked>
-        <label for="radix-hex">hex</label>
-
-        <input type="radio" name="radix" id="radix-dec">
-        <label for="radix-dec">dec</label>
-
-        <input type="radio" name="radix" id="radix-bin">
-        <label for="radix-bin">bin</label>
-    </fieldset>
-
-</div>
-
-<div id="main">
-    <div id="regs-panel" class="panel">
-        <h2>Register</h2>
-        <div class="content">
-            <h4>Special</h4>
-            <div id="special-regs" class="reg-lines"></div>
-            <h4>General</h4>
-            <div id="general-regs" class="reg-lines"></div>
-            <h4>Single Precision</h4>
-            <div id="float-regs" class="reg-lines"></div>
-            <h4>Double Precision</h4>
-            <div id="double-regs" class="reg-lines"></div>
+            <input id="toggle-comment" type="checkbox" checked
+                   onchange="InstructionUtils.toggleInstructionComment(this.checked)">
+            <label for="toggle-comment"> source code </label>
         </div>
-
     </div>
 
-    <div id="text-panel" class="panel" title="Click to toggle breakpoint">
-        <h2>Text</h2>
-        <div id="text-content" class="content"></div>
-    </div>
+    <pre id="text-content" class="content card-body"></pre>
 
-    <div id="data-panel" class="panel">
-        <h2>Data</h2>
-        <div id="data-content" class="content"></div>
-    </div>
-
-    <div id="stack-panel" class="panel">
-        <h2>Stack</h2>
-        <div id="stack-wrapper">
-            <div id="stack-content" class="content"></div>
+    <div class="form-inline card-footer" id="execution-fieldset">
+        <div class="form-group">
+            <label for="speed-selector" class="col-form-label">Execution speed: &nbsp</label>
+            <div>
+                <input type="range" id="speed-selector" class="custom-range" value="190" max="200"
+                       oninput="Execution.setSpeed(this.value)">
+            </div>
+        </div>
+        &nbsp&nbsp&nbsp
+        <div>
+            <button id="play-button" class="btn btn-outline-primary btn-sm">Play</button>
+            <button id="step-button" class="btn btn-outline-success btn-sm">Step</button>
+            <button id="reset-button" class="btn btn-outline-info btn-sm">Reset</button>
         </div>
     </div>
 </div>
 
-<div id="footer">
-    <div id="output-panel" class="panel">
-        <h2>Output</h2>
-        <pre id="output-content" class="content"></pre>
-    </div>
+<div id="data-panel" class="card">
+    <h5 class="card-header"> Data </h5>
+    <pre id="data-content" class="content card-body"></pre>
+</div>
 
-    <div id="log-panel" class="panel">
-        <h2>Log</h2>
-        <pre id="log-content" class="content"></pre>
+<div id="stack-panel" class="card">
+    <h5 class="card-header">Stack</h5>
+    <div id="stack-wrapper">
+        <pre id="stack-content" class="content  card-body"></pre>
     </div>
 </div>
 
+<div id="output-panel" class="card">
+    <h5 class="card-header">Output</h5>
+    <pre id="output-content" class="content"></pre>
+</div>
+
+<div id="log-panel" class="card">
+    <h5 class="card-header">Log</h5>
+    <pre id="log-content" class="content"></pre>
+</div>
 <script type='text/javascript'>
     const Elements = Object.freeze({
         output: document.getElementById('output-content'),
@@ -129,7 +140,7 @@
         doubleReg: document.getElementById('double-regs'),
     });
 
-    const fileList = ['fib.s', 'fib.s', 'read.s', 'tt.core.s', 'data_seg.s'];
+    const fileList = ['tt.core.s', 'fib.s', 'fib.s', 'read.s', 'data_seg.s'];
     fileList.forEach(filename => {
         const option = document.createElement("option");
         option.text = filename;
