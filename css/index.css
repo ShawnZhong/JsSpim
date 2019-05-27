@@ -1,3 +1,14 @@
+body {
+    height: 99vh;
+    width: max-content;
+    margin: auto !important;
+    display: grid;
+    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text stack" "reg text text stack" "reg text text data" "reg output log data";
+    grid-template-rows: min-content 1fr 1fr 1fr min-content;
+    grid-template-columns: 24ch 40ch 40ch min-content;
+    grid-gap: 12px;
+}
+
 .card {
     display: flex;
     flex-direction: column;
@@ -12,15 +23,10 @@
     margin: 0;
 }
 
-body {
-    height: 99vh;
-    width: max-content;
-    margin: auto !important;
-    display: grid;
-    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text stack" "reg text text stack" "reg text text data" "reg output log data";
-    grid-template-rows: min-content 1fr 1fr 1fr min-content;
-    grid-template-columns: 24ch 40ch 40ch min-content;
-    grid-gap: 12px;
+.segment-title {
+    text-align: center;
+    font-weight: bold;
+    cursor: initial;
 }
 
 #toolbar {
@@ -45,12 +51,6 @@ body {
 
 #text-panel pre {
     cursor: pointer;
-}
-
-#text-panel .segment-title {
-    text-align: center;
-    font-weight: bold;
-    cursor: initial;
 }
 
 #data-panel {

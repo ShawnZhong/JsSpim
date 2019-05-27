@@ -30,17 +30,17 @@
     <div class="card-header">
         <h5 class="float-left">Regs</h5>
         <div class="float-right">
-            <input type="radio" name="radix" id="radix-hex" value="16" checked
+            <input type="radio" name="reg-radix" id="reg-radix-hex" value="16" checked
                    onchange="RegisterUtils.changeRadix(this.value)">
-            <label for="radix-hex">hex</label>
+            <label for="reg-radix-hex">hex</label>
 
-            <input type="radio" name="radix" id="radix-dec" value="10"
+            <input type="radio" name="reg-radix" id="reg-radix-dec" value="10"
                    onchange="RegisterUtils.changeRadix(this.value)">
-            <label for="radix-dec">dec</label>
+            <label for="reg-radix-dec">dec</label>
 
-            <input type="radio" name="radix" id="radix-bin" value="2"
+            <input type="radio" name="reg-radix" id="reg-radix-bin" value="2"
                    onchange="RegisterUtils.changeRadix(this.value)">
-            <label for="radix-bin">bin</label>
+            <label for="reg-radix-bin">bin</label>
         </div>
     </div>
 
@@ -67,9 +67,13 @@
                    onchange="InstructionUtils.toggleBinary(this.checked)">
             <label for="toggle-instruction-value"> instruction value </label>
 
+            &nbsp
+
             <input id="toggle-comment" type="checkbox" checked
                    onchange="InstructionUtils.toggleSourceCode(this.checked)">
             <label for="toggle-comment"> source code </label>
+
+            &nbsp
 
             <input id="toggle-kernel-text" type="checkbox" checked
                    onchange="InstructionUtils.toggleKernelText(this.checked)">
@@ -106,22 +110,43 @@
     </div>
 </div>
 
+<div id="stack-panel" class="card">
+    <div class="card-header">
+        <h5 class="float-left">User Stack</h5>
+        <div class="float-right">
+            <input type="radio" name="stack-radix" id="stack-radix-hex" value="16" checked>
+            <label for="stack-radix-hex">hex with string</label>
+
+            &nbsp
+
+            <input type="radio" name="stack-radix" id="stack-radix-dec" value="10">
+            <label for="stack-radix-dec">dec</label>
+        </div>
+    </div>
+    <div id="stack-wrapper">
+        <pre id="stack-content" class="card-body"></pre>
+    </div>
+</div>
+
 <div id="data-panel" class="card">
     <div class="card-header">
         <h5 class="float-left">Data Segment</h5>
         <div class="float-right">
             <input id="toggle-kernel-data" type="checkbox">
             <label for="toggle-kernel-data"> kernel data </label>
+
+            &nbsp
+
+            <input type="radio" name="data-radix" id="data-radix-hex" value="16" checked>
+            <label for="data-radix-hex">hex with string</label>
+
+            &nbsp
+
+            <input type="radio" name="stack-radix" id="data-radix-dec" value="10">
+            <label for="data-radix-dec">dec</label>
         </div>
     </div>
     <pre id="data-content" class="card-body"></pre>
-</div>
-
-<div id="stack-panel" class="card">
-    <h5 class="card-header">User Stack</h5>
-    <div id="stack-wrapper">
-        <pre id="stack-content" class="card-body"></pre>
-    </div>
 </div>
 
 <div id="output-panel" class="card">
