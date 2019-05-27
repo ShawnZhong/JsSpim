@@ -131,14 +131,14 @@ char *getUserData(bool compute_diff) {
       continue;
 
     // open tag
-    ss_printf(&ss, "<pre>[<span class='hljs-attr'>0x%08x</span>]  ", addr);
+    ss_printf(&ss, "<pre>[<span class='hljs-attr'>%08x</span>] ", addr);
 
     // print hex
     for (int j = 0; j < 4; ++j) {
       if (compute_diff && (data_seg[i + j] != prev_data_seg[i + j] || addr > prev_data_top))
-        ss_printf(&ss, "<span class='hljs-number' style='background-color: yellow;'>0x%08x</span> ", data_seg[i + j]);
+        ss_printf(&ss, "<span class='hljs-number' style='background-color: yellow;'>%08x</span> ", data_seg[i + j]);
       else
-        ss_printf(&ss, "<span class='hljs-number'>0x%08x</span> ", data_seg[i + j]);
+        ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", data_seg[i + j]);
     }
 
     // print ascii
@@ -147,7 +147,7 @@ char *getUserData(bool compute_diff) {
       if (start[k] >= 32 && start[k] <= 127)
         ss_printf(&ss, "%c", start[k]);
       else
-        ss_printf(&ss, " ");
+        ss_printf(&ss, ".");
     }
 
     // close tag
@@ -177,12 +177,12 @@ char *getUserStack(bool compute_diff) {
     int index = (i - stack_bot) / 4;
     if (compute_diff && (i < prev_stack_bottom || stack_seg[index] != prev_stack_seg[index]))
       ss_printf(&ss,
-                PRE_H("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
+                PRE_H("[<span class='hljs-attr'>%08x</span>] <span class='hljs-number'>%08x</span>"),
                 index,
                 stack_seg[index]);
     else
       ss_printf(&ss,
-                PRE("[<span class='hljs-attr'>0x%08x</span>] <span class='hljs-number'>0x%08x</span>"),
+                PRE("[<span class='hljs-attr'>%08x</span>] <span class='hljs-number'>%08x</span>"),
                 index,
                 stack_seg[index]);
 

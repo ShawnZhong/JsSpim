@@ -60,7 +60,7 @@ class Instruction {
         this.showBinary = false;
         this.showComment = true;
 
-        this.address = this.text.substring(1, 11);
+        this.address = this.text.substring(3, 11);
 
         this.initElement()
     }
@@ -105,12 +105,11 @@ class Instruction {
     toggleBreakpoint() {
         this.isBreakpoint = !this.isBreakpoint;
         if (this.isBreakpoint) {
-            Spim.addBreakpoint(this.address);
+            Spim.addBreakpoint(Number.parseInt(this.address, 16));
             this.element.style.fontWeight = "bold";
         } else {
-            Spim.deleteBreakpoint(this.address);
+            Spim.deleteBreakpoint(Number.parseInt(this.address, 16));
             this.element.style.fontWeight = null;
         }
-
     }
 }
