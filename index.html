@@ -30,26 +30,31 @@
     <div class="card-header">
         <h5 class="float-left">Regs</h5>
         <div class="float-right">
-            <input type="radio" name="radix" id="radix-hex" checked>
+            <input type="radio" name="radix" id="radix-hex" value="16" checked
+                   onchange="RegisterUtils.changeRadix(this.value)">
             <label for="radix-hex">hex</label>
 
-            <input type="radio" name="radix" id="radix-dec">
+            <input type="radio" name="radix" id="radix-dec" value="10"
+                   onchange="RegisterUtils.changeRadix(this.value)">
             <label for="radix-dec">dec</label>
 
-            <input type="radio" name="radix" id="radix-bin">
+            <input type="radio" name="radix" id="radix-bin" value="2"
+                   onchange="RegisterUtils.changeRadix(this.value)">
             <label for="radix-bin">bin</label>
         </div>
     </div>
 
 
     <div class="card-body">
-        <h6>Special</h6>
-        <pre id="special-regs" class="reg-lines"></pre>
-        <h6>General</h6>
+        <h6>Special Integer</h6>
+        <pre id="special-int-regs" class="reg-lines"></pre>
+        <h6>General Integer</h6>
         <pre id="general-regs" class="reg-lines"></pre>
-        <h6>Single</h6>
+        <h6>Special Float</h6>
+        <pre id="special-float-regs" class="reg-lines"></pre>
+        <h6>Single Precision</h6>
         <pre id="float-regs" class="reg-lines"></pre>
-        <h6>Double</h6>
+        <h6>Double Precision</h6>
         <pre id="double-regs" class="reg-lines"></pre>
     </div>
 </div>
@@ -143,7 +148,8 @@
         data: document.getElementById('data-content'),
         stack: document.getElementById('stack-content'),
         generalReg: document.getElementById('general-regs'),
-        specialReg: document.getElementById('special-regs'),
+        specialIntReg: document.getElementById('special-int-regs'),
+        specialFloatReg: document.getElementById('special-float-regs'),
         floatReg: document.getElementById('float-regs'),
         doubleReg: document.getElementById('double-regs'),
     });

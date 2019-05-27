@@ -88,22 +88,27 @@ class Instruction {
 
         this.indexOfComma = this.text.indexOf(';');
 
+        // address
         this.element.innerHTML = `[<span class="hljs-attr">${this.addressString}</span>] `;
 
+        // instruction value
         this.binaryElement = document.createElement("span");
         this.binaryElement.innerText = this.getBinaryInnerText();
         this.binaryElement.classList.add("hljs-number");
         this.element.appendChild(this.binaryElement);
 
+        // instruction
         this.instructionElement = document.createElement("span");
         this.instructionElement.innerText = this.getInstructionInnerText();
         this.element.appendChild(this.instructionElement);
 
+        // source code
         this.sourceCodeElement = document.createElement("span");
         this.sourceCodeElement.classList.add("hljs-comment");
         this.sourceCodeElement.innerText = this.getSourceCodeInnerText();
         this.element.appendChild(this.sourceCodeElement);
 
+        // add event listener
         this.element.onclick = () => this.toggleBreakpoint();
         return this.element;
     }

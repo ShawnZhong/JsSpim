@@ -20,10 +20,11 @@ function initSpim() {
         isUserDataChanged: cwrap('isUserDataChanged', 'boolean'),
 
         getPC: Module.getPC,
-        getGeneralRegVals: Module.getGeneralRegVals,
         getSpecialRegVals: Module.getSpecialRegVals,
-        getFloatRegVals: Module.getFloatRegVals,
-        getDoubleRegVals: Module.getDoubleRegVals,
+
+        generalRegVals: Module.getGeneralRegVals(),
+        floatRegVals: Module.getFloatRegVals(),
+        doubleRegVals: Module.getDoubleRegVals(),
 
         getUserData: cwrap('getUserData', 'string', ['boolean']),
         getUserText: cwrap('getUserText', 'string', ['boolean']),

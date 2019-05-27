@@ -34,6 +34,11 @@ body {
     grid-area: reg;
 }
 
+/* for long binary values */
+#regs-panel pre {
+    white-space: pre-wrap;
+}
+
 #text-panel {
     grid-area: text;
 }
@@ -75,11 +80,7 @@ body {
     grid-area: log;
 }
 
-#output-panel pre {
-    white-space: pre-wrap;
-    height: 8em;
-}
-#log-panel pre {
+#output-panel pre, #log-panel pre {
     white-space: pre-wrap;
     height: 8em;
 }
