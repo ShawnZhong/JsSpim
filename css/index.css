@@ -26,10 +26,6 @@ body {
     justify-content: space-around;
 }
 
-#execution-fieldset button {
-    width: 9ch;
-}
-
 #regs-panel {
     grid-area: reg;
 }
@@ -65,13 +61,16 @@ body {
     grid-area: output;
 }
 
-#output-panel > .content {
-    width: 100%;
-    word-wrap: break-word;
+#output-panel pre {
+    white-space: pre-wrap;
 }
 
 #log-panel {
     grid-area: log;
+}
+
+#log-panel pre {
+    white-space: pre-wrap;
 }
 
 .card-header * {
