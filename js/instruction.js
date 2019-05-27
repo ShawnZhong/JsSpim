@@ -1,5 +1,5 @@
 const worker = new Worker('js/highlight.min.js');
-worker.onmessage = (event) => event.data.forEach((e, i) => InstructionUtils.instructions[i].instructionElement.innerHTML = e);
+worker.onmessage = (event) => event.data.forEach((e, i) => InstructionUtils.instructionList[i].instructionElement.innerHTML = e);
 
 class InstructionUtils {
     static showInstructions() {
@@ -12,12 +12,17 @@ class InstructionUtils {
         const kernelText = Spim.getKernelText().split("\n").slice(0, -1).map(e => new Instruction(e));
         kernelText.forEach(e => Elements.kernelTextContent.appendChild(e.element));
 
-        InstructionUtils.instructions = [...userText, ...kernelText];
+        InstructionUtils.instructionList = [...userText, ...kernelText];
+
+        InstructionUtils.instructionDict = {};
+        userText.forEach(e => InstructionUtils.instructionDict[e.address] = e);
+        kernelText.forEach(e => InstructionUtils.instructionDict[e.address] = e);
+
         InstructionUtils.formatCode();
     }
 
     static removeAllBreakpoints() {
-        InstructionUtils.instructions
+        InstructionUtils.instructionList
             .filter(e => e.isBreakpoint)
             .forEach(e => {
                 e.isBreakpoint = false;
@@ -30,7 +35,7 @@ class InstructionUtils {
             InstructionUtils.highlighted.style.backgroundColor = null;
 
         const pc = Spim.getPC();
-        const instruction = InstructionUtils.instructions[pc === 0 ? 0 : (pc - 0x400000) / 4];
+        const instruction = InstructionUtils.instructionDict[pc];
         if (!instruction) return;
 
         InstructionUtils.highlighted = instruction.element;
@@ -39,20 +44,20 @@ class InstructionUtils {
     }
 
     static formatCode() {
-        worker.postMessage(InstructionUtils.instructions.map(e => e.instructionElement.innerHTML));
+        worker.postMessage(this.instructionList.map(e => e.instructionElement.innerHTML));
     }
 
     static toggleBinary(showBinary) {
-        InstructionUtils.instructions.forEach(e => {
+        InstructionUtils.instructionList.forEach(e => {
             e.showBinary = showBinary;
             e.binaryElement.innerText = e.getBinaryInnerText();
         });
     }
 
     static toggleSourceCode(showSourceCode) {
-        InstructionUtils.instructions.forEach(e => {
+        InstructionUtils.instructionList.forEach(e => {
             e.showSourceCode = showSourceCode;
-            e.commentElement.innerText = e.getCommentInnerText();
+            e.sourceCodeElement.innerText = e.getSourceCodeInnerText();
         });
     }
 
@@ -72,7 +77,8 @@ class Instruction {
         this.showBinary = false;
         this.showSourceCode = true;
 
-        this.address = this.text.substring(3, 11);
+        this.addressString = this.text.substring(3, 11);
+        this.address = Number.parseInt(this.addressString, 16);
 
         this.initElement()
     }
@@ -82,7 +88,7 @@ class Instruction {
 
         this.indexOfComma = this.text.indexOf(';');
 
-        this.element.innerHTML = `[<span class="hljs-attr">${this.address}</span>] `;
+        this.element.innerHTML = `[<span class="hljs-attr">${this.addressString}</span>] `;
 
         this.binaryElement = document.createElement("span");
         this.binaryElement.innerText = this.getBinaryInnerText();
@@ -93,20 +99,20 @@ class Instruction {
         this.instructionElement.innerText = this.getInstructionInnerText();
         this.element.appendChild(this.instructionElement);
 
-        this.commentElement = document.createElement("span");
-        this.commentElement.classList.add("hljs-comment");
-        this.commentElement.innerText = this.getCommentInnerText();
-        this.element.appendChild(this.commentElement);
+        this.sourceCodeElement = document.createElement("span");
+        this.sourceCodeElement.classList.add("hljs-comment");
+        this.sourceCodeElement.innerText = this.getSourceCodeInnerText();
+        this.element.appendChild(this.sourceCodeElement);
 
         this.element.onclick = () => this.toggleBreakpoint();
         return this.element;
     }
 
     getBinaryInnerText() {
-        return this.showBinary ? this.text.substring(13, 24) : "";
+        return this.showBinary ? this.text.substring(15, 24) : "";
     }
 
-    getCommentInnerText() {
+    getSourceCodeInnerText() {
         return (this.showSourceCode && this.indexOfComma > 0) ? this.text.substring(this.indexOfComma) : "";
     }
 
@@ -117,10 +123,10 @@ class Instruction {
     toggleBreakpoint() {
         this.isBreakpoint = !this.isBreakpoint;
         if (this.isBreakpoint) {
-            Spim.addBreakpoint(Number.parseInt(this.address, 16));
+            Spim.addBreakpoint(this.address);
             this.element.style.fontWeight = "bold";
         } else {
-            Spim.deleteBreakpoint(Number.parseInt(this.address, 16));
+            Spim.deleteBreakpoint(this.address);
             this.element.style.fontWeight = null;
         }
     }

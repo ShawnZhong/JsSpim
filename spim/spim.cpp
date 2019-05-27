@@ -69,6 +69,7 @@ void init() {
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
   initialize_run_stack(0, nullptr);
   read_assembly_file("input.s");
+  PC = starting_address();
 }
 
 int step(int step_size, bool cont_bkpt) {
@@ -212,10 +213,12 @@ char *getUserStack(bool compute_diff) {
   return ss_to_string(&ss);
 }
 
-int getPC() { return PC; }
 void addBreakpoint(mem_addr addr) { add_breakpoint(addr); }
 void deleteBreakpoint(mem_addr addr) { delete_breakpoint(addr); }
 }
+
+unsigned int getPC() { return PC; }
+EMSCRIPTEN_BINDINGS(getPC) { function("getPC", &getPC); }
 
 val getGeneralRegVals() { return val(typed_memory_view(32, (unsigned int *) R)); }
 EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
