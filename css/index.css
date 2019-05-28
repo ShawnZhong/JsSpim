@@ -8,6 +8,7 @@ body {
     grid-template-rows: min-content 1fr 1fr 10px 1fr 10px min-content;
     grid-template-columns: 24ch 40ch 40ch 57ch;
     grid-column-gap: 10px;
+    padding-bottom: 10px;
 }
 
 .card {
@@ -41,7 +42,9 @@ body {
     grid-area: reg;
 }
 
+
 /* for long binary values */
+
 #regs-panel pre {
     white-space: pre-wrap;
 }
@@ -74,7 +77,6 @@ body {
     margin: 0;
 }
 
-
 #output-panel {
     grid-area: output;
 }
@@ -83,12 +85,14 @@ body {
     grid-area: log;
 }
 
-#output-panel pre, #log-panel pre {
+#output-panel pre,
+#log-panel pre {
     white-space: pre-wrap;
     height: 8em;
 }
 
-#output-panel .card-body, #log-panel .card-body {
+#output-panel .card-body,
+#log-panel .card-body {
     margin: 0;
 }
 
