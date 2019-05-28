@@ -127,12 +127,14 @@
 
             &nbsp
 
-            <input type="radio" name="data-radix" id="data-radix-hex" value="16" checked>
+            <input type="radio" name="data-radix" id="data-radix-hex" value="16" checked
+                   onchange="DataSegment.changeRadix(this.value)">
             <label for="data-radix-hex">Hex</label>
 
             &nbsp
 
-            <input type="radio" name="data-radix" id="data-radix-dec" value="10">
+            <input type="radio" name="data-radix" id="data-radix-dec" value="10"
+                   onchange="DataSegment.changeRadix(this.value)">
             <label for="data-radix-dec">Dec</label>
         </div>
     </div>

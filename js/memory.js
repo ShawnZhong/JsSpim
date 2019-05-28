@@ -1,4 +1,16 @@
-class DataSegment {
+class Memory {
+    static changeRadix(radixStr) {
+        const radix = Number.parseInt(radixStr);
+        for (const line of this.lines) {
+            for (const word of line.wordList) {
+                word.radix = radix;
+                word.valueElement.innerText = word.getValueInnerText()
+            }
+        }
+    }
+}
+
+class DataSegment extends Memory {
     static init() {
         Elements.data.innerHTML = '';
         this.data = Spim.getUserData();
@@ -31,7 +43,8 @@ class DataSegment {
     }
 }
 
-class Stack {
+
+class Stack extends Memory {
     static init() {
         Elements.stack.innerHTML = '';
         this.stack = Spim.getStack();
@@ -59,16 +72,6 @@ class Stack {
         if (RegisterUtils.getSP() > addr) return undefined;
         const index = Stack.stack.length - (0x80000000 - addr) / 4;
         return Stack.stack[index];
-    }
-
-    static changeRadix(radixStr) {
-        const radix = Number.parseInt(radixStr);
-        for (const line of this.lines) {
-            for (const word of line.wordList) {
-                word.radix = radix;
-                word.valueElement.innerText = word.getValueInnerText()
-            }
-        }
     }
 }
 
