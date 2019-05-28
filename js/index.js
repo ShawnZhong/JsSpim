@@ -1,4 +1,4 @@
-const fileList = ['tt.core.s', 'fib.s', 'read.s', 'data_seg.s'];
+const fileList = ['hello_world.s', 'fibonacci.s', 'test.s', 'test_le.s', 'read_string.s', 'timing.s', 'timer_interrupt.s'];
 fileList.forEach(filename => {
     const option = document.createElement("option");
     option.text = filename;

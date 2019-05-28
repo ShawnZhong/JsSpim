@@ -1,4 +1,4 @@
-# Read a string
+# Simple loop to test execution speed
 #
 #
 # Copyright (c) 1990-2011, James R. Larus.
@@ -31,20 +31,28 @@
 #
 
 	.data
-m1:	.asciiz "Read next line\n"
+m1:	.asciiz "Hit return to start timing\n"
+m2:	.asciiz "Done with timing\n"
 	.text
 	.globl main
 main:
 
-	li $v0 4	# syscall 4 (print_str)
+	li $v0 4        # syscall 4 (print_str)
 	la $a0 m1
 	syscall
 
-       	li $v0 8	# syscall 8 (read_string)
+    li $v0 5        # syscall 5 (read_int)
 	syscall
 
-       	li $v0 4	# syscall 4 (print_str)
+    li $t0 100
+loop:
+    xor $t1 $t1 $t1
+    sub $t0 1
+    bnez $t0 loop
+
+    li $v0 4        # syscall 4 (print_str)
+	la $a0 m2
 	syscall
 
-        jr $ra
+    jr $ra
 
