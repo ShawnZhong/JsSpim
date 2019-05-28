@@ -77,7 +77,8 @@ int step(int step_size, bool cont_bkpt) {
   bp_encountered = run_program(addr, step_size, false, cont_bkpt, &continuable);
 
   if (!continuable) { // finished
-    printf("\n");
+    printf("\n"); // to flush output
+    error("Execution finished\n");
     return 0;
   }
 
