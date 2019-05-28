@@ -16,31 +16,34 @@ class DataSegment extends Memory {
 
         // user data
         this.userData = Module.getUserData();
-        this.lines = [];
+        this.userLines = [];
         for (let i = 0; i < DataSegment.userData.length / 16; i++) {
             const addr = 0x10000000 + i * 0x10;
             if (this.isLineEmpty(addr, this.getUserContent)) continue;
             const newLine = new MemoryLine(addr, this.getUserContent);
             Elements.userData.append(newLine.element);
-            this.lines.push(newLine);
+            this.userLines.push(newLine);
         }
 
 
         // kernel data
         this.kernelData = Module.getKernelData();
+        this.kernelLines = [];
         for (let i = 0; i < DataSegment.kernelData.length / 16; i++) {
             const addr = 0x90000000 + i * 0x10;
             if (this.isLineEmpty(addr, this.getKernelContent)) continue;
             const newLine = new MemoryLine(addr, this.getKernelContent);
             newLine.updateValues();
             Elements.kernelData.append(newLine.element);
+            this.kernelLines.push(newLine);
         }
 
+        this.lines = [...this.userLines, ...this.kernelLines];
     }
 
     static update() {
         this.userData = Module.getUserData();
-        this.lines.forEach(e => e.updateValues());
+        this.userLines.forEach(e => e.updateValues());
     }
 
     static getUserContent(addr) {
