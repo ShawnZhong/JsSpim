@@ -95,74 +95,10 @@ char *getText(mem_addr from, mem_addr to) {
   return ss_to_string(&ss);
 }
 
-char *getKernelText() { return getText(K_TEXT_BOT, k_text_top); }
-
 char *getUserText() { return getText(TEXT_BOT, text_top); }
-
-char *getKernelData() {
-  ss_clear(&ss);
-  return ss_to_string(&ss);
+char *getKernelText() {
+  return getText(K_TEXT_BOT, k_text_top);
 }
-
-mem_word *prev_data_seg;
-mem_addr prev_data_top;
-
-bool isUserDataChanged() {
-  if (prev_data_top != data_top)
-    return true;
-
-  for (int i = 0; i < (data_top - DATA_BOT) / 4; ++i)
-    if (data_seg[i] != prev_data_seg[i])
-      return true;
-
-  return false;
-}
-
-char *getUserData(bool compute_diff) {
-  ss_clear(&ss);
-
-  for (mem_addr addr = DATA_BOT; addr < data_top; addr += BYTES_PER_WORD * 4) {
-
-    int i = (addr - DATA_BOT) / 4;
-    // skip empty
-    if (data_seg[i] == 0 && data_seg[i + 1] == 0 && data_seg[i + 2] == 0 && data_seg[i + 3] == 0)
-      continue;
-
-    // open tag
-    ss_printf(&ss, "<div>[<span class='hljs-attr'>%08x</span>] ", addr);
-
-    // print hex
-    for (int j = 0; j < 4; ++j) {
-      if (compute_diff && (data_seg[i + j] != prev_data_seg[i + j] || addr > prev_data_top))
-        ss_printf(&ss, "<span class='hljs-number' style='background-color: yellow;'>%08x</span> ", data_seg[i + j]);
-      else
-        ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", data_seg[i + j]);
-    }
-
-    // print ascii
-    char *start = (char *) &data_seg[i];
-    for (int k = 0; k < 16; ++k) {
-      if (start[k] >= 32 && start[k] < 127)
-        ss_printf(&ss, "%c", start[k]);
-      else
-        ss_printf(&ss, "�");
-    }
-
-    // close tag
-    ss_printf(&ss, "</pre>", addr);
-  }
-
-  if (prev_data_top != data_top) {
-    free(prev_data_seg);
-    prev_data_seg = (mem_word *) malloc(data_top - DATA_BOT);
-  }
-
-  memcpy(prev_data_seg, data_seg, data_top - DATA_BOT);
-  prev_data_top = data_top;
-
-  return ss_to_string(&ss);
-}
-
 }
 
 EMSCRIPTEN_BINDINGS(delete_breakpoint) { function("deleteBreakpoint", &delete_breakpoint); }
@@ -171,8 +107,8 @@ EMSCRIPTEN_BINDINGS(add_breakpoint) { function("addBreakpoint", &add_breakpoint)
 val getStack() { return val(typed_memory_view(STACK_LIMIT / 16, (unsigned int *) stack_seg)); }
 EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }
 
-unsigned int getPC() { return PC; }
-EMSCRIPTEN_BINDINGS(getPC) { function("getPC", &getPC); }
+val getUserData() { return val(typed_memory_view(data_top - DATA_BOT, (unsigned int *) data_seg)); }
+EMSCRIPTEN_BINDINGS(getUserData) { function("getUserData", &getUserData); }
 
 val getGeneralRegVals() { return val(typed_memory_view(32, (unsigned int *) R)); }
 EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }

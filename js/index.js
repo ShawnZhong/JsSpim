@@ -1,3 +1,11 @@
+const fileList = ['tt.core.s', 'fib.s', 'read.s', 'data_seg.s'];
+fileList.forEach(filename => {
+    const option = document.createElement("option");
+    option.text = filename;
+    option.value = `Tests/${filename}`;
+    Elements.fileSelector.add(option);
+});
+
 let Spim;
 
 var Module = {
@@ -18,23 +26,14 @@ function initSpim() {
     Spim = {
         init: cwrap('init'),
         step: cwrap('step', 'number', ['number', 'boolean']),
-
-        isUserDataChanged: cwrap('isUserDataChanged', 'boolean'),
-
-        getPC: Module.getPC,
+        getUserText: cwrap('getUserText', 'string', ['boolean']),
+        getKernelText: cwrap('getKernelText', 'string'),
+        getUserData: Module.getUserData,
         getSpecialRegVals: Module.getSpecialRegVals,
-
         getGeneralRegVals: Module.getGeneralRegVals,
         getFloatRegVals: Module.getFloatRegVals,
         getDoubleRegVals: Module.getDoubleRegVals,
-
         getStack: Module.getStack,
-
-        getUserData: cwrap('getUserData', 'string', ['boolean']),
-        getUserText: cwrap('getUserText', 'string', ['boolean']),
-        getKernelData: cwrap('getKernelData', 'string'),
-        getKernelText: cwrap('getKernelText', 'string'),
-        getUserStack: cwrap('getUserStack', 'string', ['boolean']),
         addBreakpoint: Module.addBreakpoint,
         deleteBreakpoint: Module.deleteBreakpoint,
     };

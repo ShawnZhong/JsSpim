@@ -3,21 +3,20 @@ class Display {
         RegisterUtils.init();
         Stack.init();
         InstructionUtils.init();
-        Display.update(false, true);
+        DataSegment.init();
+        Display.update();
     }
 
     static reset() {
         InstructionUtils.removeAllBreakpoints();
         Stack.init();
-        Display.update(true, true);
+        DataSegment.init();
+        Display.update();
     }
 
-    static update(compareDiff = true, forceUpdate = false) {
+    static update() {
         Stack.update();
-
-        if (forceUpdate || Spim.isUserDataChanged())
-            Elements.data.innerHTML = Spim.getUserData(compareDiff);
-
+        DataSegment.update();
         RegisterUtils.update();
         InstructionUtils.highlightCurrentInstruction()
     }

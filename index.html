@@ -188,14 +188,6 @@
         floatReg: document.getElementById('float-regs'),
         doubleReg: document.getElementById('double-regs'),
     });
-
-    const fileList = ['fib.s', 'tt.core.s', 'read.s', 'data_seg.s'];
-    fileList.forEach(filename => {
-        const option = document.createElement("option");
-        option.text = filename;
-        option.value = `Tests/${filename}`;
-        Elements.fileSelector.add(option);
-    });
 </script>
 
 <script type='text/javascript' src="js/index.js"></script>

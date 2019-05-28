@@ -34,7 +34,7 @@ class InstructionUtils {
         if (InstructionUtils.highlighted)
             InstructionUtils.highlighted.style.backgroundColor = null;
 
-        const pc = Spim.getPC();
+        const pc = RegisterUtils.getPC();
         const instruction = InstructionUtils.instructionDict[pc];
         if (!instruction) return;
 

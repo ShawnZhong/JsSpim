@@ -1,5 +1,33 @@
-class Data {
+class DataSegment {
     static init() {
+        Elements.data.innerHTML = '';
+        this.data = Spim.getUserData();
+
+        this.lines = [];
+
+        for (let i = 0; i < DataSegment.data.length / 16; i++) {
+            const addr = 0x10000000 + i * 0x10;
+            if (this.isLineEmpty(addr)) continue;
+            const newLine = new MemoryLine(addr, this.getContent);
+            Elements.data.append(newLine.element);
+            this.lines.push(newLine);
+        }
+        this.update();
+    }
+
+    static update() {
+        this.data = Spim.getUserData();
+        this.lines.forEach(e => e.updateValues());
+    }
+
+    static getContent(addr) {
+        return DataSegment.data[(addr - 0x10000000) >> 2];
+    }
+
+    static isLineEmpty(addr) {
+        for (let i = addr; i < addr + 0x10; i += 4)
+            if (this.getContent(i) !== 0) return false;
+        return true;
     }
 }
 
@@ -12,9 +40,9 @@ class Stack {
         this.update();
     }
 
-    static addNewLines(endAddress) {
-        for (; endAddress >= RegisterUtils.getSP(); endAddress -= 0x10) {
-            const newLine = new MemoryLine(endAddress);
+    static addNewLines(endAddr) {
+        for (; endAddr >= RegisterUtils.getSP(); endAddr -= 0x10) {
+            const newLine = new MemoryLine(endAddr - 0x10, this.getContent);
             Elements.stack.prepend(newLine.element);
             this.lines.push(newLine);
         }
@@ -27,10 +55,10 @@ class Stack {
         this.lines.forEach(e => e.updateValues());
     }
 
-    static getContent(address) {
-        if (RegisterUtils.getSP() > address) return undefined;
-        const index = this.stack.length - (0x80000000 - address) / 4;
-        return this.stack[index];
+    static getContent(addr) {
+        if (RegisterUtils.getSP() > addr) return undefined;
+        const index = Stack.stack.length - (0x80000000 - addr) / 4;
+        return Stack.stack[index];
     }
 
     static changeRadix(radixStr) {
@@ -46,12 +74,10 @@ class Stack {
 
 
 class MemoryLine {
-    constructor(endAddress) {
-        const startAddress = endAddress - 0x10;
-
+    constructor(startAddress, getContent) {
         this.wordList = [];
-        for (let address = startAddress; address < endAddress; address += 4)
-            this.wordList.push(new MemoryWord(address));
+        for (let address = startAddress; address < startAddress + 0x10; address += 4)
+            this.wordList.push(new MemoryWord(address, getContent));
 
         this.element = document.createElement('div');
         this.element.innerHTML = `[<span class='hljs-attr'>${startAddress.toString(16)}</span>] `;
@@ -66,8 +92,9 @@ class MemoryLine {
 }
 
 class MemoryWord {
-    constructor(address) {
+    constructor(address, getContent) {
         this.address = address;
+        this.getContent = getContent;
         this.radix = 16;
 
         this.valueElement = document.createElement('span');
@@ -79,7 +106,7 @@ class MemoryWord {
     }
 
     updateValue() {
-        const newValue = Stack.getContent(this.address);
+        const newValue = this.getContent(this.address);
 
         if (this.value === newValue) {
             this.valueElement.classList.remove('highlight');

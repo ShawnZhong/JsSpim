@@ -63,6 +63,10 @@ class RegisterUtils {
     static getSP() {
         return this.generalRegVals[29];
     }
+
+    static getPC() {
+        return this.specialRegVals[0];
+    }
 }
 
 class Register {
