@@ -82,8 +82,6 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getKernelData', \
 					 '_step', \
 					 '_init', \
-					 '_addBreakpoint', \
-					 '_deleteBreakpoint', \
 					 '_isUserDataChanged'
 LDFLAGS += -lm -O2 --bind\
 			--preload-file $(CPU_DIR)/exceptions.s@/usr/share/spim/exceptions.s\

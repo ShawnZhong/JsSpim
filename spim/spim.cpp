@@ -166,9 +166,10 @@ char *getUserData(bool compute_diff) {
   return ss_to_string(&ss);
 }
 
-void addBreakpoint(mem_addr addr) { add_breakpoint(addr); }
-void deleteBreakpoint(mem_addr addr) { delete_breakpoint(addr); }
 }
+
+EMSCRIPTEN_BINDINGS(delete_breakpoint) { function("deleteBreakpoint", &delete_breakpoint); }
+EMSCRIPTEN_BINDINGS(add_breakpoint) { function("addBreakpoint", &add_breakpoint); }
 
 val getStack() { return val(typed_memory_view(STACK_LIMIT / 16, (unsigned int *) stack_seg)); }
 EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }

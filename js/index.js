@@ -33,8 +33,8 @@ function initSpim() {
         getKernelData: cwrap('getKernelData', 'string'),
         getKernelText: cwrap('getKernelText', 'string'),
         getUserStack: cwrap('getUserStack', 'string', ['boolean']),
-        addBreakpoint: cwrap('addBreakpoint', null, ['number']),
-        deleteBreakpoint: cwrap('deleteBreakpoint', null, ['number']),
+        addBreakpoint: Module.addBreakpoint,
+        deleteBreakpoint: Module.deleteBreakpoint,
     };
 }
 
