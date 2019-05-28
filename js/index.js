@@ -1,9 +1,9 @@
 const fileList = [
-    'hello_world.s',
     'fibonacci.s',
     'test_core.s',
     'test_le.s',
     'test_sys_call.s',
+    'hello_world.s',
     'read_string.s',
     'timing.s',
     'timer_interrupt.s'
