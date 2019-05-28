@@ -15,10 +15,17 @@ class Execution {
         Elements.log.innerHTML = '';
 
         Module.init();
-        if (reset)
-            Display.reset();
-        else
-            Display.init();
+        RegisterUtils.init();
+        Stack.init();
+        DataSegment.init();
+
+        if (reset) {
+            InstructionUtils.removeAllBreakpoints();
+            InstructionUtils.highlightCurrentInstruction();
+        } else {
+            InstructionUtils.init();
+            InstructionUtils.highlightCurrentInstruction();
+        }
     }
 
     static step(stepSize = 1) {
@@ -34,7 +41,10 @@ class Execution {
             Execution.skipBreakpoint = false;
         }
 
-        Display.update();
+        RegisterUtils.update();
+        Stack.update();
+        DataSegment.update();
+        InstructionUtils.highlightCurrentInstruction();
     }
 
     static togglePlay() {

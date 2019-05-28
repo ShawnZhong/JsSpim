@@ -73,7 +73,6 @@ class Register {
     constructor(name) {
         this.name = name.padEnd(8);
         this.value = undefined;
-        this.highlighted = false;
 
         // init element
         this.element = document.createElement("div");
@@ -92,21 +91,15 @@ class Register {
 
     updateValue(newValue) {
         if (this.value === newValue) {
-            if (this.highlighted) this.toggleHighlight();
+            this.valueElement.classList.remove('highlight');
             return;
         }
 
+        if (this.value !== undefined)
+            this.valueElement.classList.add('highlight');
+
         this.value = newValue;
         this.valueElement.innerText = this.formatValue();
-        this.toggleHighlight();
-    }
-
-    toggleHighlight() {
-        if (this.highlighted)
-            this.valueElement.style.backgroundColor = null;
-        else
-            this.valueElement.style.backgroundColor = 'yellow';
-        this.highlighted = !this.highlighted;
     }
 
     formatValue() {

@@ -96,3 +96,7 @@ body {
 .highlight {
     background-color: yellow;
 }
+
+.unused {
+    color: gainsboro;
+}

@@ -21,6 +21,7 @@ class DataSegment extends Memory {
             const addr = 0x10000000 + i * 0x10;
             if (this.isLineEmpty(addr, this.getUserContent)) continue;
             const newLine = new MemoryLine(addr, this.getUserContent);
+            newLine.updateValues();
             Elements.userData.append(newLine.element);
             this.userLines.push(newLine);
         }
@@ -137,9 +138,15 @@ class MemoryWord {
     updateValue() {
         const newValue = this.getContent(this.address);
 
+        if (newValue === undefined) {
+            this.valueElement.classList.add('unused');
+            this.stringElement.classList.add('unused');
+            return;
+        }
+
         if (this.value === newValue) {
-            this.valueElement.classList.remove('highlight');
-            this.stringElement.classList.remove('highlight');
+            this.valueElement.classList.remove('highlight', 'unused');
+            this.stringElement.classList.remove('highlight', 'unused');
             return;
         }
 
@@ -148,8 +155,8 @@ class MemoryWord {
             this.stringElement.classList.add('highlight');
         }
 
-        this.value = newValue;
 
+        this.value = newValue;
         this.valueElement.innerText = this.getValueInnerText();
         this.stringElement.innerText = this.getStringInnerText();
     }
