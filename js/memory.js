@@ -12,35 +12,58 @@ class Memory {
 
 class DataSegment extends Memory {
     static init() {
-        Elements.data.innerHTML = '';
-        this.data = Module.getUserData();
+        Elements.userData.innerHTML = '';
 
+        // user data
+        this.userData = Module.getUserData();
         this.lines = [];
-
-        for (let i = 0; i < DataSegment.data.length / 16; i++) {
+        for (let i = 0; i < DataSegment.userData.length / 16; i++) {
             const addr = 0x10000000 + i * 0x10;
-            if (this.isLineEmpty(addr)) continue;
-            const newLine = new MemoryLine(addr, this.getContent);
-            Elements.data.append(newLine.element);
+            if (this.isLineEmpty(addr, this.getUserContent)) continue;
+            const newLine = new MemoryLine(addr, this.getUserContent);
+            Elements.userData.append(newLine.element);
             this.lines.push(newLine);
         }
-        this.update();
+
+
+        // kernel data
+        this.kernelData = Module.getKernelData();
+        for (let i = 0; i < DataSegment.kernelData.length / 16; i++) {
+            const addr = 0x90000000 + i * 0x10;
+            if (this.isLineEmpty(addr, this.getKernelContent)) continue;
+            const newLine = new MemoryLine(addr, this.getKernelContent);
+            newLine.updateValues();
+            Elements.kernelData.append(newLine.element);
+        }
+
     }
 
     static update() {
-        this.data = Module.getUserData();
+        this.userData = Module.getUserData();
         this.lines.forEach(e => e.updateValues());
     }
 
-    static getContent(addr) {
-        return DataSegment.data[(addr - 0x10000000) >> 2];
+    static getUserContent(addr) {
+        return DataSegment.userData[(addr - 0x10000000) >> 2];
     }
 
-    static isLineEmpty(addr) {
+    static getKernelContent(addr) {
+        return DataSegment.kernelData[(addr - 0x90000000) >> 2];
+    }
+
+    static isLineEmpty(addr, getContent) {
         for (let i = addr; i < addr + 0x10; i += 4)
-            if (this.getContent(i) !== 0) return false;
+            if (getContent(i) !== 0) return false;
         return true;
     }
+
+    static toggleKernelData(shoeKernelData) {
+        if (shoeKernelData)
+            Elements.kernelDataContainer.style.display = null;
+        else
+            Elements.kernelDataContainer.style.display = 'none';
+    }
+
 }
 
 
@@ -117,10 +140,12 @@ class MemoryWord {
             return;
         }
 
-        this.value = newValue;
+        if (this.value !== undefined) {
+            this.valueElement.classList.add('highlight');
+            this.stringElement.classList.add('highlight');
+        }
 
-        this.valueElement.classList.add('highlight');
-        this.stringElement.classList.add('highlight');
+        this.value = newValue;
 
         this.valueElement.innerText = this.getValueInnerText();
         this.stringElement.innerText = this.getStringInnerText();

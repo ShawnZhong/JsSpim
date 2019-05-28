@@ -111,6 +111,9 @@ EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }
 val getUserData() { return val(typed_memory_view(data_top - DATA_BOT, (unsigned int *) data_seg)); }
 EMSCRIPTEN_BINDINGS(getUserData) { function("getUserData", &getUserData); }
 
+val getKernelData() { return val(typed_memory_view(k_data_top - K_DATA_BOT, (unsigned int *) k_data_seg)); }
+EMSCRIPTEN_BINDINGS(getKernelData) { function("getKernelData", &getKernelData); }
+
 val getGeneralRegVals() { return val(typed_memory_view(32, (unsigned int *) R)); }
 EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
 

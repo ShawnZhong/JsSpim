@@ -122,7 +122,8 @@
     <div class="card-header">
         <h5 class="float-left">Data Segment</h5>
         <div class="float-right">
-            <input id="toggle-kernel-data" type="checkbox">
+            <input id="toggle-kernel-data" type="checkbox" checked
+                   onchange="DataSegment.toggleKernelData(this.checked)">
             <label for="toggle-kernel-data"> Kernel data </label>
 
             &nbsp
@@ -138,7 +139,19 @@
             <label for="data-radix-dec">Dec</label>
         </div>
     </div>
-    <pre id="data-content" class="card-body"></pre>
+
+    <div class="card-body">
+        <div id="user-data-container">
+            <pre class="segment-title">User Data Segment</pre class="segment-title">
+            <pre id="user-data-content"></pre>
+        </div>
+        <div id="kernel-data-container">
+            <pre class="segment-title">Kernel Data Segment</pre>
+            <pre id="kernel-data-content"></pre>
+        </div>
+    </div>
+
+
 </div>
 
 <div id="stack-panel" class="card">
@@ -182,7 +195,9 @@
         userTextContent: document.getElementById('user-text-content'),
         kernelTextContent: document.getElementById('kernel-text-content'),
         kernelTextContainer: document.getElementById('kernel-text-container'),
-        data: document.getElementById('data-content'),
+        userData: document.getElementById('user-data-content'),
+        kernelData: document.getElementById('kernel-data-content'),
+        kernelDataContainer: document.getElementById('kernel-data-container'),
         stack: document.getElementById('stack-content'),
         generalReg: document.getElementById('general-regs'),
         specialIntReg: document.getElementById('special-int-regs'),
