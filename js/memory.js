@@ -13,6 +13,7 @@ class Memory {
 class DataSegment extends Memory {
     static init() {
         Elements.userData.innerHTML = '';
+        Elements.kernelData.innerHTML = '';
 
         // user data
         this.userData = Module.getUserData();
