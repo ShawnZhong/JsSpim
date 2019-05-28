@@ -2,6 +2,7 @@ class MemoryUtils {
     static init() {
         Elements.stack.innerHTML = '';
         this.stack = Spim.getStack();
+        this.stackRadix = 16;
         this.memoryLines = [];
         this.addNewLines(0x80000000);
         this.update();
@@ -26,6 +27,11 @@ class MemoryUtils {
         if (Spim.generalRegVals[29] > address) return undefined;
         const index = this.stack.length - (0x80000000 - address) / 4;
         return this.stack[index];
+    }
+
+    static changeStackRadix(radix) {
+        this.stackRadix = Number.parseInt(radix);
+        this.memoryLines.forEach(line => line.wordList.forEach(word => word.valueElement.innerText = word.getValueInnerText()));
     }
 }
 
@@ -80,10 +86,13 @@ class MemoryWord {
     }
 
     getValueInnerText() {
-        if (this.value === undefined)
-            return "        ";
-
-        return this.value.toString(16).padStart(8, '0');
+        if (MemoryUtils.stackRadix === 16) {
+            if (this.value === undefined) return ''.padStart(8);
+            return this.value.toString(16).padStart(8, '0');
+        } else {
+            const string = this.value === undefined ? '' : this.value.toString();
+            return string.padStart(10, ' ');
+        }
     }
 
     getStringInnerText() {

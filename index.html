@@ -128,7 +128,7 @@
             &nbsp
 
             <input type="radio" name="data-radix" id="data-radix-hex" value="16" checked>
-            <label for="data-radix-hex">Hex with ASCII</label>
+            <label for="data-radix-hex">Hex</label>
 
             &nbsp
 
@@ -143,12 +143,14 @@
     <div class="card-header">
         <h5 class="float-left">User Stack</h5>
         <div class="float-right">
-            <input type="radio" name="stack-radix" id="stack-radix-hex" value="16" checked>
-            <label for="stack-radix-hex">Hex with ASCII</label>
+            <input type="radio" name="stack-radix" id="stack-radix-hex" value="16" checked
+                   onchange="MemoryUtils.changeStackRadix(this.value)">
+            <label for="stack-radix-hex">Hex</label>
 
             &nbsp
 
-            <input type="radio" name="stack-radix" id="stack-radix-dec" value="10">
+            <input type="radio" name="stack-radix" id="stack-radix-dec" value="10"
+                   onchange="MemoryUtils.changeStackRadix(this.value)">
             <label for="stack-radix-dec">Dec</label>
         </div>
     </div>
