@@ -12,6 +12,8 @@ var Module = {
     }
 };
 
+
+let stack1, stack2, stack3;
 function initSpim() {
     Spim = {
         init: cwrap('init'),
@@ -22,9 +24,9 @@ function initSpim() {
         getPC: Module.getPC,
         getSpecialRegVals: Module.getSpecialRegVals,
 
-        generalRegVals: Module.getGeneralRegVals(),
-        floatRegVals: Module.getFloatRegVals(),
-        doubleRegVals: Module.getDoubleRegVals(),
+        getGeneralRegVals: Module.getGeneralRegVals,
+        getFloatRegVals: Module.getFloatRegVals,
+        getDoubleRegVals: Module.getDoubleRegVals,
 
         getStack: Module.getStack,
 

@@ -1,39 +1,49 @@
-class MemoryUtils {
+class Data {
+    static init() {
+    }
+}
+
+class Stack {
     static init() {
         Elements.stack.innerHTML = '';
         this.stack = Spim.getStack();
-        this.stackRadix = 16;
-        this.memoryLines = [];
+        this.lines = [];
         this.addNewLines(0x80000000);
         this.update();
     }
 
     static addNewLines(endAddress) {
-        for (; endAddress >= Spim.generalRegVals[29]; endAddress -= 0x10) {
+        for (; endAddress >= RegisterUtils.getSP(); endAddress -= 0x10) {
             const newLine = new MemoryLine(endAddress);
             Elements.stack.prepend(newLine.element);
-            this.memoryLines.push(newLine);
+            this.lines.push(newLine);
         }
-        this.minLineAddress = Spim.generalRegVals[29] & 0xfffffff0;
+        this.minLineAddress = RegisterUtils.getSP() & 0xfffffff0;
     }
 
     static update() {
-        if (Spim.generalRegVals[29] < this.minLineAddress)
+        if (RegisterUtils.getSP() < this.minLineAddress)
             this.addNewLines(this.minLineAddress);
-        this.memoryLines.forEach(e => e.updateValues());
+        this.lines.forEach(e => e.updateValues());
     }
 
-    static getStackContent(address) {
-        if (Spim.generalRegVals[29] > address) return undefined;
+    static getContent(address) {
+        if (RegisterUtils.getSP() > address) return undefined;
         const index = this.stack.length - (0x80000000 - address) / 4;
         return this.stack[index];
     }
 
-    static changeStackRadix(radix) {
-        this.stackRadix = Number.parseInt(radix);
-        this.memoryLines.forEach(line => line.wordList.forEach(word => word.valueElement.innerText = word.getValueInnerText()));
+    static changeRadix(radixStr) {
+        const radix = Number.parseInt(radixStr);
+        for (const line of this.lines) {
+            for (const word of line.wordList) {
+                word.radix = radix;
+                word.valueElement.innerText = word.getValueInnerText()
+            }
+        }
     }
 }
+
 
 class MemoryLine {
     constructor(endAddress) {
@@ -58,6 +68,7 @@ class MemoryLine {
 class MemoryWord {
     constructor(address) {
         this.address = address;
+        this.radix = 16;
 
         this.valueElement = document.createElement('span');
         this.valueElement.classList.add('data-number');
@@ -68,7 +79,7 @@ class MemoryWord {
     }
 
     updateValue() {
-        const newValue = MemoryUtils.getStackContent(this.address);
+        const newValue = Stack.getContent(this.address);
 
         if (this.value === newValue) {
             this.valueElement.classList.remove('highlight');
@@ -86,12 +97,12 @@ class MemoryWord {
     }
 
     getValueInnerText() {
-        if (MemoryUtils.stackRadix === 16) {
-            if (this.value === undefined) return ''.padStart(8);
-            return this.value.toString(16).padStart(8, '0');
-        } else {
+        if (this.radix === 10) {
             const string = this.value === undefined ? '' : this.value.toString();
             return string.padStart(10, ' ');
+        } else {
+            if (this.value === undefined) return ''.padStart(8);
+            return this.value.toString(16).padStart(8, '0');
         }
     }
 

@@ -2,7 +2,6 @@ class RegisterUtils {
     static init() {
         this.radix = 16;
 
-
         const generalRegNames = [
             "r0", "at", "v0", "v1", "a0", "a1", "a2", "a3",
             "t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7",
@@ -15,6 +14,9 @@ class RegisterUtils {
         const doubleRegNames = Array(16).fill(0).map((_, i) => `FP${i}`);
 
         this.specialRegVals = Spim.getSpecialRegVals();
+        this.generalRegVals = Spim.getGeneralRegVals();
+        this.floatRegVals = Spim.getFloatRegVals();
+        this.doubleRegVals = Spim.getDoubleRegVals();
 
         this.generalRegs = generalRegNames.map(name => new Register(name));
         this.specialIntRegs = specialRegNames.map(name => new Register(name));
@@ -46,9 +48,9 @@ class RegisterUtils {
         this.specialFloatRegs.forEach((reg, i) => reg.updateValue(this.specialRegVals[i + 7]));
 
 
-        this.generalRegs.forEach((reg, i) => reg.updateValue(Spim.generalRegVals[i]));
-        this.floatRegs.forEach((reg, i) => reg.updateValue(Spim.floatRegVals[i]));
-        this.doubleRegs.forEach((reg, i) => reg.updateValue(Spim.doubleRegVals[i]));
+        this.generalRegs.forEach((reg, i) => reg.updateValue(this.generalRegVals[i]));
+        this.floatRegs.forEach((reg, i) => reg.updateValue(this.floatRegVals[i]));
+        this.doubleRegs.forEach((reg, i) => reg.updateValue(this.doubleRegVals[i]));
     }
 
     static changeRadix(radix) {
@@ -56,6 +58,10 @@ class RegisterUtils {
         this.generalRegs.forEach(e => e.valueElement.innerText = e.formatValue());
         this.specialIntRegs.forEach(e => e.valueElement.innerText = e.formatValue());
         this.specialFloatRegs.forEach(e => e.valueElement.innerText = e.formatValue());
+    }
+
+    static getSP() {
+        return this.generalRegVals[29];
     }
 }
 

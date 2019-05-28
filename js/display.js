@@ -1,19 +1,19 @@
 class Display {
     static init() {
         RegisterUtils.init();
-        MemoryUtils.init();
+        Stack.init();
         InstructionUtils.init();
         Display.update(false, true);
     }
 
     static reset() {
         InstructionUtils.removeAllBreakpoints();
-        MemoryUtils.init();
+        Stack.init();
         Display.update(true, true);
     }
 
     static update(compareDiff = true, forceUpdate = false) {
-        MemoryUtils.update();
+        Stack.update();
 
         if (forceUpdate || Spim.isUserDataChanged())
             Elements.data.innerHTML = Spim.getUserData(compareDiff);

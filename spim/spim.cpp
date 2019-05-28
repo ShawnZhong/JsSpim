@@ -46,9 +46,6 @@
 #include "mem.h"
 #include "data.h"
 
-#define PRE(text)  "<div>" text "</pre>"
-#define PRE_H(text) "<div style='background-color: yellow;'>" text "</pre>"
-
 using namespace emscripten;
 
 bool bare_machine;        /* => simulate bare machine */
