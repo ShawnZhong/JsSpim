@@ -2,7 +2,7 @@ const worker = new Worker('js/highlight.min.js');
 worker.onmessage = (event) => event.data.forEach((e, i) => InstructionUtils.instructionList[i].instructionElement.innerHTML = e);
 
 class InstructionUtils {
-    static showInstructions() {
+    static init() {
         Elements.userTextContent.innerHTML = '';
         Elements.kernelTextContent.innerHTML = '';
 

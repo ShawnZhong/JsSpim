@@ -26,6 +26,8 @@ function initSpim() {
         floatRegVals: Module.getFloatRegVals(),
         doubleRegVals: Module.getDoubleRegVals(),
 
+        getStack: Module.getStack,
+
         getUserData: cwrap('getUserData', 'string', ['boolean']),
         getUserText: cwrap('getUserText', 'string', ['boolean']),
         getKernelData: cwrap('getKernelData', 'string'),

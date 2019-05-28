@@ -29,16 +29,12 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
   color: #c41a16;
 }
 
-.hljs-regexp,
-.hljs-link {
-  color: #0E0EFF;
-}
-
 .hljs-title,
 .hljs-symbol,
 .hljs-bullet,
 .hljs-number {
   color: #1c00cf;
+
 }
 
 .hljs-section,
@@ -57,35 +53,4 @@ XCode style (c) Angel Garcia <angelgarcia.mail@gmail.com>
 
 .hljs-attr {
   color: gray;
-}
-
-.hljs-subst {
-  color: #000;
-}
-
-.hljs-formula {
-  background-color: #eee;
-  font-style: italic;
-}
-
-.hljs-addition {
-  background-color: #baeeba;
-}
-
-.hljs-deletion {
-  background-color: #ffc8bd;
-}
-
-.hljs-selector-id,
-.hljs-selector-class {
-  color: #9b703f;
-}
-
-.hljs-doctag,
-.hljs-strong {
-  font-weight: bold;
-}
-
-.hljs-emphasis {
-  font-style: italic;
 }

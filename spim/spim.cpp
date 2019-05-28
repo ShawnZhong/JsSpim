@@ -166,56 +166,12 @@ char *getUserData(bool compute_diff) {
   return ss_to_string(&ss);
 }
 
-char *getUserStack(bool compute_diff) {
-  ss_clear(&ss);
-
-  static mem_addr prev_stack_bottom;
-  static mem_word prev_stack_seg[STACK_LIMIT];
-
-  mem_addr curr_stack_bottom = ROUND_DOWN(R[29], BYTES_PER_WORD * 4);
-
-  for (mem_addr addr = curr_stack_bottom; addr < STACK_TOP; addr += BYTES_PER_WORD * 4) {
-
-    int i = (addr - stack_bot) / 4;
-
-    // open tag
-    ss_printf(&ss, "<div>[<span class='hljs-attr'>%08x</span>] ", addr);
-
-    // print hex
-    for (int j = 0; j < 4; ++j) {
-      ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", stack_seg[i + j]);
-
-      //      if (compute_diff && (stack_seg[i + j] || i + j < prev_stack_bottom))
-      //        ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", stack_seg[i + j]);
-      //        //                  ss_printf(&ss, "<span class='hljs-number' style='background-color: yellow;'>%08x</span> ", stack_seg[i + j]);
-      //      else
-      //        ss_printf(&ss, "<span class='hljs-number'>%08x</span> ", stack_seg[i + j]);
-    }
-
-
-    // print ascii
-    char *start = (char *) &stack_seg[i];
-    for (int k = 0; k < 16; ++k) {
-      if (start[k] >= 32 && start[k] < 127)
-        ss_printf(&ss, "%c", start[k]);
-      else
-        ss_printf(&ss, "�");
-    }
-
-    // close tag
-    ss_printf(&ss, "</pre>", addr);
-  }
-
-  memcpy(prev_stack_seg, stack_seg, STACK_LIMIT);
-
-  prev_stack_bottom = curr_stack_bottom;
-
-  return ss_to_string(&ss);
-}
-
 void addBreakpoint(mem_addr addr) { add_breakpoint(addr); }
 void deleteBreakpoint(mem_addr addr) { delete_breakpoint(addr); }
 }
+
+val getStack() { return val(typed_memory_view(STACK_LIMIT / 16, (unsigned int *) stack_seg)); }
+EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }
 
 unsigned int getPC() { return PC; }
 EMSCRIPTEN_BINDINGS(getPC) { function("getPC", &getPC); }

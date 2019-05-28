@@ -80,7 +80,6 @@ EXPORTED_FUNCTIONS = '_getUserData', \
 					 '_getUserText', \
 					 '_getKernelText', \
 					 '_getKernelData', \
-					 '_getUserStack', \
 					 '_step', \
 					 '_init', \
 					 '_addBreakpoint', \
