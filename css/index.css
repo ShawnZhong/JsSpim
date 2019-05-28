@@ -1,12 +1,13 @@
 body {
-    height: 99vh;
+    height: 100vh;
     width: max-content;
+    overflow: hidden;
     margin: auto !important;
     display: grid;
-    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text data" "reg text text data" "reg text text stack" "reg output log stack";
-    grid-template-rows: min-content 1fr 1fr 1fr min-content;
+    grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text data" "reg text text data" "reg text text gap3" "reg text text stack" "reg gap2 gap2 stack" "reg output log stack";
+    grid-template-rows: min-content 1fr 1fr 10px 1fr 10px min-content;
     grid-template-columns: 24ch 40ch 40ch 57ch;
-    grid-gap: 12px;
+    grid-column-gap: 10px;
 }
 
 .card {
