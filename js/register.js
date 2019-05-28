@@ -13,10 +13,10 @@ class RegisterUtils {
         const floatRegNames = Array(32).fill(0).map((_, i) => `FG${i}`);
         const doubleRegNames = Array(16).fill(0).map((_, i) => `FP${i}`);
 
-        this.specialRegVals = Spim.getSpecialRegVals();
-        this.generalRegVals = Spim.getGeneralRegVals();
-        this.floatRegVals = Spim.getFloatRegVals();
-        this.doubleRegVals = Spim.getDoubleRegVals();
+        this.specialRegVals = Module.getSpecialRegVals();
+        this.generalRegVals = Module.getGeneralRegVals();
+        this.floatRegVals = Module.getFloatRegVals();
+        this.doubleRegVals = Module.getDoubleRegVals();
 
         this.generalRegs = generalRegNames.map(name => new Register(name));
         this.specialIntRegs = specialRegNames.map(name => new Register(name));
@@ -43,7 +43,7 @@ class RegisterUtils {
 
     static update() {
         // values in special registers needs to be refreshed
-        this.specialRegVals = Spim.getSpecialRegVals();
+        this.specialRegVals = Module.getSpecialRegVals();
         this.specialIntRegs.forEach((reg, i) => reg.updateValue(this.specialRegVals[i]));
         this.specialFloatRegs.forEach((reg, i) => reg.updateValue(this.specialRegVals[i + 7]));
 

@@ -14,7 +14,7 @@ class Execution {
         Elements.output.innerHTML = '';
         Elements.log.innerHTML = '';
 
-        Spim.init();
+        Module.init();
         if (reset)
             Display.reset();
         else
@@ -22,7 +22,7 @@ class Execution {
     }
 
     static step(stepSize = 1) {
-        const result = Spim.step(stepSize, Execution.playing ? Execution.skipBreakpoint : true);
+        const result = Module.step(stepSize, Execution.playing ? Execution.skipBreakpoint : true);
 
         if (result === 0)  // finished
             Execution.finish();

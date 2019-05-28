@@ -9,7 +9,7 @@ fileList.forEach(filename => {
 let Spim;
 
 var Module = {
-    postRun: [initSpim, main],
+    postRun: [main],
     print: (text) => {
         Elements.output.innerHTML += text + "\n";
         Elements.output.scrollTop = Elements.output.scrollHeight;
@@ -19,25 +19,6 @@ var Module = {
         Elements.log.scrollTop = Elements.output.scrollHeight;
     }
 };
-
-
-let stack1, stack2, stack3;
-function initSpim() {
-    Spim = {
-        init: cwrap('init'),
-        step: cwrap('step', 'number', ['number', 'boolean']),
-        getUserText: cwrap('getUserText', 'string', ['boolean']),
-        getKernelText: cwrap('getKernelText', 'string'),
-        getUserData: Module.getUserData,
-        getSpecialRegVals: Module.getSpecialRegVals,
-        getGeneralRegVals: Module.getGeneralRegVals,
-        getFloatRegVals: Module.getFloatRegVals,
-        getDoubleRegVals: Module.getDoubleRegVals,
-        getStack: Module.getStack,
-        addBreakpoint: Module.addBreakpoint,
-        deleteBreakpoint: Module.deleteBreakpoint,
-    };
-}
 
 async function main(fileInput = `Tests/${fileList[0]}`) {
     let data = await loadData(fileInput);

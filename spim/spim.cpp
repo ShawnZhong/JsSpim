@@ -58,16 +58,16 @@ port message_out, console_out, console_in;
 bool mapped_io;            /* => activate memory-mapped IO */
 int spim_return_value;        /* Value returned when spim exits */
 
-extern "C" {
-
-str_stream ss;
-
+static str_stream ss;
 void init() {
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
   initialize_run_stack(0, nullptr);
   read_assembly_file("input.s");
   PC = starting_address();
+  ss_clear(&ss);
 }
+
+EMSCRIPTEN_BINDINGS(init) { function("init", &init); }
 
 int step(int step_size, bool cont_bkpt) {
   mem_addr addr = PC == 0 ? starting_address() : PC;
@@ -89,20 +89,21 @@ int step(int step_size, bool cont_bkpt) {
   return 1;
 }
 
-char *getText(mem_addr from, mem_addr to) {
+EMSCRIPTEN_BINDINGS(step) { function("step", &step); }
+
+std::string getUserText() {
   ss_clear(&ss);
-  format_insts(&ss, from, to);
-  return ss_to_string(&ss);
+  format_insts(&ss, TEXT_BOT, text_top);
+  return std::string(ss_to_string(&ss));
 }
+EMSCRIPTEN_BINDINGS(getUserText) { function("getUserText", &getUserText); }
 
-char *getUserText() { return getText(TEXT_BOT, text_top); }
-char *getKernelText() {
-  return getText(K_TEXT_BOT, k_text_top);
+std::string getKernelText() {
+  ss_clear(&ss);
+  format_insts(&ss, K_TEXT_BOT, k_text_top);
+  return std::string(ss_to_string(&ss));
 }
-}
-
-EMSCRIPTEN_BINDINGS(delete_breakpoint) { function("deleteBreakpoint", &delete_breakpoint); }
-EMSCRIPTEN_BINDINGS(add_breakpoint) { function("addBreakpoint", &add_breakpoint); }
+EMSCRIPTEN_BINDINGS(getKernelText) { function("getKernelText", &getKernelText); }
 
 val getStack() { return val(typed_memory_view(STACK_LIMIT / 16, (unsigned int *) stack_seg)); }
 EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }
@@ -137,6 +138,9 @@ val getSpecialRegVals() {
   return val(typed_memory_view(12, specialRegs));
 }
 EMSCRIPTEN_BINDINGS(getSpecialRegVals) { function("getSpecialRegVals", &getSpecialRegVals); }
+
+EMSCRIPTEN_BINDINGS(delete_breakpoint) { function("deleteBreakpoint", &delete_breakpoint); }
+EMSCRIPTEN_BINDINGS(add_breakpoint) { function("addBreakpoint", &add_breakpoint); }
 
 /* Print an error message. */
 

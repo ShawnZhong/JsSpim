@@ -13,7 +13,7 @@ class Memory {
 class DataSegment extends Memory {
     static init() {
         Elements.data.innerHTML = '';
-        this.data = Spim.getUserData();
+        this.data = Module.getUserData();
 
         this.lines = [];
 
@@ -28,7 +28,7 @@ class DataSegment extends Memory {
     }
 
     static update() {
-        this.data = Spim.getUserData();
+        this.data = Module.getUserData();
         this.lines.forEach(e => e.updateValues());
     }
 
@@ -47,7 +47,7 @@ class DataSegment extends Memory {
 class Stack extends Memory {
     static init() {
         Elements.stack.innerHTML = '';
-        this.stack = Spim.getStack();
+        this.stack = Module.getStack();
         this.lines = [];
         this.addNewLines(0x80000000);
         this.update();
