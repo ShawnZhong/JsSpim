@@ -87,6 +87,9 @@ body {
     height: 8em;
 }
 
+#output-panel .card-body, #log-panel .card-body {
+    margin: 0;
+}
 
 .data-number {
     color: #1c00cf;

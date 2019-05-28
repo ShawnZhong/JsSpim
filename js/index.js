@@ -1,4 +1,13 @@
-const fileList = ['hello_world.s', 'fibonacci.s', 'test.s', 'test_le.s', 'read_string.s', 'timing.s', 'timer_interrupt.s'];
+const fileList = [
+    'hello_world.s',
+    'fibonacci.s',
+    'test_core.s',
+    'test_le.s',
+    'test_sys_call.s',
+    'read_string.s',
+    'timing.s',
+    'timer_interrupt.s'
+];
 fileList.forEach(filename => {
     const option = document.createElement("option");
     option.text = filename;
