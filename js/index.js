@@ -6,8 +6,6 @@ fileList.forEach(filename => {
     Elements.fileSelector.add(option);
 });
 
-let Spim;
-
 var Module = {
     postRun: [main],
     print: (text) => {
