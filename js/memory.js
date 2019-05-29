@@ -113,7 +113,10 @@ class MemoryLine {
         this.element = document.createElement('div');
         this.element.innerHTML = `[<span class='hljs-attr'>${startAddress.toString(16)}</span>] `;
 
-        this.wordList.forEach(e => this.element.appendChild(e.valueElement));
+        this.wordList.forEach(e => {
+            this.element.appendChild(e.valueElement);
+            this.element.appendChild(document.createTextNode(' '));
+        });
         this.wordList.forEach(e => this.element.appendChild(e.stringElement));
     }
 
