@@ -183,7 +183,7 @@ class MemoryWord {
             this.value >> 24
         ];
         return asciiArray
-            .map(e => e >= 32 && e < 127 ? e : -3)
+            .map(e => e >= 32 && e < 127 ? e : 183)
             .map(e => String.fromCharCode(e)).join('');
     }
 }
