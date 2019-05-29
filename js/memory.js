@@ -110,7 +110,7 @@ class MemoryLine {
         for (let address = startAddress; address < startAddress + 0x10; address += 4)
             this.wordList.push(new MemoryWord(address, getContent));
 
-        this.element = document.createElement('div');
+        this.element = document.createElement('span');
         this.element.innerHTML = `[<span class='hljs-attr'>${startAddress.toString(16)}</span>] `;
 
         this.wordList.forEach(e => {
@@ -118,6 +118,7 @@ class MemoryLine {
             this.element.appendChild(document.createTextNode(' '));
         });
         this.wordList.forEach(e => this.element.appendChild(e.stringElement));
+        this.element.appendChild(document.createTextNode('\n'));
     }
 
     updateValues() {

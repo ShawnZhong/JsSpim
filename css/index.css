@@ -11,6 +11,11 @@ body {
     padding-bottom: 10px;
 }
 
+pre {
+    width: fit-content;
+    margin: auto;
+}
+
 .card {
     display: flex;
     flex-direction: column;
@@ -46,6 +51,7 @@ body {
 /* for long binary values */
 
 #regs-panel pre {
+    margin-left: 2ch;
     white-space: pre-wrap;
 }
 
@@ -74,7 +80,7 @@ body {
 #stack-content {
     max-height: 100%;
     overflow: auto;
-    margin: 0;
+    margin-bottom: 0;
 }
 
 #output-panel {
