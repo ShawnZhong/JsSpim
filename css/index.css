@@ -6,7 +6,7 @@ body {
     display: grid;
     grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text data" "reg text text data" "reg text text gap3" "reg text text stack" "reg gap2 gap2 stack" "reg output log stack";
     grid-template-rows: min-content 1fr 1fr 10px 1fr 10px min-content;
-    grid-template-columns: 24ch 40ch 40ch 60ch;
+    grid-template-columns: 16rem 26rem 26rem 36rem;
     grid-column-gap: 10px;
     padding-bottom: 10px;
 }
@@ -51,7 +51,7 @@ pre {
 /* for long binary values */
 
 #regs-panel pre {
-    margin-left: 2ch;
+    margin-left: 1rem;
     white-space: pre-wrap;
 }
 
@@ -94,7 +94,7 @@ pre {
 #output-panel pre,
 #log-panel pre {
     white-space: pre-wrap;
-    height: 8em;
+    height: 8rem;
 }
 
 #output-panel .card-body,
