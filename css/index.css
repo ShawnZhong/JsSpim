@@ -6,6 +6,7 @@ body {
     display: grid;
     grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text data" "reg text text data" "reg text text gap3" "reg text text stack" "reg gap2 gap2 stack" "reg output log stack";
     grid-template-rows: min-content 1fr 1fr 10px 1fr 10px min-content;
+    grid-template-columns: 24ch 40ch 40ch 57ch;
     grid-column-gap: 10px;
     padding-bottom: 10px;
 }
@@ -41,10 +42,6 @@ body {
     grid-area: reg;
 }
 
-#regs-panel .card-body {
-    width: 24ch;
-}
-
 
 /* for long binary values */
 
@@ -56,17 +53,8 @@ body {
     grid-area: text;
 }
 
-#text-panel .card-body {
-    width: 80ch;
-}
-
 #text-panel pre {
     cursor: pointer;
-}
-
-#stack-panel .card-body,
-#data-panel .card-body {
-    width: 58ch;
 }
 
 #data-panel {
