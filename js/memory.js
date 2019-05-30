@@ -1,261 +1,164 @@
-class Memory {
-    static changeRadix(radixStr) {
-        this.radix = Number.parseInt(radixStr);
-        for (const line of this.lines) {
-            for (const word of line.wordList) {
-                word.radix = this.radix;
-                word.valueElement.innerText = word.getValueInnerText()
-            }
-        }
-    }
-}
-
-class DataSegment extends Memory {
+class MemoryUtils {
     static init() {
-        Elements.userData.innerHTML = '';
-        Elements.kernelData.innerHTML = '';
+        this.userData = new UserData();
+        this.kernelData = new KernelData();
+        this.stack = new Stack();
 
-        this.radix = 16;
-
-        // user data
-        this.userData = Module.getUserData();
-        this.userLines = [];
-        for (let i = 0; i < DataSegment.userData.length / 16; i++) {
-            const addr = 0x10000000 + i * 0x10;
-            if (this.isUserLineEmpty(addr)) continue;
-            const newLine = new UserDataMemoryLine(addr);
-            newLine.updateValues();
-            Elements.userData.append(newLine.element);
-            this.userLines.push(newLine);
-        }
-
-
-        // kernel data
-        this.kernelData = Module.getKernelData();
-        this.kernelLines = [];
-        for (let i = 0; i < DataSegment.kernelData.length / 16; i++) {
-            const addr = 0x90000000 + i * 0x10;
-            if (this.isKernelLineEmpty(addr)) continue;
-            const newLine = new KernelDataMemoryLine(addr);
-            newLine.updateValues();
-            Elements.kernelData.append(newLine.element);
-            this.kernelLines.push(newLine);
-        }
-
-        this.lines = [...this.userLines, ...this.kernelLines];
+        this.userData.initialize();
+        this.kernelData.initialize();
+        this.stack.initialize();
     }
 
     static update() {
-        this.userData = Module.getUserData();
-        this.userLines.forEach(e => e.updateValues());
+        this.userData.update();
+        this.kernelData.update();
+        this.stack.update();
     }
 
-    static isKernelLineEmpty(addr) {
-        for (let i = addr; i < addr + 0x10; i += 4)
-            if (this.getKernelDataContent(i) !== 0) return false;
-        return true;
+    static changeStackRadix(radixStr) {
+        const radix = Number.parseInt(radixStr);
+        this.stack.changeRadix(radix);
     }
 
-    static isUserLineEmpty(addr) {
-        for (let i = addr; i < addr + 0x10; i += 4)
-            if (this.getUserDataContent(i) !== 0) return false;
-        return true;
+    static changeDataRadix(radixStr) {
+        const radix = Number.parseInt(radixStr);
+        this.kernelData.changeRadix(radix);
+        this.userData.changeRadix(radix);
     }
 
-    static getUserDataContent(addr) {
-        return DataSegment.userData[(addr - 0x10000000) >> 2];
-    }
-
-    static getKernelDataContent(addr) {
-        return DataSegment.kernelData[(addr - 0x90000000) >> 2];
-    }
-
-    static toggleKernelData(shoeKernelData) {
-        if (shoeKernelData)
+    static toggleKernelData(showKernelData) {
+        if (showKernelData)
             Elements.kernelDataContainer.style.display = null;
         else
             Elements.kernelDataContainer.style.display = 'none';
     }
-
 }
 
-
-class Stack extends Memory {
-    static init() {
-        Elements.stack.innerHTML = '';
+class Memory {
+    constructor() {
         this.radix = 16;
-        this.stack = Module.getStack();
         this.lines = [];
-        this.addNewLines(0x80000000);
-        this.update();
+        this.content = undefined;
+        this.element = undefined;
     }
 
-    static addNewLines(endAddr) {
+    /**
+     * Initialize `element` and `lines`
+     */
+    initialize() {
+        this.element.innerHTML = '';
+        this.addNewLines();
+    }
+
+    /**
+     * update the radix for values
+     * @param radix new radix
+     */
+    changeRadix(radix) {
+        this.radix = radix;
+        for (const line of this.lines)
+            for (const word of line.wordList)
+                word.valueElement.innerText = word.getValueInnerText()
+    }
+
+    /**
+     * Check whether a line with the corresponding start address is empty (i.e., all zeros)
+     * @param startAddress the start address of the line
+     * @returns {boolean}
+     */
+    isLineEmpty(startAddress) {
+        for (let i = startAddress; i < startAddress + 0x10; i += 4)
+            if (this.getContent(i) !== 0) return false;
+        return true;
+    }
+
+    /**
+     * Adding new lines to `this.lines`
+     */
+    addNewLines() {
+    }
+
+    /**
+     * update the memory values
+     */
+    update() {
+    }
+
+    /**
+     * Get content from a certain memory address
+     * @param address a memory address
+     * @returns {number} the content in the address in int32
+     */
+    getContent(address) {
+        return 0;
+    }
+}
+
+class DataSegment extends Memory {
+    addNewLines() {
+        for (let i = 0; i < this.content.length / 16; i++) {
+            const addr = this.startAddress + i * 0x10;
+            if (this.isLineEmpty(addr)) continue;
+            const newLine = new MemoryLine(addr, this);
+            newLine.updateValues();
+            this.element.append(newLine.element);
+            this.lines.push(newLine);
+        }
+    }
+
+    getContent(addr) {
+        return this.content[(addr - this.startAddress) >> 2];
+    }
+}
+
+class UserData extends DataSegment {
+    constructor() {
+        super();
+        this.element = Elements.userData;
+        this.content = Module.getUserData();
+        this.startAddress = 0x10000000;
+    }
+    
+    update() {
+        this.content = Module.getUserData();
+        this.lines.forEach(e => e.updateValues());
+    }
+}
+
+class KernelData extends DataSegment {
+    constructor() {
+        super();
+        this.element = Elements.kernelData;
+        this.content = Module.getKernelData();
+        this.startAddress = 0x90000000;
+    }
+}
+
+class Stack extends Memory {
+    constructor() {
+        super();
+        this.content = Module.getStack();
+        this.element = Elements.stack;
+    }
+
+    addNewLines(endAddr = 0x80000000) {
         for (; endAddr >= RegisterUtils.getSP(); endAddr -= 0x10) {
-            const newLine = new StackMemoryLine(endAddr - 0x10);
+            const newLine = new MemoryLine(endAddr - 0x10, this);
             Elements.stack.prepend(newLine.element);
             this.lines.push(newLine);
         }
         this.minLineAddress = RegisterUtils.getSP() & 0xfffffff0;
     }
 
-    static update() {
+    update() {
         if (RegisterUtils.getSP() < this.minLineAddress)
             this.addNewLines(this.minLineAddress);
         this.lines.forEach(e => e.updateValues());
     }
 
-    static getStackContent(addr) {
+    getContent(addr) {
         if (RegisterUtils.getSP() > addr) return undefined;
-        const index = Stack.stack.length - (0x80000000 - addr) / 4;
-        return Stack.stack[index];
-    }
-}
-
-
-class AbstractMemoryLine {
-    constructor(startAddress) {
-        this.wordList = [];
-        for (let address = startAddress; address < startAddress + 0x10; address += 4)
-            this.wordList.push(this.createMemoryWord(address));
-
-        this.element = document.createElement('span');
-        this.element.innerHTML = `[<span class='hljs-attr'>${startAddress.toString(16)}</span>] `;
-
-        this.wordList.forEach(e => {
-            this.element.appendChild(e.valueElement);
-            this.element.appendChild(document.createTextNode(' '));
-        });
-        this.wordList.forEach(e => this.element.appendChild(e.stringElement));
-        this.element.appendChild(document.createTextNode('\n'));
-    }
-
-    updateValues() {
-        this.wordList.forEach(e => e.updateValue());
-    }
-
-    createMemoryWord(address) {
-        return new AbstractMemoryWord(address);
-    }
-}
-
-class UserDataMemoryLine extends AbstractMemoryLine {
-    createMemoryWord(address) {
-        return new UserDataMemoryWord(address);
-    }
-}
-
-class KernelDataMemoryLine extends AbstractMemoryLine {
-    createMemoryWord(address) {
-        return new KernelDataMemoryWord(address);
-    }
-}
-
-class StackMemoryLine extends AbstractMemoryLine {
-    createMemoryWord(address) {
-        return new StackMemoryWord(address);
-    }
-}
-
-class AbstractMemoryWord {
-    constructor(address) {
-        this.address = address;
-        this.radix = this.getRadix();
-
-        this.valueElement = document.createElement('span');
-        this.valueElement.classList.add('data-number');
-        this.stringElement = document.createElement('span');
-
-        this.valueElement.innerText = this.getValueInnerText();
-        this.stringElement.innerText = this.getStringInnerText();
-    }
-
-    updateValue() {
-        const newValue = this.getContent(this.address);
-
-        if (newValue === undefined) {
-            this.valueElement.classList.add('unused');
-            this.stringElement.classList.add('unused');
-            return;
-        }
-
-        if (this.value === newValue) {
-            this.valueElement.classList.remove('highlight', 'unused');
-            this.stringElement.classList.remove('highlight', 'unused');
-            return;
-        }
-
-        if (this.value !== undefined) {
-            this.valueElement.classList.add('highlight');
-            this.stringElement.classList.add('highlight');
-        }
-
-
-        this.value = newValue;
-        this.valueElement.innerText = this.getValueInnerText();
-        this.stringElement.innerText = this.getStringInnerText();
-    }
-
-    getValueInnerText() {
-        if (this.radix === 10) {
-            const string = this.value === undefined ? '' : this.value.toString();
-            return string.padStart(10, ' ');
-        } else {
-            if (this.value === undefined) return ''.padStart(8);
-            return this.value.toString(16).padStart(8, '0');
-        }
-    }
-
-    getStringInnerText() {
-        if (this.value === undefined)
-            return "    ";
-
-        const asciiArray = [
-            this.value & 0xff,
-            (this.value & 0xffff) >> 8,
-            (this.value & 0xffffff) >> 16,
-            this.value >> 24
-        ];
-        return asciiArray
-            .map(e => e >= 32 && e < 127 ? e : 183)
-            .map(e => String.fromCharCode(e)).join('');
-    }
-
-    getContent(addr) {
-        return 0;
-    }
-
-    getRadix() {
-        return 16;
-    }
-}
-
-class UserDataMemoryWord extends AbstractMemoryWord {
-    getContent(addr) {
-        return DataSegment.getUserDataContent(addr);
-    }
-
-    getRadix() {
-        return DataSegment.radix;
-    }
-}
-
-class KernelDataMemoryWord extends AbstractMemoryWord {
-    getContent(addr) {
-        return DataSegment.getKernelDataContent(addr);
-    }
-
-    getRadix() {
-        return DataSegment.radix;
-    }
-}
-
-class StackMemoryWord extends AbstractMemoryWord {
-    getContent(addr) {
-        return Stack.getStackContent(addr);
-    }
-
-    getRadix() {
-        return Stack.radix;
+        const index = this.content.length - (0x80000000 - addr) / 4;
+        return this.content[index];
     }
 }

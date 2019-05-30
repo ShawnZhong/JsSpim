@@ -123,19 +123,19 @@
         <h5 class="float-left">Data Segment</h5>
         <div class="float-right">
             <input id="toggle-kernel-data" type="checkbox" checked
-                   onchange="DataSegment.toggleKernelData(this.checked)">
+                   onchange="MemoryUtils.toggleKernelData(this.checked)">
             <label for="toggle-kernel-data"> Kernel data </label>
 
             &nbsp
 
             <input type="radio" name="data-radix" id="data-radix-hex" value="16" checked
-                   onchange="DataSegment.changeRadix(this.value)">
+                   onchange="MemoryUtils.changeDataRadix(this.value)">
             <label for="data-radix-hex">Hex</label>
 
             &nbsp
 
             <input type="radio" name="data-radix" id="data-radix-dec" value="10"
-                   onchange="DataSegment.changeRadix(this.value)">
+                   onchange="MemoryUtils.changeDataRadix(this.value)">
             <label for="data-radix-dec">Dec</label>
         </div>
     </div>
@@ -159,13 +159,13 @@
         <h5 class="float-left">User Stack</h5>
         <div class="float-right">
             <input type="radio" name="stack-radix" id="stack-radix-hex" value="16" checked
-                   onchange="Stack.changeRadix(this.value)">
+                   onchange="MemoryUtils.changeStackRadix(this.value)">
             <label for="stack-radix-hex">Hex</label>
 
             &nbsp
 
             <input type="radio" name="stack-radix" id="stack-radix-dec" value="10"
-                   onchange="Stack.changeRadix(this.value)">
+                   onchange="MemoryUtils.changeStackRadix(this.value)">
             <label for="stack-radix-dec">Dec</label>
         </div>
     </div>
@@ -209,6 +209,8 @@
 
 <script type='text/javascript' src="js/index.js"></script>
 <script type='text/javascript' src="js/instruction.js"></script>
+<script type='text/javascript' src="js/memoryword.js"></script>
+<script type='text/javascript' src="js/memoryline.js"></script>
 <script type='text/javascript' src="js/memory.js"></script>
 <script type='text/javascript' src="js/register.js"></script>
 <script type='text/javascript' src="js/execution.js"></script>

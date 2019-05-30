@@ -16,8 +16,7 @@ class Execution {
 
         Module.init();
         RegisterUtils.init();
-        Stack.init();
-        DataSegment.init();
+        MemoryUtils.init();
 
         if (reset) {
             InstructionUtils.removeAllBreakpoints();
@@ -42,8 +41,7 @@ class Execution {
         }
 
         RegisterUtils.update();
-        Stack.update();
-        DataSegment.update();
+        MemoryUtils.update();
         InstructionUtils.highlightCurrentInstruction();
     }
 
