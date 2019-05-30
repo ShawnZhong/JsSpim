@@ -1,7 +1,6 @@
 body {
     height: 100vh;
     width: max-content;
-    overflow: hidden;
     margin: auto !important;
     display: grid;
     grid-template-areas: "toolbar toolbar toolbar toolbar" "reg text text data" "reg text text data" "reg text text gap3" "reg text text stack" "reg gap2 gap2 stack" "reg output log stack";
