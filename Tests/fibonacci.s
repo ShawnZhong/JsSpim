@@ -1,10 +1,6 @@
 .text
 main:
-la $a0, prompt1
-li $v0, 4           # print
-syscall
-
-la $a0, prompt2
+la $a0, prompt
 li $v0, 4           # print
 syscall
 
@@ -97,8 +93,7 @@ li $v0, 1
 jr $ra
 
 .data
-prompt1: .asciiz "This program calculates Fibonacci sequence from 1 to n.\n"
-prompt2: .asciiz "Enter a non-negative number n: \n"
+prompt: .asciiz "The code is based on Adel Zare's answer at <a href='https://stackoverflow.com/questions/22976456'>StackOverflow</a>\nThis program calculates Fibonacci sequence from 1 to n.\nPlease enter a non-negative number n:\n"
 result: .asciiz "F_"
 result2: .asciiz " = "
 endl: .asciiz "\n"
