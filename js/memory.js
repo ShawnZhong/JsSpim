@@ -95,15 +95,25 @@ class Memory {
 }
 
 class DataSegment extends Memory {
+    constructor() {
+        super();
+        this.lineAddresses = new Set();
+    }
+
     addNewLines() {
         for (let i = 0; i < this.content.length / 16; i++) {
             const addr = this.startAddress + i * 0x10;
             if (this.isLineEmpty(addr)) continue;
-            const newLine = new MemoryLine(addr, this);
-            newLine.updateValues();
-            this.element.append(newLine.element);
-            this.lines.push(newLine);
+            this.addLine(addr);
         }
+    }
+
+    addLine(addr) {
+        const newLine = new MemoryLine(addr, this);
+        newLine.updateValues();
+        this.element.append(newLine.element);
+        this.lines.push(newLine);
+        this.lineAddresses.add(addr);
     }
 
     getContent(addr) {
@@ -118,8 +128,14 @@ class UserData extends DataSegment {
         this.content = Module.getUserData();
         this.startAddress = 0x10000000;
     }
-    
+
     update() {
+        for (let i = 0; i < this.content.length / 16; i++) {
+            const addr = this.startAddress + i * 0x10;
+            if (!this.isLineEmpty(addr) && !this.lineAddresses.has(addr))
+                this.addLine(addr);
+        }
+
         this.content = Module.getUserData();
         this.lines.forEach(e => e.updateValues());
     }
@@ -141,15 +157,6 @@ class Stack extends Memory {
         this.element = Elements.stack;
     }
 
-    addNewLines(endAddr = 0x80000000) {
-        for (; endAddr >= RegisterUtils.getSP(); endAddr -= 0x10) {
-            const newLine = new MemoryLine(endAddr - 0x10, this);
-            Elements.stack.prepend(newLine.element);
-            this.lines.push(newLine);
-        }
-        this.minLineAddress = RegisterUtils.getSP() & 0xfffffff0;
-    }
-
     update() {
         if (RegisterUtils.getSP() < this.minLineAddress)
             this.addNewLines(this.minLineAddress);
@@ -160,5 +167,14 @@ class Stack extends Memory {
         if (RegisterUtils.getSP() > addr) return undefined;
         const index = this.content.length - (0x80000000 - addr) / 4;
         return this.content[index];
+    }
+
+    addNewLines(endAddr = 0x80000000) {
+        for (; endAddr >= RegisterUtils.getSP(); endAddr -= 0x10) {
+            const newLine = new MemoryLine(endAddr - 0x10, this);
+            Elements.stack.prepend(newLine.element);
+            this.lines.push(newLine);
+        }
+        this.minLineAddress = RegisterUtils.getSP() & 0xfffffff0;
     }
 }
