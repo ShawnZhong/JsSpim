@@ -36,7 +36,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <sstream>
 
 #include "spim.h"
 #include "string-stream.h"
@@ -45,6 +44,7 @@
 #include "reg.h"
 #include "mem.h"
 #include "data.h"
+#include "version.h"
 
 using namespace emscripten;
 
@@ -60,11 +60,14 @@ int spim_return_value;        /* Value returned when spim exits */
 
 static str_stream ss;
 void init() {
+  error("Based on <a href='http://spimsimulator.sourceforge.net/'>SPIM</a> %s "
+        "by <a href='https://people.epfl.ch/james.larus'>James Larus</a>.\n",
+        SPIM_VERSION);
+
   initialize_world(DEFAULT_EXCEPTION_HANDLER, false);
   initialize_run_stack(0, nullptr);
   read_assembly_file("input.s");
   PC = starting_address();
-  ss_clear(&ss);
 }
 
 
