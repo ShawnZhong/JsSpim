@@ -31,6 +31,7 @@ class RegisterUtils {
     static initElement() {
         Elements.generalReg.innerHTML = "";
         Elements.specialIntReg.innerHTML = "";
+        Elements.specialFloatReg.innerHTML = "";
         Elements.floatReg.innerHTML = "";
         Elements.doubleReg.innerHTML = "";
 
