@@ -67,7 +67,6 @@ void init() {
   ss_clear(&ss);
 }
 
-EMSCRIPTEN_BINDINGS(init) { function("init", &init); }
 
 int step(int step_size, bool cont_bkpt) {
   mem_addr addr = PC == 0 ? starting_address() : PC;
@@ -90,39 +89,25 @@ int step(int step_size, bool cont_bkpt) {
   return 1;
 }
 
-EMSCRIPTEN_BINDINGS(step) { function("step", &step); }
 
 std::string getUserText() {
   ss_clear(&ss);
   format_insts(&ss, TEXT_BOT, text_top);
   return std::string(ss_to_string(&ss));
 }
-EMSCRIPTEN_BINDINGS(getUserText) { function("getUserText", &getUserText); }
 
 std::string getKernelText() {
   ss_clear(&ss);
   format_insts(&ss, K_TEXT_BOT, k_text_top);
   return std::string(ss_to_string(&ss));
 }
-EMSCRIPTEN_BINDINGS(getKernelText) { function("getKernelText", &getKernelText); }
 
 val getStack() { return val(typed_memory_view(STACK_LIMIT / 16, (unsigned int *) stack_seg)); }
-EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }
-
 val getUserData() { return val(typed_memory_view(data_top - DATA_BOT, (unsigned int *) data_seg)); }
-EMSCRIPTEN_BINDINGS(getUserData) { function("getUserData", &getUserData); }
-
 val getKernelData() { return val(typed_memory_view(k_data_top - K_DATA_BOT, (unsigned int *) k_data_seg)); }
-EMSCRIPTEN_BINDINGS(getKernelData) { function("getKernelData", &getKernelData); }
-
 val getGeneralRegVals() { return val(typed_memory_view(32, (unsigned int *) R)); }
-EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
-
 val getFloatRegVals() { return val(typed_memory_view(32, (float *) FPR)); }
-EMSCRIPTEN_BINDINGS(getFloatRegVals) { function("getFloatRegVals", &getFloatRegVals); }
-
 val getDoubleRegVals() { return val(typed_memory_view(16, (double *) FPR)); }
-EMSCRIPTEN_BINDINGS(getDoubleRegVals) { function("getDoubleRegVals", &getDoubleRegVals); }
 
 val getSpecialRegVals() {
   static unsigned int specialRegs[12];
@@ -141,8 +126,18 @@ val getSpecialRegVals() {
 
   return val(typed_memory_view(12, specialRegs));
 }
-EMSCRIPTEN_BINDINGS(getSpecialRegVals) { function("getSpecialRegVals", &getSpecialRegVals); }
 
+EMSCRIPTEN_BINDINGS(init) { function("init", &init); }
+EMSCRIPTEN_BINDINGS(step) { function("step", &step); }
+EMSCRIPTEN_BINDINGS(getUserText) { function("getUserText", &getUserText); }
+EMSCRIPTEN_BINDINGS(getKernelText) { function("getKernelText", &getKernelText); }
+EMSCRIPTEN_BINDINGS(getStack) { function("getStack", &getStack); }
+EMSCRIPTEN_BINDINGS(getUserData) { function("getUserData", &getUserData); }
+EMSCRIPTEN_BINDINGS(getKernelData) { function("getKernelData", &getKernelData); }
+EMSCRIPTEN_BINDINGS(getGeneralRegVals) { function("getGeneralRegVals", &getGeneralRegVals); }
+EMSCRIPTEN_BINDINGS(getFloatRegVals) { function("getFloatRegVals", &getFloatRegVals); }
+EMSCRIPTEN_BINDINGS(getDoubleRegVals) { function("getDoubleRegVals", &getDoubleRegVals); }
+EMSCRIPTEN_BINDINGS(getSpecialRegVals) { function("getSpecialRegVals", &getSpecialRegVals); }
 EMSCRIPTEN_BINDINGS(delete_breakpoint) { function("deleteBreakpoint", &delete_breakpoint); }
 EMSCRIPTEN_BINDINGS(add_breakpoint) { function("addBreakpoint", &add_breakpoint); }
 
