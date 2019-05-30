@@ -9,8 +9,6 @@ JsSpim is an online MIPS32 simulator based on Prof. James Larus's [Spim](http://
 
 <img src="screenrecord.gif" width="100%">
 
-![May-30-2019 03-02-30](assets/May-30-2019 03-02-30.gif)
-
 ## Features
 
 - Click on an instruction to toggle **breakpoint**
