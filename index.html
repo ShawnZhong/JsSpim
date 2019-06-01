@@ -21,7 +21,8 @@
         <div>&nbsp or &nbsp</div>
         <div>
             <div class="custom-file">
-                <input type="file" class="custom-file-input" id="file-upload" onChange="main(this.files[0])">
+                <input type="file" class="custom-file-input" id="file-upload"
+                       onChange="main(this.files[0]);this.value=''">
                 <div class="custom-file-label">upload your own</div>
             </div>
         </div>
