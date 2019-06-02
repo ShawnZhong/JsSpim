@@ -1,5 +1,5 @@
 # JsSpim
-JsSpim is an online MIPS32 simulator based on Prof. James Larus's [Spim](http://spimsimulator.sourceforge.net/).
+[JsSpim](https://shawnzhong.github.io/JsSpim/) is an online MIPS32 simulator based on Prof. James Larus's [Spim](http://spimsimulator.sourceforge.net/).
 
 > *Spim* is a self-contained simulator that runs MIPS32 programs. It reads and executes assembly language programs written for this processor. *Spim* also provides a simple debugger and minimal set of operating system services. *Spim* does not execute binary (compiled) programs.
 >
