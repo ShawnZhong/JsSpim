@@ -5,6 +5,8 @@
 >
 > *Spim* implements almost the entire MIPS32 assembler-extended instruction set. (It omits most floating point comparisons and rounding modes and the memory system page tables.) The MIPS architecture has several variants that differ in various ways (e.g., the MIPS64 architecture supports 64-bit integers and addresses), which means that *Spim* will not run programs for all MIPS processors.
 
+The source code is published at [GitHub](https://github.com/ShawnZhong/JsSpim/)
+
 ## Screenshot
 
 ![image-20190530030929768](screenshot.png)
